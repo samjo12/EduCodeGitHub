@@ -1,0 +1,10 @@
+C:\Users\usr\source\repos\MyUtils\bin\Debug\MyUtils.exe.config
+C:\Users\usr\source\repos\MyUtils\bin\Debug\MyUtils.exe
+C:\Users\usr\source\repos\MyUtils\bin\Debug\MyUtils.pdb
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.csproj.AssemblyReference.cache
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.Properties.Resources.resources
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.csproj.GenerateResource.cache
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.csproj.CoreCompileInputs.cache
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.exe
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.pdb
+C:\Users\usr\source\repos\MyUtils\obj\Debug\MyUtils.MainForm.resources
