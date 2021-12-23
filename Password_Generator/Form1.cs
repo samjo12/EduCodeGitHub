@@ -13,7 +13,19 @@ namespace Password_Generator
     public partial class Form1 : Form
     {
         Random rnd = new Random();
-        char[] special_symbols = new char[] { '%', '*', ')', '?', '#', '$', '^', '&', '^' };
+        /*
+Цифры[0..9]
+Прописные буквы[a..z]
+Строчные буквы[A..Z]
+Спец.символы ! @ # $ _ / \ |
+Скобки [ ] { } ( ) < >
+Математ.знаки % ^ & * - + = ~
+Знаки препинания ; : , . ` " ' ?
+Пробел " " */
+        int[] special_symbols = new int[] { 33, 64, 35, 36, 95, 47, 92, 124 };
+        int[] bracket_symbols = new int[] { 91, 93, 123, 125, 40, 41, 60, 62 };
+        int[] math_symbols = new int[] { 37, 94, 38, 42, 45, 43, 61, 126 };
+        int[] special_symbols2 = new int[] { 59, 58, 44, 46, 96, 34, 39, 63 };
         Dictionary<string,double> metrica;
         
         public Form1()
@@ -33,6 +45,9 @@ namespace Password_Generator
 
         private void btnCreatePass_Click(object sender, EventArgs e)
         {
+            int passletter, nsymbs=0;
+            string str_entropy;
+            double entropy = 0;
             if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов в пароле не выбрано
             string password = "";
             for (int i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
@@ -43,22 +58,74 @@ namespace Password_Generator
                 {
                     case "Цифры [0..9]":
                         password += rnd.Next(10).ToString();
+                        break; 
+                    case "Прописные буквы [A..Z]":
+                        do 
+                        { passletter = rnd.Next(65, 90);
+                            if (cbDisableLetter_O_I.Checked == false) break;
+                        } while ((passletter is 'O') || (passletter is 'I'));
+                        password += Convert.ToChar(passletter);
                         break;
-                    case "Прописные буквы [a..z]":
-                        password += Convert.ToChar(rnd.Next(65, 88));
+                    case "Строчные буквы [a..z]":
+                        do 
+                        { passletter = rnd.Next(97, 122);
+                            if (cbDisableLetter_o.Checked == false) break;
+                        } while (passletter is 'o'); 
+                        password += Convert.ToChar(passletter);
+                        entropy += 4.7004;
                         break;
-                    case "Строчные буквы [A..Z]":
-                        password += Convert.ToChar(rnd.Next(97, 122));
+                    case "Спец.символы ! @ # $ _ / |":
+                        do
+                        {
+                          passletter = special_symbols[rnd.Next(special_symbols.Length)];
+                            if (cbDisableUnderline.Checked == false) break;
+                        } while (passletter is '_');
+                        password += Convert.ToChar(passletter);
                         break;
-                    default: 
-                        password += special_symbols[rnd.Next(special_symbols.Length)];
+                    case "Скобки [ ] { } ( ) < >":
+                        passletter = bracket_symbols[rnd.Next(bracket_symbols.Length)];
+                        password += Convert.ToChar(passletter);
+                        break;
+                    case "Математ.знаки % ^ & * - + = ~":
+                        do
+                        {
+                            passletter = math_symbols[rnd.Next(math_symbols.Length)];
+                            if (cbDisableMinus.Checked == false) break;
+                        } while (passletter is '-');
+                        password += Convert.ToChar(passletter);
+                        break;
+                    case "Символ пробела":
+                        password += " ";
+                        break;
+                    default:
+                        passletter = special_symbols2[rnd.Next(special_symbols2.Length)];
+                        password += Convert.ToChar(passletter);
                         break;
                 }
-                tbPassword.Text = password;
-                Clipboard.SetText(password);
+                
             }
+            tbPassword.Text = password;
+            Clipboard.SetText(password);
+            /*расчет силы пароля и вывод результата*/
+
+            if (clbPassSymbols.GetItemChecked(0) is true) nsymbs += 10; //цифры
+            if (clbPassSymbols.GetItemChecked(1) is true) nsymbs += 26; // [A..Z]
+            if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26;// [a..z]
+            if (clbPassSymbols.GetItemChecked(3) is true) nsymbs += 8;// спец.символы ! @ # $ _ / \ |
+            if (clbPassSymbols.GetItemChecked(4) is true) nsymbs += 8; // скобки [ ] { } ( ) < >
+            if (clbPassSymbols.GetItemChecked(5) is true) nsymbs += 8;// мат.символы % ^ & * - + = ~
+            if (clbPassSymbols.GetItemChecked(6) is true) nsymbs += 8; // знаки препинания ; : , . ` " ' ?
+            if (clbPassSymbols.GetItemChecked(7) is true) nsymbs += 1; // пробел
+            entropy = Math.Floor(Convert.ToDouble(nudPassLength.Value) * Math.Log2(nsymbs));
+            str_entropy = Convert.ToString(entropy); // считаем сложность пароля
+            //tbPassForce.Text = Convert.ToString(entropy) + " bits";
+            if (entropy < 56) { tbPassForce.BackColor = Color.Red; tbPassForce.Text = str_entropy + " bits - cлишком слабый"; }
+            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = str_entropy + " bits - слабый"; }//раскрашиваем полоску со сложностью пароля
+            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = str_entropy + " bits - средний"; }
+            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = str_entropy + " bits - хороший!"; }//<=80bit -is Good
+
         }
-      
+
         private void btnConvert_Click(object sender, EventArgs e)
         {
             
@@ -157,6 +224,16 @@ namespace Password_Generator
                 default:
                     break;
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nudPassLength_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
