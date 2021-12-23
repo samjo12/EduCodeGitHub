@@ -48,6 +48,7 @@ namespace Password_Generator
             int passletter, nsymbs=0;
             string str_entropy;
             double entropy = 0;
+            pb1.Value = 0;// обнуляем прогрессбар
             if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов в пароле не выбрано
             string password = "";
             for (int i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
@@ -119,10 +120,13 @@ namespace Password_Generator
             entropy = Math.Floor(Convert.ToDouble(nudPassLength.Value) * Math.Log2(nsymbs));
             str_entropy = Convert.ToString(entropy); // считаем сложность пароля
             //tbPassForce.Text = Convert.ToString(entropy) + " bits";
-            if (entropy < 56) { tbPassForce.BackColor = Color.Red; tbPassForce.Text = str_entropy + " bits - cлишком слабый"; }
-            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = str_entropy + " bits - слабый"; }//раскрашиваем полоску со сложностью пароля
-            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = str_entropy + " bits - средний"; }
-            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = str_entropy + " bits - хороший!"; }//<=80bit -is Good
+            if (entropy < 56) { tbPassForce.BackColor = Color.Red; tbPassForce.Text = str_entropy + " bits - cлишком слабый";
+                                pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
+            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = str_entropy + " bits - слабый";
+                                     pb1.Value = Convert.ToInt32(10 / 8 * entropy); }//раскрашиваем полоску со сложностью пароля
+            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = str_entropy + " bits - средний"; 
+                                     pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
+            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = str_entropy + " bits - хороший!";pb1.Value = 100; }//<=80bit -is Good
 
         }
 

@@ -31,6 +31,7 @@ namespace Password_Generator
         {
             this.tcPassGen = new System.Windows.Forms.TabControl();
             this.tabPassword = new System.Windows.Forms.TabPage();
+            this.pb1 = new System.Windows.Forms.ProgressBar();
             this.tbPassForce = new System.Windows.Forms.TextBox();
             this.tbSymIgnor = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -38,7 +39,6 @@ namespace Password_Generator
             this.cbDisableMinus = new System.Windows.Forms.CheckBox();
             this.cbDisableLetter_O_I = new System.Windows.Forms.CheckBox();
             this.cbDisableLetter_o = new System.Windows.Forms.CheckBox();
-            this.btnCopyPass = new System.Windows.Forms.Button();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.btnCreatePass = new System.Windows.Forms.Button();
             this.nudPassLength = new System.Windows.Forms.NumericUpDown();
@@ -73,6 +73,7 @@ namespace Password_Generator
             // tabPassword
             // 
             this.tabPassword.BackColor = System.Drawing.Color.Transparent;
+            this.tabPassword.Controls.Add(this.pb1);
             this.tabPassword.Controls.Add(this.tbPassForce);
             this.tabPassword.Controls.Add(this.tbSymIgnor);
             this.tabPassword.Controls.Add(this.label3);
@@ -80,7 +81,6 @@ namespace Password_Generator
             this.tabPassword.Controls.Add(this.cbDisableMinus);
             this.tabPassword.Controls.Add(this.cbDisableLetter_O_I);
             this.tabPassword.Controls.Add(this.cbDisableLetter_o);
-            this.tabPassword.Controls.Add(this.btnCopyPass);
             this.tabPassword.Controls.Add(this.tbPassword);
             this.tabPassword.Controls.Add(this.btnCreatePass);
             this.tabPassword.Controls.Add(this.nudPassLength);
@@ -93,9 +93,18 @@ namespace Password_Generator
             this.tabPassword.TabIndex = 0;
             this.tabPassword.Text = "Генератор паролей";
             // 
+            // pb1
+            // 
+            this.pb1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.pb1.ForeColor = System.Drawing.SystemColors.Control;
+            this.pb1.Location = new System.Drawing.Point(8, 268);
+            this.pb1.Name = "pb1";
+            this.pb1.Size = new System.Drawing.Size(521, 23);
+            this.pb1.TabIndex = 14;
+            // 
             // tbPassForce
             // 
-            this.tbPassForce.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.tbPassForce.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.tbPassForce.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tbPassForce.Location = new System.Drawing.Point(9, 242);
             this.tbPassForce.Name = "tbPassForce";
@@ -161,15 +170,6 @@ namespace Password_Generator
             this.cbDisableLetter_o.TabIndex = 7;
             this.cbDisableLetter_o.Text = "Не использовать букву \"о\"";
             this.cbDisableLetter_o.UseVisualStyleBackColor = true;
-            // 
-            // btnCopyPass
-            // 
-            this.btnCopyPass.Location = new System.Drawing.Point(218, 273);
-            this.btnCopyPass.Name = "btnCopyPass";
-            this.btnCopyPass.Size = new System.Drawing.Size(94, 23);
-            this.btnCopyPass.TabIndex = 5;
-            this.btnCopyPass.Text = "Скопировать";
-            this.btnCopyPass.UseVisualStyleBackColor = true;
             // 
             // tbPassword
             // 
@@ -257,7 +257,7 @@ namespace Password_Generator
             this.tabConverter.Location = new System.Drawing.Point(4, 24);
             this.tabConverter.Name = "tabConverter";
             this.tabConverter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConverter.Size = new System.Drawing.Size(792, 609);
+            this.tabConverter.Size = new System.Drawing.Size(958, 630);
             this.tabConverter.TabIndex = 1;
             this.tabConverter.Text = "Конвертер";
             // 
@@ -378,7 +378,6 @@ namespace Password_Generator
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown nudPassLength;
         private System.Windows.Forms.Button btnCreatePass;
-        private System.Windows.Forms.Button btnCopyPass;
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.TextBox tbConverterTo;
         private System.Windows.Forms.TextBox tbConverterFrom;
@@ -395,6 +394,7 @@ namespace Password_Generator
         private System.Windows.Forms.CheckBox cbDisableUnderline;
         private System.Windows.Forms.TextBox tbSymIgnor;
         private System.Windows.Forms.TextBox tbPassForce;
+        private System.Windows.Forms.ProgressBar pb1;
     }
 }
 
