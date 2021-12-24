@@ -71,57 +71,51 @@ namespace Password_Generator
                 switch (s)
                 {
                     case "Цифры [0..9]":
-                        password += rnd.Next(10).ToString();
+                        passletter = rnd.Next(10)+48;
                         break; 
                     case "Прописные буквы [A..Z]":
                         do 
-                        { passletter = rnd.Next(65, 90);
-                            if (cbDisableLetter_O_I.Checked == false) break;
+                        {  passletter = rnd.Next(65, 90);
+                           if (cbDisableLetter_O_I.Checked == false) break;
                         } while ((passletter is 'O') || (passletter is 'I'));
-                        password += Convert.ToChar(passletter);
                         break;
                     case "Строчные буквы [a..z]":
                         do 
-                        { passletter = rnd.Next(97, 122);
-                            if (cbDisableLetter_o.Checked == false) break;
+                        {  passletter = rnd.Next(97, 122);
+                           if (cbDisableLetter_o.Checked == false) break;
                         } while (passletter is 'o'); 
-                        password += Convert.ToChar(passletter);
-                        entropy += 4.7004;
                         break;
                     case "Спец.символы ! @ # $ _ / |":
                         do
                         {
-                          passletter = special_symbols[rnd.Next(special_symbols.Length)];
-                            if (cbDisableUnderline.Checked == false) break;
+                           passletter = special_symbols[rnd.Next(special_symbols.Length)];
+                           if (cbDisableUnderline.Checked == false) break;
                         } while (passletter is '_');
-                        password += Convert.ToChar(passletter);
                         break;
                     case "Скобки [ ] { } ( ) < >":
                         passletter = bracket_symbols[rnd.Next(bracket_symbols.Length)];
-                        password += Convert.ToChar(passletter);
                         break;
                     case "Математ.знаки % ^ & * - + = ~":
                         do
                         {
-                            passletter = math_symbols[rnd.Next(math_symbols.Length)];
-                            if (cbDisableMinus.Checked == false) break;
+                           passletter = math_symbols[rnd.Next(math_symbols.Length)];
+                           if (cbDisableMinus.Checked == false) break;
                         } while (passletter is '-');
-                        password += Convert.ToChar(passletter);
                         break;
                     case "Символ пробела":
-                        password += " ";
+                        passletter = 0x20;
                         break;
                     default:
                         passletter = special_symbols2[rnd.Next(special_symbols2.Length)];
-                        password += Convert.ToChar(passletter);
                         break;
                 }
-                
-            }
-            tbPassword.Text = password;
-            Clipboard.SetText(password);
+                password += Convert.ToChar(passletter);
 
-            /*расчет силы пароля и вывод результата*/
+            }
+            tbPassword.Text = password; //выводим пароль в окно
+            Clipboard.SetText(password); // записываемпароль в clipboard
+
+            //подсчет числа символов,использующихся во всех отмеченных группах
             if (clbPassSymbols.GetItemChecked(0) is true) nsymbs += 10; //цифры
             if (clbPassSymbols.GetItemChecked(1) is true) nsymbs += 26; // [A..Z]
             if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26;// [a..z]
@@ -130,17 +124,20 @@ namespace Password_Generator
             if (clbPassSymbols.GetItemChecked(5) is true) nsymbs += 8;// мат.символы % ^ & * - + = ~
             if (clbPassSymbols.GetItemChecked(6) is true) nsymbs += 8; // знаки препинания ; : , . ` " ' ?
             if (clbPassSymbols.GetItemChecked(7) is true) nsymbs += 1; // пробел
+            // считаем сложность пароля в битах
             entropy = Math.Floor(Convert.ToDouble(nudPassLength.Value) * Math.Log2(nsymbs));
-            str_entropy = Convert.ToString(entropy); // считаем сложность пароля
-            //tbPassForce.Text = Convert.ToString(entropy) + " bits";
-            if (entropy < 56) { tbPassForce.BackColor = Color.Red; tbPassForce.Text = str_entropy + " bits - cлишком слабый";
+            str_entropy = Convert.ToString(entropy);
+
+            if (entropy < 56)
+            {
+                tbPassForce.BackColor = Color.Red; tbPassForce.Text = " bits - очень слабый ";
                                 pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
-            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = str_entropy + " bits - слабый";
+            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = " bits - слабый";
                                      pb1.Value = Convert.ToInt32(10 / 8 * entropy); }//раскрашиваем полоску со сложностью пароля
-            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = str_entropy + " bits - средний"; 
+            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = " bits - средний"; 
                                      pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
-            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = str_entropy + " bits - хороший!";pb1.Value = 100; }//<=80bit -is Good
-            tbPassForce.Text = tbPassForce.Text + "+"+Convert.ToString(password.Length)+" символов";
+            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = " bits - хороший!"; pb1.Value = 100; }//<=80bit -is Good
+            tbPassForce.Text = str_entropy + tbPassForce.Text + "пароль";
         }
 
         private void btnConvert_Click(object sender, EventArgs e)
