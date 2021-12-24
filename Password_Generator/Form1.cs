@@ -45,15 +45,28 @@ namespace Password_Generator
 
         private void btnCreatePass_Click(object sender, EventArgs e)
         {
-            int passletter, nsymbs=0;
+            int passletter, nsymbs=0,i,j,unused_groups;
             string str_entropy;
             double entropy = 0;
+            Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count]; //используемые в пароле группы символов
+
+            for (i = 0; i < clbPassSymbols.CheckedItems.Count; i++) group_sym[i] = false; // initial
             pb1.Value = 0;// обнуляем прогрессбар
-            if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов в пароле не выбрано
             string password = "";
-            for (int i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
+            
+            if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов для пароля не выбрано
+            
+            for (i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
             {
                 int n = rnd.Next(0, clbPassSymbols.CheckedItems.Count); //случайно выбираем набор символов
+                if (group_sym[n] == true) // в подборе уже была ипользована такая группа символов
+                {
+                    //подсчитаем сколько отмеченных груп символов было использовано
+                    unused_groups = 0;
+                    for (j = 0; j < clbPassSymbols.CheckedItems.Count; j++) if (group_sym[j] == false) unused_groups--;
+                    if (unused_groups <= (clbPassSymbols.CheckedItems.Count - i)) { i--; continue; }
+                }
+                else { group_sym[n] = true; }
                 string s = clbPassSymbols.CheckedItems[n].ToString(); //получаем его содержимое в строку s
                 switch (s)
                 {
@@ -107,8 +120,8 @@ namespace Password_Generator
             }
             tbPassword.Text = password;
             Clipboard.SetText(password);
-            /*расчет силы пароля и вывод результата*/
 
+            /*расчет силы пароля и вывод результата*/
             if (clbPassSymbols.GetItemChecked(0) is true) nsymbs += 10; //цифры
             if (clbPassSymbols.GetItemChecked(1) is true) nsymbs += 26; // [A..Z]
             if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26;// [a..z]
