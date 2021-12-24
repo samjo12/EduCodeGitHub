@@ -66,7 +66,7 @@ namespace Password_Generator
                     for (j = 0; j < clbPassSymbols.CheckedItems.Count; j++) if (group_sym[j] == false) unused_groups--;
                     if (unused_groups <= (clbPassSymbols.CheckedItems.Count - i)) { i--; continue; }
                 }
-                else { group_sym[n] = true; }
+                else { group_sym[n] = true; } /*отмечаем, что сейчас выбирем символ из этой группы*/
                 string s = clbPassSymbols.CheckedItems[n].ToString(); //получаем его содержимое в строку s
                 switch (s)
                 {
@@ -140,7 +140,7 @@ namespace Password_Generator
             else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = str_entropy + " bits - средний"; 
                                      pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
             else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = str_entropy + " bits - хороший!";pb1.Value = 100; }//<=80bit -is Good
-
+            tbPassForce.Text = tbPassForce.Text + "+"+Convert.ToString(password.Length)+" символов";
         }
 
         private void btnConvert_Click(object sender, EventArgs e)
