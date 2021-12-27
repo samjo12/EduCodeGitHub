@@ -53,6 +53,8 @@ namespace Password_Generator
             this.btnConvert = new System.Windows.Forms.Button();
             this.cbConverterTo = new System.Windows.Forms.ComboBox();
             this.cbConverterFrom = new System.Windows.Forms.ComboBox();
+            this.tbMyStr = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tcPassGen.SuspendLayout();
             this.tabPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).BeginInit();
@@ -67,12 +69,14 @@ namespace Password_Generator
             this.tcPassGen.Location = new System.Drawing.Point(0, 0);
             this.tcPassGen.Name = "tcPassGen";
             this.tcPassGen.SelectedIndex = 0;
-            this.tcPassGen.Size = new System.Drawing.Size(966, 658);
+            this.tcPassGen.Size = new System.Drawing.Size(547, 409);
             this.tcPassGen.TabIndex = 0;
             // 
             // tabPassword
             // 
             this.tabPassword.BackColor = System.Drawing.Color.Transparent;
+            this.tabPassword.Controls.Add(this.label4);
+            this.tabPassword.Controls.Add(this.tbMyStr);
             this.tabPassword.Controls.Add(this.pb1);
             this.tabPassword.Controls.Add(this.tbPassForce);
             this.tabPassword.Controls.Add(this.tbSymIgnor);
@@ -89,7 +93,7 @@ namespace Password_Generator
             this.tabPassword.Location = new System.Drawing.Point(4, 24);
             this.tabPassword.Name = "tabPassword";
             this.tabPassword.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPassword.Size = new System.Drawing.Size(958, 630);
+            this.tabPassword.Size = new System.Drawing.Size(539, 381);
             this.tabPassword.TabIndex = 0;
             this.tabPassword.Text = "Генератор паролей";
             // 
@@ -97,7 +101,7 @@ namespace Password_Generator
             // 
             this.pb1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.pb1.ForeColor = System.Drawing.SystemColors.Control;
-            this.pb1.Location = new System.Drawing.Point(8, 268);
+            this.pb1.Location = new System.Drawing.Point(9, 350);
             this.pb1.Name = "pb1";
             this.pb1.Size = new System.Drawing.Size(521, 23);
             this.pb1.TabIndex = 14;
@@ -106,7 +110,7 @@ namespace Password_Generator
             // 
             this.tbPassForce.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.tbPassForce.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.tbPassForce.Location = new System.Drawing.Point(9, 242);
+            this.tbPassForce.Location = new System.Drawing.Point(9, 324);
             this.tbPassForce.Name = "tbPassForce";
             this.tbPassForce.Size = new System.Drawing.Size(521, 29);
             this.tbPassForce.TabIndex = 13;
@@ -114,21 +118,21 @@ namespace Password_Generator
             // 
             // tbSymIgnor
             // 
-            this.tbSymIgnor.Location = new System.Drawing.Point(242, 142);
+            this.tbSymIgnor.Location = new System.Drawing.Point(9, 186);
+            this.tbSymIgnor.MaxLength = 70;
             this.tbSymIgnor.Name = "tbSymIgnor";
-            this.tbSymIgnor.Size = new System.Drawing.Size(288, 23);
+            this.tbSymIgnor.Size = new System.Drawing.Size(521, 23);
             this.tbSymIgnor.TabIndex = 12;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(235, 108);
+            this.label3.Location = new System.Drawing.Point(8, 168);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(299, 30);
+            this.label3.Size = new System.Drawing.Size(466, 15);
             this.label3.TabIndex = 11;
-            this.label3.Text = "Не использовать символы или последовательность\r\nсимволов (можно ввести через запя" +
-    "тую):";
+            this.label3.Text = "Не использовать в пароле следующие символы (можно ввести до 70 символов):";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // cbDisableUnderline
@@ -175,7 +179,7 @@ namespace Password_Generator
             // 
             this.tbPassword.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.tbPassword.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.tbPassword.Location = new System.Drawing.Point(9, 209);
+            this.tbPassword.Location = new System.Drawing.Point(9, 291);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(521, 33);
             this.tbPassword.TabIndex = 4;
@@ -183,7 +187,7 @@ namespace Password_Generator
             // 
             // btnCreatePass
             // 
-            this.btnCreatePass.Location = new System.Drawing.Point(198, 180);
+            this.btnCreatePass.Location = new System.Drawing.Point(198, 262);
             this.btnCreatePass.Name = "btnCreatePass";
             this.btnCreatePass.Size = new System.Drawing.Size(140, 23);
             this.btnCreatePass.TabIndex = 3;
@@ -194,7 +198,7 @@ namespace Password_Generator
             // nudPassLength
             // 
             this.nudPassLength.Cursor = System.Windows.Forms.Cursors.WaitCursor;
-            this.nudPassLength.Location = new System.Drawing.Point(102, 181);
+            this.nudPassLength.Location = new System.Drawing.Point(102, 263);
             this.nudPassLength.Maximum = new decimal(new int[] {
             20,
             0,
@@ -218,7 +222,7 @@ namespace Password_Generator
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 183);
+            this.label1.Location = new System.Drawing.Point(8, 265);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 15);
             this.label1.TabIndex = 1;
@@ -257,7 +261,7 @@ namespace Password_Generator
             this.tabConverter.Location = new System.Drawing.Point(4, 24);
             this.tabConverter.Name = "tabConverter";
             this.tabConverter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConverter.Size = new System.Drawing.Size(958, 630);
+            this.tabConverter.Size = new System.Drawing.Size(539, 381);
             this.tabConverter.TabIndex = 1;
             this.tabConverter.Text = "Конвертер";
             // 
@@ -351,11 +355,30 @@ namespace Password_Generator
             this.cbConverterFrom.TabIndex = 0;
             this.cbConverterFrom.Text = "mm - millimeters";
             // 
+            // tbMyStr
+            // 
+            this.tbMyStr.Location = new System.Drawing.Point(9, 234);
+            this.tbMyStr.MaxLength = 70;
+            this.tbMyStr.Name = "tbMyStr";
+            this.tbMyStr.Size = new System.Drawing.Size(521, 23);
+            this.tbMyStr.TabIndex = 15;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(9, 216);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(527, 15);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Использовать в пароле свои последовательности символов (можно ввести через запяту" +
+    "ю):";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(966, 658);
+            this.ClientSize = new System.Drawing.Size(547, 409);
             this.Controls.Add(this.tcPassGen);
             this.Name = "Form1";
             this.Text = "Мои утилиты";
@@ -395,6 +418,8 @@ namespace Password_Generator
         private System.Windows.Forms.TextBox tbSymIgnor;
         private System.Windows.Forms.TextBox tbPassForce;
         private System.Windows.Forms.ProgressBar pb1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbMyStr;
     }
 }
 

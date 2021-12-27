@@ -26,6 +26,7 @@ namespace Password_Generator
         int[] bracket_symbols = new int[] { 91, 93, 123, 125, 40, 41, 60, 62 };
         int[] math_symbols = new int[] { 37, 94, 38, 42, 45, 43, 61, 126 };
         int[] special_symbols2 = new int[] { 59, 58, 44, 46, 96, 34, 39, 63 };
+        
         Dictionary<string,double> metrica;
         
         public Form1()
@@ -48,14 +49,15 @@ namespace Password_Generator
             int passletter, nsymbs=0,i,j,unused_groups;
             string str_entropy;
             double entropy = 0;
+            Boolean flag_SymIgnor;
             Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count]; //используемые в пароле группы символов
 
             for (i = 0; i < clbPassSymbols.CheckedItems.Count; i++) group_sym[i] = false; // initial
             pb1.Value = 0;// обнуляем прогрессбар
             string password = "";
-            
+
             if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов для пароля не выбрано
-            
+
             for (i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
             {
                 int n = rnd.Next(0, clbPassSymbols.CheckedItems.Count); //случайно выбираем набор символов
@@ -108,20 +110,38 @@ namespace Password_Generator
                     default:
                         passletter = special_symbols2[rnd.Next(special_symbols2.Length)];
                         break;
+                } //end of switch
+                 
+
+                if (tbSymIgnor.Text.Length != 0) //проверим полученный символ на вхождение в список запрещенных
+                {
+                    flag_SymIgnor = false;
+                    for (j = 0; j < tbSymIgnor.Text.Length; j++)
+                    {
+                        if (tbSymIgnor.Text[j] == Convert.ToChar(passletter))// встречен запрещенный символ
+                        {
+                            i--; //перевыбор
+                            flag_SymIgnor = true;
+                            break;
+                        }
+                                               
+                    }
+                    if (flag_SymIgnor == true) { continue; } // выбираем следующий символ пароля в цикле i
+                    else { password += Convert.ToChar(passletter); }
                 }
-                password += Convert.ToChar(passletter);
+                else { password += Convert.ToChar(passletter); }
 
             }
             tbPassword.Text = password; //выводим пароль в окно
-            Clipboard.SetText(password); // записываемпароль в clipboard
+            Clipboard.SetText(password); // записываем пароль в clipboard
 
-            //подсчет числа символов,использующихся во всех отмеченных группах
+            //подсчет числа символов,использующихся в пароле из всех отмеченных групп
             if (clbPassSymbols.GetItemChecked(0) is true) nsymbs += 10; //цифры
             if (clbPassSymbols.GetItemChecked(1) is true) nsymbs += 26; // [A..Z]
-            if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26;// [a..z]
-            if (clbPassSymbols.GetItemChecked(3) is true) nsymbs += 8;// спец.символы ! @ # $ _ / \ |
+            if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26; // [a..z]
+            if (clbPassSymbols.GetItemChecked(3) is true) nsymbs += 8; // спец.символы ! @ # $ _ / \ |
             if (clbPassSymbols.GetItemChecked(4) is true) nsymbs += 8; // скобки [ ] { } ( ) < >
-            if (clbPassSymbols.GetItemChecked(5) is true) nsymbs += 8;// мат.символы % ^ & * - + = ~
+            if (clbPassSymbols.GetItemChecked(5) is true) nsymbs += 8; // мат.символы % ^ & * - + = ~
             if (clbPassSymbols.GetItemChecked(6) is true) nsymbs += 8; // знаки препинания ; : , . ` " ' ?
             if (clbPassSymbols.GetItemChecked(7) is true) nsymbs += 1; // пробел
             // считаем сложность пароля в битах
@@ -132,11 +152,11 @@ namespace Password_Generator
             {
                 tbPassForce.BackColor = Color.Red; tbPassForce.Text = " bits - очень слабый ";
                                 pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
-            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = " bits - слабый";
+            else if (entropy < 72) { tbPassForce.BackColor = Color.OrangeRed; tbPassForce.Text = " bits - слабый ";
                                      pb1.Value = Convert.ToInt32(10 / 8 * entropy); }//раскрашиваем полоску со сложностью пароля
-            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = " bits - средний"; 
+            else if (entropy < 80) { tbPassForce.BackColor = Color.Orange; tbPassForce.Text = " bits - среднесложный "; 
                                      pb1.Value = Convert.ToInt32(10 / 8 * entropy); }
-            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = " bits - хороший!"; pb1.Value = 100; }//<=80bit -is Good
+            else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = " bits - хороший "; pb1.Value = 100; }//<=80bit -is Good
             tbPassForce.Text = str_entropy + tbPassForce.Text + "пароль";
         }
 
