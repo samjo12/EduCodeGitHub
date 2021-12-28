@@ -22,13 +22,13 @@ namespace Password_Generator
 Математ.знаки % ^ & * - + = ~
 Знаки препинания ; : , . ` " ' ?
 Пробел " " */
-        int[,] cifer_symbols = new int[2,10];//символы цифр в Ascii
-        int[] small_letters = new int[] { 33, 64, 35, 36, 95, 47, 92, 124 };
-        int[,] big_letters =  new int[2,26];
-        int[] special_symbols = new int[] { 33, 64, 35, 36, 95, 47, 92, 124 };
-        int[] bracket_symbols = new int[] { 91, 93, 123, 125, 40, 41, 60, 62 };
-        int[] math_symbols = new int[] { 37, 94, 38, 42, 45, 43, 61, 126 };
-        int[] special_symbols2 = new int[] { 59, 58, 44, 46, 96, 34, 39, 63 };
+        int[,] cifer_symbols = new int[2,10];//набор кодов символов Ascii для цифр
+        int[,] small_letters = new int[2, 26]; //набор кодов символов Ascii для маленьких букв
+        int[,] big_letters =  new int[2,26];//набор кодов символов Ascii для больших букв
+        int[,] special_symbols = new int[] { 33, 35, 36, 47, 64, 92, 95, 124 }; //! @ # $ _ / \ |
+        int[,] bracket_symbols = new int[] { 40, 41, 60, 62, 91, 93, 123, 125 };
+        int[,] math_symbols = new int[] { 37, 38, 42, 43, 45, 61, 94, 126 };
+        int[,] special_symbols2 = new int[] { 34, 39, 44, 46, 58, 59, 63, 96 };
         
         Dictionary<string,double> metrica;
         
@@ -69,11 +69,15 @@ namespace Password_Generator
                     if (passletter >= 48 && passletter <=57)// встречен запрещенный символ в цифрах
                     { cifer_symbols[1,passletter - 48] = 1; } // отмечаем в массиве символов , что символ запрещен
                     if ( passletter>=65 && passletter<=90) // встречен символ из массива [A..Z]
-                    { big_letters[1,passletter - 90] = 1;
-                      if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
-                      { big_letters[1, 73 - 1] = 1; big_letters[1, 79 - 1] = 1; /*отключаем буквы I и O*/};
-                    }
+                      big_letters[1,passletter - 90] = 1;                 
+                    if ( passletter>=97 && passletter<=122) // встречен символ из массива [a..z]
+                      small_letters[1,passletter - 90] = 1;
                 }
+                // дополнительно отключаем символы если нужно
+                if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
+                      { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; /*отключаем буквы I и O*/};
+                if (cbDisableLetter_o.Checked == true) // отмечена галка о запрете символа o
+                      small_letters[1, 111 - 97] = 1;//отключаем букву o
                 if (clbPassSymbols.GetItemChecked(0) is true)// группа цифр выбрана
                 {
                     for (i = 0; i < 10; i++) // изначальна все цифры разрешены, кроме запрещенных
@@ -114,7 +118,26 @@ namespace Password_Generator
                     }
                     else { nsymbs += 26;  }/*подсчитаем количество символов в алфавите пароля + [A..Z]*/
                 }
+                if (clbPassSymbols.GetItemChecked(2) is true)// группа букв [a..z]
+                {
+                    for (i = 0; i < 26; i++) // изначальна все цифры разрешены, если группа цифр разрешена
+                    {
+                        if( small_letters[1, i] != 1) small_letters[1,i] = 0;
+                        small_letters[0, i] = i + 97; //инициализируем символы цифр в массиве
+                    }
+                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
 
+                    for (i = 0; i < 26; i++)
+                    {
+                        if (small_letters[1, i] == 0)
+                        { flag_SymIgnor = true; }//в группе цифр есть как минимум один разрешенный символ
+                    }
+                    if (flag_SymIgnor == false)// группа [A..Z] полностью запрещена
+                    {  // отключим галочку выбора группы [A..Z]
+                        clbPassSymbols.SetItemChecked(2, false); return;
+                    }
+                    else { nsymbs += 26;  }/*подсчитаем количество символов в алфавите пароля + [A..Z]*/
+                }
             
 
             for (i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
@@ -137,15 +160,14 @@ namespace Password_Generator
                         passletter = cifer_symbols[0,rnd_tmp]; //цифра выбрана
                         break; 
                     case "Прописные буквы [A..Z]":
-                        do { rnd_tmp = rnd.Next(26); }//выбираем случайную цифру
+                        do { rnd_tmp = rnd.Next(26); }//выбираем случайную букву [A..Z]
                         while (big_letters[1, rnd_tmp] != 0);
-                        passletter = big_letters[0, rnd_tmp]; //цифра выбрана
+                        passletter = big_letters[0, rnd_tmp]; //буква выбрана
                         break;
                     case "Строчные буквы [a..z]":
-                        do 
-                        {  passletter = small_letters[rnd.Next(26)];
-                           if (cbDisableLetter_o.Checked == false) break;
-                        } while (passletter is 'o'); 
+                        do { rnd_tmp = rnd.Next(26); }//выбираем случайную букву [a..z]
+                        while (small_letters[1, rnd_tmp] != 0);
+                        passletter = small_letters[0, rnd_tmp]; //буква выбрана
                         break;
                     case "Спец.символы ! @ # $ _ / |":
                         do
@@ -198,7 +220,7 @@ namespace Password_Generator
             //подсчет числа символов,использующихся в пароле из всех отмеченных групп
             //if (clbPassSymbols.GetItemChecked(0) is true) nsymbs += 10; //цифры
             //if (clbPassSymbols.GetItemChecked(1) is true) nsymbs += 26; // [A..Z]
-            if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26; // [a..z]
+            //if (clbPassSymbols.GetItemChecked(2) is true) nsymbs += 26; // [a..z]
             if (clbPassSymbols.GetItemChecked(3) is true) nsymbs += 8; // спец.символы ! @ # $ _ / \ |
             if (clbPassSymbols.GetItemChecked(4) is true) nsymbs += 8; // скобки [ ] { } ( ) < >
             if (clbPassSymbols.GetItemChecked(5) is true) nsymbs += 8; // мат.символы % ^ & * - + = ~
