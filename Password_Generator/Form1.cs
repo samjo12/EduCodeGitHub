@@ -49,18 +49,22 @@ namespace Password_Generator
 
         private void btnCreatePass_Click(object sender, EventArgs e)
         {
-            int passletter, nsymbs=0,i,j,unused_groups,rnd_tmp;
-            string str_entropy;
+            int passletter=0, nsymbs=0,i,j,unused_groups,rnd_tmp, n_group,n_wanted_words=0;
+            int len_wanted_words = 0;//длина в символах всех желаемых слов
+            string str_entropy,s;
+            string[] wanted_words=new string[70];
             double entropy = 0;
             Boolean flag_SymIgnor;
-            Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count]; //используемые в пароле группы символов
+            Boolean flag_wanted_words = false;
+            Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count+70]; //используемые в пароле группы символов
 
-            for (i = 0; i < clbPassSymbols.CheckedItems.Count; i++) group_sym[i] = false; // initial
+            for (i = 0; i < (clbPassSymbols.CheckedItems.Count+70); i++) group_sym[i] = false; // initial
             pb1.Value = 0;// обнуляем прогрессбар
             string password = "";
 
             if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов для пароля не выбрано
-                                                                // проверим , есть ли игнорируемые символы
+                                                                
+
 
               //переберем список игнорируемых символов 
              
@@ -74,7 +78,7 @@ namespace Password_Generator
                     if ( passletter>=97 && passletter<=122) // встречен символ из массива [a..z]
                       small_letters[1,passletter - 97] = 1;
                 }
-                     // дополнительно отключаем символы запрещенные в чекбоксах, если нужно
+                // дополнительно отключаем символы запрещенные в чекбоксах, если нужно
                 if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
                 { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; };/*отключаем буквы I и O*/
                 if (cbDisableLetter_o.Checked == true) // отмечена галка о запрете символа o
@@ -196,27 +200,55 @@ namespace Password_Generator
                 nsymbs += 1;
             }
 
-
-
-                for (i = 1; nudPassLength.Value >= i; i++) //цикл по длине пароля
-            {
-                int n = rnd.Next(0, clbPassSymbols.CheckedItems.Count); //случайно выбираем набор символов
-                if (group_sym[n] == true) // в подборе уже была ипользована такая группа символов
+            if (tbMyStr.TextLength != 0) // присутствуют желаемые слова и выражения
+            { // проверим строчку на количество слов
+                char[] delimiterChars = { ' ', ',', '.', ':' }; //возможные символы разделители
+                string [] words = tbMyStr.Text.Split(delimiterChars); //соскладируем желаемые слова в массив
+                foreach(string word in words)
                 {
-                    //подсчитаем сколько отмеченных груп символов было использовано
-                    unused_groups = 0;
-                    for (j = 0; j < clbPassSymbols.CheckedItems.Count; j++) if (group_sym[j] == false) unused_groups--;
-                    if (unused_groups <= (clbPassSymbols.CheckedItems.Count - i)) { i--; continue; }
+                   wanted_words[n_wanted_words] = word;
+                    len_wanted_words += word.Length;
+                    n_wanted_words++; 
                 }
-                else { group_sym[n] = true; } /*отмечаем, что сейчас выбирем символ из этой группы*/
-                string s = clbPassSymbols.CheckedItems[n].ToString(); //получаем его содержимое в строку s
+                
+                if ((tbMyStr.TextLength -n_wanted_words+ clbPassSymbols.CheckedItems.Count) > nudPassLength.Value) 
+                {// длина желаемых слов и символов из отмеченных групп превышает выбранную длину пароля
+                    tbPassword.Text = "Длина пароля мала для введенного набора символов";
+                    nudPassLength.Value = tbMyStr.TextLength - n_wanted_words + clbPassSymbols.CheckedItems.Count; //корректируем длину пароля
+                    tbPassForce.BackColor = Color.LightGray; tbPassForce.Text = "";
+                    return; // показываем пользователю новую длину пароля
+                }
+                // отмечаем желаемые слова как неиспользуемые группы
+                //for (i = clbPassSymbols.CheckedItems.Count; i < clbPassSymbols.CheckedItems.Count+n_wanted_words; i++) group_sym[i] = false;
+                // в начале процедуры уже была инициализация
+            }
+
+
+            for (i = 0; i < clbPassSymbols.CheckedItems.Count; i++) { group_sym[i] = false; } //отмечаем основные группы символов как не использовавшиеся
+            for (i = 1; i<=(nudPassLength.Value-len_wanted_words+n_wanted_words); i++) //цикл по длине пароля /подбор
+            {
+                
+                n_group = rnd.Next(0, clbPassSymbols.CheckedItems.Count+n_wanted_words); //случайно выбираем группу символов учитывая группы с желаемыми словами
+
+                if (group_sym[n_group] == true) // в подборе пароля уже была ипользована такая группа символов
+                {
+                    //подсчитаем сколько отмеченных груп символов Небыло использовано
+                    unused_groups = 0;
+                    for (j = 0; j < clbPassSymbols.CheckedItems.Count + n_wanted_words; j++) if (group_sym[j] == false) unused_groups++;
+                    if ((nudPassLength.Value - i) < unused_groups) { i--; continue; }
+                    if (n_group >= clbPassSymbols.CheckedItems.Count) { i--; continue; } //желаемое слово не повторяем дважды
+                }
+                else { group_sym[n_group] = true; }/*отмечаем, что сейчас выбeрем символ из этой группы*/
+
+                if (n_group< clbPassSymbols.CheckedItems.Count) s = clbPassSymbols.CheckedItems[n_group].ToString(); //получаем его содержимое в строку s
+                else s = "Wanted"; // прописываем строку в switch для default:
                 switch (s)
                 {
                     case "Цифры [0..9]":
                         do { rnd_tmp = rnd.Next(10); }//выбираем случайную цифру
-                        while (cifer_symbols[1,rnd_tmp] != 0);
-                        passletter = cifer_symbols[0,rnd_tmp]; //цифра выбрана
-                        break; 
+                        while (cifer_symbols[1, rnd_tmp] != 0);
+                        passletter = cifer_symbols[0, rnd_tmp]; //цифра выбрана
+                        break;
                     case "Прописные буквы [A..Z]":
                         do { rnd_tmp = rnd.Next(26); }//выбираем случайную букву [A..Z]
                         while (big_letters[1, rnd_tmp] != 0);
@@ -243,16 +275,26 @@ namespace Password_Generator
                         passletter = math_symbols[0, rnd_tmp];
                         break;
                     case "Символ пробела":
-                        passletter = 0x20;
+                        if ((i == 1 || i == nudPassLength.Value) || (i >1 && password[password.Length-1] == 32)) { i--; continue; } //не может быть первым и последним символом в пароле или двойным
+                        passletter = 32;
                         break;
-                    default:
+                    case "Знаки препинания  ; : , . ? кавычки":
                         do { rnd_tmp = rnd.Next(8); }
                         while (special_symbols2[1, rnd_tmp] != 0);
                         passletter = special_symbols2[0, rnd_tmp];
                         break;
+                    default: // вставка желаемых слов
+                        flag_wanted_words = true;
+                        break;
                 } //end of switch
-                 
 
+                if (flag_wanted_words == true)// вставка желаемых слов
+                {
+                    flag_wanted_words = false;//сброс флага группы
+                    password += wanted_words[n_group- clbPassSymbols.CheckedItems.Count];
+                    //i += wanted_words[n_wanted_words-1].Length;
+                    continue;
+                }
                 if (tbSymIgnor.Text.Length != 0) //проверим полученный символ на вхождение в список запрещенных
                 {
                     flag_SymIgnor = false;

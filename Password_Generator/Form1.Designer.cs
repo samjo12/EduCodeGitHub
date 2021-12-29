@@ -31,6 +31,8 @@ namespace Password_Generator
         {
             this.tcPassGen = new System.Windows.Forms.TabControl();
             this.tabPassword = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbMyStr = new System.Windows.Forms.TextBox();
             this.pb1 = new System.Windows.Forms.ProgressBar();
             this.tbPassForce = new System.Windows.Forms.TextBox();
             this.tbSymIgnor = new System.Windows.Forms.TextBox();
@@ -53,8 +55,6 @@ namespace Password_Generator
             this.btnConvert = new System.Windows.Forms.Button();
             this.cbConverterTo = new System.Windows.Forms.ComboBox();
             this.cbConverterFrom = new System.Windows.Forms.ComboBox();
-            this.tbMyStr = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.tcPassGen.SuspendLayout();
             this.tabPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).BeginInit();
@@ -96,6 +96,25 @@ namespace Password_Generator
             this.tabPassword.Size = new System.Drawing.Size(539, 381);
             this.tabPassword.TabIndex = 0;
             this.tabPassword.Text = "Генератор паролей";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(9, 216);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(527, 15);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Использовать в пароле свои последовательности символов (можно ввести через запяту" +
+    "ю):";
+            // 
+            // tbMyStr
+            // 
+            this.tbMyStr.Location = new System.Drawing.Point(9, 234);
+            this.tbMyStr.MaxLength = 70;
+            this.tbMyStr.Name = "tbMyStr";
+            this.tbMyStr.Size = new System.Drawing.Size(521, 23);
+            this.tbMyStr.TabIndex = 15;
             // 
             // pb1
             // 
@@ -200,7 +219,7 @@ namespace Password_Generator
             this.nudPassLength.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             this.nudPassLength.Location = new System.Drawing.Point(102, 263);
             this.nudPassLength.Maximum = new decimal(new int[] {
-            20,
+            80,
             0,
             0,
             0});
@@ -240,7 +259,7 @@ namespace Password_Generator
             "Спец.символы ! @ # $ _ / |",
             "Скобки [ ] { } ( ) < >",
             "Математ.знаки % ^ & * - + = ~",
-            "Знаки препинания ; : , . ` \" \' ?",
+            "Знаки препинания  ; : , . ? кавычки",
             "Символ пробела"});
             this.clbPassSymbols.Location = new System.Drawing.Point(8, 17);
             this.clbPassSymbols.Name = "clbPassSymbols";
@@ -354,25 +373,6 @@ namespace Password_Generator
             this.cbConverterFrom.Size = new System.Drawing.Size(121, 23);
             this.cbConverterFrom.TabIndex = 0;
             this.cbConverterFrom.Text = "mm - millimeters";
-            // 
-            // tbMyStr
-            // 
-            this.tbMyStr.Location = new System.Drawing.Point(9, 234);
-            this.tbMyStr.MaxLength = 70;
-            this.tbMyStr.Name = "tbMyStr";
-            this.tbMyStr.Size = new System.Drawing.Size(521, 23);
-            this.tbMyStr.TabIndex = 15;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(9, 216);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(527, 15);
-            this.label4.TabIndex = 16;
-            this.label4.Text = "Использовать в пароле свои последовательности символов (можно ввести через запяту" +
-    "ю):";
             // 
             // Form1
             // 
