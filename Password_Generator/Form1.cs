@@ -56,9 +56,7 @@ namespace Password_Generator
             double entropy = 0;
             Boolean flag_SymIgnor;
             Boolean flag_wanted_words = false;
-            Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count+70]; //используемые в пароле группы символов
-
-            for (i = 0; i < (clbPassSymbols.CheckedItems.Count+70); i++) group_sym[i] = false; // initial
+            
             pb1.Value = 0;// обнуляем прогрессбар
             string password = "";
 
@@ -211,21 +209,21 @@ namespace Password_Generator
                     n_wanted_words++; 
                 }
                 
-                if ((tbMyStr.TextLength -n_wanted_words+ clbPassSymbols.CheckedItems.Count) > nudPassLength.Value) 
+                if ((len_wanted_words + clbPassSymbols.CheckedItems.Count) >nudPassLength.Value) 
                 {// длина желаемых слов и символов из отмеченных групп превышает выбранную длину пароля
-                    tbPassword.Text = "Длина пароля мала для введенного набора символов";
-                    nudPassLength.Value = tbMyStr.TextLength - n_wanted_words + clbPassSymbols.CheckedItems.Count; //корректируем длину пароля
+                    tbPassword.Text = "Длина пароля мала для выбранного набора символов";
+                    nudPassLength.Value = len_wanted_words + clbPassSymbols.CheckedItems.Count; //корректируем длину пароля
                     tbPassForce.BackColor = Color.LightGray; tbPassForce.Text = "";
                     return; // показываем пользователю новую длину пароля
                 }
-                // отмечаем желаемые слова как неиспользуемые группы
-                //for (i = clbPassSymbols.CheckedItems.Count; i < clbPassSymbols.CheckedItems.Count+n_wanted_words; i++) group_sym[i] = false;
-                // в начале процедуры уже была инициализация
+                
+
             }
+            Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count + n_wanted_words]; //используемые в пароле группы символов
 
-
-            for (i = 0; i < clbPassSymbols.CheckedItems.Count; i++) { group_sym[i] = false; } //отмечаем основные группы символов как не использовавшиеся
-            for (i = 1; i<=(nudPassLength.Value-len_wanted_words+n_wanted_words); i++) //цикл по длине пароля /подбор
+            for (i = 0; i < (clbPassSymbols.CheckedItems.Count + n_wanted_words); i++) group_sym[i] = false; // initial group_sym
+                                                                                                             // отмечаем отмеченные группы символов и желаемые слова как неиспользованные группы
+            for (i = 1; i<=nudPassLength.Value; i++) //цикл по длине пароля /подбор
             {
                 
                 n_group = rnd.Next(0, clbPassSymbols.CheckedItems.Count+n_wanted_words); //случайно выбираем группу символов учитывая группы с желаемыми словами
@@ -234,7 +232,9 @@ namespace Password_Generator
                 {
                     //подсчитаем сколько отмеченных груп символов Небыло использовано
                     unused_groups = 0;
-                    for (j = 0; j < clbPassSymbols.CheckedItems.Count + n_wanted_words; j++) if (group_sym[j] == false) unused_groups++;
+                    for (j = 0; j < (clbPassSymbols.CheckedItems.Count); j++) if (group_sym[j] == false) unused_groups++;
+                    for (j = 0; j <  n_wanted_words; j++) if (group_sym[j+ clbPassSymbols.CheckedItems.Count] == false) unused_groups+=wanted_words[j].Length;
+
                     if ((nudPassLength.Value - i) < unused_groups) { i--; continue; }
                     if (n_group >= clbPassSymbols.CheckedItems.Count) { i--; continue; } //желаемое слово не повторяем дважды
                 }
@@ -292,7 +292,7 @@ namespace Password_Generator
                 {
                     flag_wanted_words = false;//сброс флага группы
                     password += wanted_words[n_group- clbPassSymbols.CheckedItems.Count];
-                    //i += wanted_words[n_wanted_words-1].Length;
+                    i += wanted_words[n_group - clbPassSymbols.CheckedItems.Count].Length-1;
                     continue;
                 }
                 if (tbSymIgnor.Text.Length != 0) //проверим полученный символ на вхождение в список запрещенных
@@ -311,7 +311,7 @@ namespace Password_Generator
                     if (flag_SymIgnor == true) { continue; } // выбираем следующий символ пароля в цикле i
                     else { password += Convert.ToChar(passletter); }
                 }
-                else { password += Convert.ToChar(passletter); }
+                else { password += Convert.ToChar(passletter);  }
 
             }
 
