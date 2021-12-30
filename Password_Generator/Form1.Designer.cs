@@ -103,10 +103,10 @@ namespace Password_Generator
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label4.Location = new System.Drawing.Point(9, 216);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(527, 15);
+            this.label4.Size = new System.Drawing.Size(507, 15);
             this.label4.TabIndex = 16;
-            this.label4.Text = "Использовать в пароле свои последовательности символов (можно ввести через запяту" +
-    "ю):";
+            this.label4.Text = "Использовать в пароле свои последовательности символов, можно ввести через  ; ,\" " +
+    "\" : ";
             // 
             // tbMyStr
             // 
@@ -200,9 +200,9 @@ namespace Password_Generator
             this.tbPassword.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tbPassword.Location = new System.Drawing.Point(9, 291);
             this.tbPassword.Name = "tbPassword";
+            this.tbPassword.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.tbPassword.Size = new System.Drawing.Size(521, 33);
             this.tbPassword.TabIndex = 4;
-            this.tbPassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnCreatePass
             // 
@@ -216,7 +216,7 @@ namespace Password_Generator
             // 
             // nudPassLength
             // 
-            this.nudPassLength.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+            this.nudPassLength.Cursor = System.Windows.Forms.Cursors.Default;
             this.nudPassLength.Location = new System.Drawing.Point(102, 263);
             this.nudPassLength.Maximum = new decimal(new int[] {
             80,
