@@ -45,6 +45,7 @@ namespace Password_Generator
             metrica.Add("m - meters", 1000);
             metrica.Add("km - kilometers", 1000000);
             metrica.Add("ml - miles", 1609344);
+          
         }
 
         private void btnCreatePass_Click(object sender, EventArgs e)
@@ -354,7 +355,8 @@ namespace Password_Generator
             
             double m1 = metrica[cbConverterFrom.Text];
             double m2 = metrica[cbConverterTo.Text];
-            double n;
+            double n, Res_Double;
+            Int64 Res_Int;
             if (tbConverterFrom.Text is "") return; //проверяем что входное значение не пустое
             
             try
@@ -363,23 +365,63 @@ namespace Password_Generator
             }
             catch (FormatException)
             {
-                tbConverterTo.Text="Неверные данные !"; tbConverterFrom.Text = "1";
+                tbConverterTo.Text="Неверные данные !"; 
+                tbConverterFrom.Text = "1";
                 return;
                 
             }
-            
             n = Convert.ToDouble(tbConverterFrom.Text); //читаем входное значение в виде числа
-            if (Convert.ToInt64((n * m1 / m2)) == Convert.ToDouble(n * m1 / m2))
+            
+            
+            switch (cbConverterMetrica.Text)
+            {
+                case "Длины":
+                    Res_Int = Convert.ToInt64(n * m1 / m2);
+                    Res_Double =Convert.ToDouble(n * m1 / m2);
+                    
+                    break;
+                case "Температура":
+                    if (cbConverterTo.Text == "F - градусы Форенгейта")
+                    {
+                        Res_Int = Convert.ToInt64(n * m1 / m2 + 32);
+                        Res_Double = Convert.ToDouble(n * m1 / m2 + 32);
+                        if (n < -273.15) // проверка на абсолютный 0
+                        {
+                            tbConverterTo.Text = "Неверные данные !";
+                            tbConverterFrom.Text = "1";
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Res_Int = Convert.ToInt64((n -32)* m1 / m2);
+                        Res_Double = Convert.ToDouble((n-32) * m1 / m2 );
+                        if (n < -459.67) // проверка на абсолютный 0
+                        {
+                            tbConverterTo.Text = "Неверные данные !";
+                            tbConverterFrom.Text = "1";
+                            return;
+                        }
+                    }
+
+                    break;
+                default:
+                    Res_Int = Convert.ToInt64(n * m1 / m2);
+                    Res_Double = Convert.ToDouble(n * m1 / m2); 
+                   break;
+            }
+            // Вывод результатов
+            if (Res_Int == Res_Double)
             { // вывод без дробной части
-                if ((n * m1 / m2) < 9999999999) tbConverterTo.Text = String.Format("{0:F0}", (n * m1 / m2));
-                else tbConverterTo.Text = String.Format("{0:e}", (n * m1 / m2));
+                if (Res_Int < 9999999999) tbConverterTo.Text = String.Format("{0:F0}", Res_Int);
+                else tbConverterTo.Text = String.Format("{0:e}", Res_Int);
             }
             else
-            { 
-                if ((n * m1 / m2) < 9999999999) tbConverterTo.Text = String.Format("{0:f8}", (n * m1 / m2)); 
-                else tbConverterTo.Text = String.Format("{0:e}", (n * m1 / m2));
+            {
+                if (Res_Double < 9999999999) tbConverterTo.Text = String.Format("{0:f8}", Res_Double);
+                else tbConverterTo.Text = String.Format("{0:e}", Res_Double);
             }
-  
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -443,6 +485,23 @@ namespace Password_Generator
                     cbConverterTo.Items.Add("lb - pounds");
                     cbConverterTo.Items.Add("oz - uncias");
                     cbConverterTo.Text = "g - gramms";
+                    break;
+
+                case "Температура": //  metrica.Add("F - fahrenheit degree",);
+                    metrica.Clear();
+                    metrica.Add("С - градусы Цельсия", 1.8);
+                    metrica.Add("F - градусы Форенгейта", 1);
+              
+                    cbConverterFrom.Items.Clear();
+                    cbConverterFrom.Items.Add("С - градусы Цельсия");
+                    cbConverterFrom.Items.Add("F - градусы Форенгейта");
+                
+                    cbConverterFrom.Text = "С - градусы Цельсия";
+                    cbConverterTo.Items.Clear();
+                    cbConverterTo.Items.Add("С - градусы Цельсия");
+                    cbConverterTo.Items.Add("F - градусы Форенгейта");
+
+                    cbConverterTo.Text = "F - градусы Форенгейта";
                     break;
                 default:
                     break;

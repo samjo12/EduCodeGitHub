@@ -30,6 +30,15 @@ namespace Password_Generator
         private void InitializeComponent()
         {
             this.tcPassGen = new System.Windows.Forms.TabControl();
+            this.tabConverter = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbConverterMetrica = new System.Windows.Forms.ComboBox();
+            this.btnConverterSwap = new System.Windows.Forms.Button();
+            this.tbConverterTo = new System.Windows.Forms.TextBox();
+            this.tbConverterFrom = new System.Windows.Forms.TextBox();
+            this.btnConvert = new System.Windows.Forms.Button();
+            this.cbConverterTo = new System.Windows.Forms.ComboBox();
+            this.cbConverterFrom = new System.Windows.Forms.ComboBox();
             this.tabPassword = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
             this.tbMyStr = new System.Windows.Forms.TextBox();
@@ -46,31 +55,142 @@ namespace Password_Generator
             this.nudPassLength = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.clbPassSymbols = new System.Windows.Forms.CheckedListBox();
-            this.tabConverter = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cbConverterMetrica = new System.Windows.Forms.ComboBox();
-            this.btnConverterSwap = new System.Windows.Forms.Button();
-            this.tbConverterTo = new System.Windows.Forms.TextBox();
-            this.tbConverterFrom = new System.Windows.Forms.TextBox();
-            this.btnConvert = new System.Windows.Forms.Button();
-            this.cbConverterTo = new System.Windows.Forms.ComboBox();
-            this.cbConverterFrom = new System.Windows.Forms.ComboBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+            this.label5 = new System.Windows.Forms.Label();
+            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.tcPassGen.SuspendLayout();
+            this.tabConverter.SuspendLayout();
             this.tabPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).BeginInit();
-            this.tabConverter.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.SuspendLayout();
             // 
             // tcPassGen
             // 
             this.tcPassGen.Controls.Add(this.tabPassword);
             this.tcPassGen.Controls.Add(this.tabConverter);
+            this.tcPassGen.Controls.Add(this.tabPage1);
             this.tcPassGen.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcPassGen.Location = new System.Drawing.Point(0, 0);
             this.tcPassGen.Name = "tcPassGen";
             this.tcPassGen.SelectedIndex = 0;
             this.tcPassGen.Size = new System.Drawing.Size(547, 409);
             this.tcPassGen.TabIndex = 0;
+            // 
+            // tabConverter
+            // 
+            this.tabConverter.BackColor = System.Drawing.Color.Honeydew;
+            this.tabConverter.Controls.Add(this.label2);
+            this.tabConverter.Controls.Add(this.cbConverterMetrica);
+            this.tabConverter.Controls.Add(this.btnConverterSwap);
+            this.tabConverter.Controls.Add(this.tbConverterTo);
+            this.tabConverter.Controls.Add(this.tbConverterFrom);
+            this.tabConverter.Controls.Add(this.btnConvert);
+            this.tabConverter.Controls.Add(this.cbConverterTo);
+            this.tabConverter.Controls.Add(this.cbConverterFrom);
+            this.tabConverter.Location = new System.Drawing.Point(4, 24);
+            this.tabConverter.Name = "tabConverter";
+            this.tabConverter.Padding = new System.Windows.Forms.Padding(3);
+            this.tabConverter.Size = new System.Drawing.Size(539, 381);
+            this.tabConverter.TabIndex = 1;
+            this.tabConverter.Text = "Конвертер величин";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(18, 7);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(94, 15);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Выбор метрики";
+            // 
+            // cbConverterMetrica
+            // 
+            this.cbConverterMetrica.FormattingEnabled = true;
+            this.cbConverterMetrica.Items.AddRange(new object[] {
+            "Длины",
+            "Веса",
+            "Температура"});
+            this.cbConverterMetrica.Location = new System.Drawing.Point(118, 3);
+            this.cbConverterMetrica.Name = "cbConverterMetrica";
+            this.cbConverterMetrica.Size = new System.Drawing.Size(152, 23);
+            this.cbConverterMetrica.TabIndex = 6;
+            this.cbConverterMetrica.Text = "Длины";
+            this.cbConverterMetrica.SelectedIndexChanged += new System.EventHandler(this.cbConverterMetrica_SelectedIndexChanged);
+            // 
+            // btnConverterSwap
+            // 
+            this.btnConverterSwap.Location = new System.Drawing.Point(156, 32);
+            this.btnConverterSwap.Name = "btnConverterSwap";
+            this.btnConverterSwap.Size = new System.Drawing.Size(114, 23);
+            this.btnConverterSwap.TabIndex = 5;
+            this.btnConverterSwap.Text = "< Обменять >";
+            this.btnConverterSwap.UseVisualStyleBackColor = true;
+            this.btnConverterSwap.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // tbConverterTo
+            // 
+            this.tbConverterTo.Location = new System.Drawing.Point(290, 61);
+            this.tbConverterTo.Name = "tbConverterTo";
+            this.tbConverterTo.ReadOnly = true;
+            this.tbConverterTo.Size = new System.Drawing.Size(121, 23);
+            this.tbConverterTo.TabIndex = 4;
+            // 
+            // tbConverterFrom
+            // 
+            this.tbConverterFrom.Location = new System.Drawing.Point(18, 62);
+            this.tbConverterFrom.Name = "tbConverterFrom";
+            this.tbConverterFrom.Size = new System.Drawing.Size(121, 23);
+            this.tbConverterFrom.TabIndex = 3;
+            this.tbConverterFrom.Text = "1";
+            // 
+            // btnConvert
+            // 
+            this.btnConvert.Location = new System.Drawing.Point(156, 62);
+            this.btnConvert.Name = "btnConvert";
+            this.btnConvert.Size = new System.Drawing.Size(114, 23);
+            this.btnConvert.TabIndex = 2;
+            this.btnConvert.Text = "Конвертировать";
+            this.btnConvert.UseVisualStyleBackColor = true;
+            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
+            // 
+            // cbConverterTo
+            // 
+            this.cbConverterTo.FormattingEnabled = true;
+            this.cbConverterTo.Items.AddRange(new object[] {
+            "mm - millimeters",
+            "cm - cantimeters",
+            "dm - decimeters",
+            "m - meters",
+            "km - kilometers",
+            "ml - miles"});
+            this.cbConverterTo.Location = new System.Drawing.Point(290, 32);
+            this.cbConverterTo.Name = "cbConverterTo";
+            this.cbConverterTo.Size = new System.Drawing.Size(121, 23);
+            this.cbConverterTo.TabIndex = 1;
+            this.cbConverterTo.Text = "mm - millimeters";
+            // 
+            // cbConverterFrom
+            // 
+            this.cbConverterFrom.FormattingEnabled = true;
+            this.cbConverterFrom.Items.AddRange(new object[] {
+            "mm - millimeters",
+            "cm - cantimeters",
+            "dm - decimeters",
+            "m - meters",
+            "km - kilometers",
+            "ml - miles"});
+            this.cbConverterFrom.Location = new System.Drawing.Point(18, 32);
+            this.cbConverterFrom.Name = "cbConverterFrom";
+            this.cbConverterFrom.Size = new System.Drawing.Size(121, 23);
+            this.cbConverterFrom.TabIndex = 0;
+            this.cbConverterFrom.Text = "mm - millimeters";
             // 
             // tabPassword
             // 
@@ -95,7 +215,7 @@ namespace Password_Generator
             this.tabPassword.Padding = new System.Windows.Forms.Padding(3);
             this.tabPassword.Size = new System.Drawing.Size(539, 381);
             this.tabPassword.TabIndex = 0;
-            this.tabPassword.Text = "Генератор паролей";
+            this.tabPassword.Text = "Генератор пароля";
             // 
             // label4
             // 
@@ -266,113 +386,66 @@ namespace Password_Generator
             this.clbPassSymbols.Size = new System.Drawing.Size(215, 148);
             this.clbPassSymbols.TabIndex = 0;
             // 
-            // tabConverter
+            // tabPage1
             // 
-            this.tabConverter.BackColor = System.Drawing.Color.Honeydew;
-            this.tabConverter.Controls.Add(this.label2);
-            this.tabConverter.Controls.Add(this.cbConverterMetrica);
-            this.tabConverter.Controls.Add(this.btnConverterSwap);
-            this.tabConverter.Controls.Add(this.tbConverterTo);
-            this.tabConverter.Controls.Add(this.tbConverterFrom);
-            this.tabConverter.Controls.Add(this.btnConvert);
-            this.tabConverter.Controls.Add(this.cbConverterTo);
-            this.tabConverter.Controls.Add(this.cbConverterFrom);
-            this.tabConverter.Location = new System.Drawing.Point(4, 24);
-            this.tabConverter.Name = "tabConverter";
-            this.tabConverter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConverter.Size = new System.Drawing.Size(539, 381);
-            this.tabConverter.TabIndex = 1;
-            this.tabConverter.Text = "Конвертер";
+            this.tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage1.Controls.Add(this.label6);
+            this.tabPage1.Controls.Add(this.numericUpDown2);
+            this.tabPage1.Controls.Add(this.numericUpDown1);
+            this.tabPage1.Controls.Add(this.vScrollBar1);
+            this.tabPage1.Controls.Add(this.label5);
+            this.tabPage1.Controls.Add(this.hScrollBar1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(539, 381);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "X0 -пять в ряд";
             // 
-            // label2
+            // hScrollBar1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 15);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Выбор метрики";
+            this.hScrollBar1.Location = new System.Drawing.Point(0, 364);
+            this.hScrollBar1.Name = "hScrollBar1";
+            this.hScrollBar1.Size = new System.Drawing.Size(539, 21);
+            this.hScrollBar1.TabIndex = 0;
             // 
-            // cbConverterMetrica
+            // label5
             // 
-            this.cbConverterMetrica.FormattingEnabled = true;
-            this.cbConverterMetrica.Items.AddRange(new object[] {
-            "Длины",
-            "Веса"});
-            this.cbConverterMetrica.Location = new System.Drawing.Point(118, 3);
-            this.cbConverterMetrica.Name = "cbConverterMetrica";
-            this.cbConverterMetrica.Size = new System.Drawing.Size(152, 23);
-            this.cbConverterMetrica.TabIndex = 6;
-            this.cbConverterMetrica.Text = "Длины";
-            this.cbConverterMetrica.SelectedIndexChanged += new System.EventHandler(this.cbConverterMetrica_SelectedIndexChanged);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 5);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(196, 15);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Размеры Игрового поля в клетках";
             // 
-            // btnConverterSwap
+            // vScrollBar1
             // 
-            this.btnConverterSwap.Location = new System.Drawing.Point(156, 32);
-            this.btnConverterSwap.Name = "btnConverterSwap";
-            this.btnConverterSwap.Size = new System.Drawing.Size(114, 23);
-            this.btnConverterSwap.TabIndex = 5;
-            this.btnConverterSwap.Text = "< Обменять >";
-            this.btnConverterSwap.UseVisualStyleBackColor = true;
-            this.btnConverterSwap.Click += new System.EventHandler(this.button1_Click);
+            this.vScrollBar1.Location = new System.Drawing.Point(516, 5);
+            this.vScrollBar1.Name = "vScrollBar1";
+            this.vScrollBar1.Size = new System.Drawing.Size(23, 356);
+            this.vScrollBar1.TabIndex = 2;
             // 
-            // tbConverterTo
+            // numericUpDown1
             // 
-            this.tbConverterTo.Location = new System.Drawing.Point(290, 61);
-            this.tbConverterTo.Name = "tbConverterTo";
-            this.tbConverterTo.ReadOnly = true;
-            this.tbConverterTo.Size = new System.Drawing.Size(121, 23);
-            this.tbConverterTo.TabIndex = 4;
+            this.numericUpDown1.Location = new System.Drawing.Point(220, 3);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(55, 23);
+            this.numericUpDown1.TabIndex = 3;
             // 
-            // tbConverterFrom
+            // numericUpDown2
             // 
-            this.tbConverterFrom.Location = new System.Drawing.Point(18, 62);
-            this.tbConverterFrom.Name = "tbConverterFrom";
-            this.tbConverterFrom.Size = new System.Drawing.Size(121, 23);
-            this.tbConverterFrom.TabIndex = 3;
-            this.tbConverterFrom.Text = "1";
+            this.numericUpDown2.Location = new System.Drawing.Point(344, 2);
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(51, 23);
+            this.numericUpDown2.TabIndex = 4;
             // 
-            // btnConvert
+            // label6
             // 
-            this.btnConvert.Location = new System.Drawing.Point(156, 62);
-            this.btnConvert.Name = "btnConvert";
-            this.btnConvert.Size = new System.Drawing.Size(114, 23);
-            this.btnConvert.TabIndex = 2;
-            this.btnConvert.Text = "Конвертировать";
-            this.btnConvert.UseVisualStyleBackColor = true;
-            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
-            // 
-            // cbConverterTo
-            // 
-            this.cbConverterTo.FormattingEnabled = true;
-            this.cbConverterTo.Items.AddRange(new object[] {
-            "mm - millimeters",
-            "cm - cantimeters",
-            "dm - decimeters",
-            "m - meters",
-            "km - kilometers",
-            "ml - miles"});
-            this.cbConverterTo.Location = new System.Drawing.Point(290, 32);
-            this.cbConverterTo.Name = "cbConverterTo";
-            this.cbConverterTo.Size = new System.Drawing.Size(121, 23);
-            this.cbConverterTo.TabIndex = 1;
-            this.cbConverterTo.Text = "mm - millimeters";
-            // 
-            // cbConverterFrom
-            // 
-            this.cbConverterFrom.FormattingEnabled = true;
-            this.cbConverterFrom.Items.AddRange(new object[] {
-            "mm - millimeters",
-            "cm - cantimeters",
-            "dm - decimeters",
-            "m - meters",
-            "km - kilometers",
-            "ml - miles"});
-            this.cbConverterFrom.Location = new System.Drawing.Point(18, 32);
-            this.cbConverterFrom.Name = "cbConverterFrom";
-            this.cbConverterFrom.Size = new System.Drawing.Size(121, 23);
-            this.cbConverterFrom.TabIndex = 0;
-            this.cbConverterFrom.Text = "mm - millimeters";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(295, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(38, 15);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "label6";
             // 
             // Form1
             // 
@@ -383,11 +456,15 @@ namespace Password_Generator
             this.Name = "Form1";
             this.Text = "Мои утилиты";
             this.tcPassGen.ResumeLayout(false);
+            this.tabConverter.ResumeLayout(false);
+            this.tabConverter.PerformLayout();
             this.tabPassword.ResumeLayout(false);
             this.tabPassword.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).EndInit();
-            this.tabConverter.ResumeLayout(false);
-            this.tabConverter.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -420,6 +497,13 @@ namespace Password_Generator
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbMyStr;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.HScrollBar hScrollBar1;
     }
 }
 
