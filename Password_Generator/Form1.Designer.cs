@@ -32,7 +32,7 @@ namespace Password_Generator
             this.tcPassGen = new System.Windows.Forms.TabControl();
             this.tabMiner = new System.Windows.Forms.TabPage();
             this.btnStartMiner = new System.Windows.Forms.Button();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.nudComplicate = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.nudMinerY = new System.Windows.Forms.NumericUpDown();
@@ -65,7 +65,7 @@ namespace Password_Generator
             this.cbConverterFrom = new System.Windows.Forms.ComboBox();
             this.tcPassGen.SuspendLayout();
             this.tabMiner.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).BeginInit();
             this.tabPassword.SuspendLayout();
@@ -89,7 +89,7 @@ namespace Password_Generator
             // 
             this.tabMiner.BackColor = System.Drawing.Color.White;
             this.tabMiner.Controls.Add(this.btnStartMiner);
-            this.tabMiner.Controls.Add(this.numericUpDown3);
+            this.tabMiner.Controls.Add(this.nudComplicate);
             this.tabMiner.Controls.Add(this.label7);
             this.tabMiner.Controls.Add(this.label6);
             this.tabMiner.Controls.Add(this.nudMinerY);
@@ -113,23 +113,23 @@ namespace Password_Generator
             this.btnStartMiner.UseVisualStyleBackColor = false;
             this.btnStartMiner.Click += new System.EventHandler(this.btnStartMiner_Click);
             // 
-            // numericUpDown3
+            // nudComplicate
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(422, 5);
-            this.numericUpDown3.Maximum = new decimal(new int[] {
+            this.nudComplicate.Location = new System.Drawing.Point(422, 5);
+            this.nudComplicate.Maximum = new decimal(new int[] {
             3,
             0,
             0,
             0});
-            this.numericUpDown3.Minimum = new decimal(new int[] {
+            this.nudComplicate.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(39, 23);
-            this.numericUpDown3.TabIndex = 7;
-            this.numericUpDown3.Value = new decimal(new int[] {
+            this.nudComplicate.Name = "nudComplicate";
+            this.nudComplicate.Size = new System.Drawing.Size(39, 23);
+            this.nudComplicate.TabIndex = 7;
+            this.nudComplicate.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -149,7 +149,7 @@ namespace Password_Generator
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(258, 5);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(13, 15);
+            this.label6.Size = new System.Drawing.Size(12, 15);
             this.label6.TabIndex = 5;
             this.label6.Text = "x";
             // 
@@ -202,9 +202,10 @@ namespace Password_Generator
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(7, 5);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(197, 15);
+            this.label5.Size = new System.Drawing.Size(196, 15);
             this.label5.TabIndex = 1;
             this.label5.Text = "Размеры игрового поля в клетках:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabPassword
             // 
@@ -518,7 +519,7 @@ namespace Password_Generator
             this.tcPassGen.ResumeLayout(false);
             this.tabMiner.ResumeLayout(false);
             this.tabMiner.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).EndInit();
             this.tabPassword.ResumeLayout(false);
@@ -565,7 +566,7 @@ namespace Password_Generator
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnStartMiner;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private System.Windows.Forms.NumericUpDown nudComplicate;
     }
 }
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Password_Generator
-{
+{ 
     public partial class Form1 : Form
     {
         Random rnd = new Random();
@@ -31,7 +31,9 @@ namespace Password_Generator
             metrica.Add("km - kilometers", 1000000);
             metrica.Add("ml - miles", 1609344);
         }
-        private Button[,] _buttons = new Button[20, 20];
+       
+
+        
         private void Message_for_user(string s)
         { /* вывод сообщений об ршибках из генератора паролей*/
             tbPassword.Text = s;
@@ -532,36 +534,199 @@ namespace Password_Generator
         private void btnStartMiner_Click(object sender, EventArgs e)
         {
             int buttonsCount = Convert.ToInt32(nudMinerX.Value * nudMinerY.Value);
-   
-            
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
-                {
-                    var button = new Button();
+            //
+            //Пишем в переменную InboxData данные.
+            //ВНИМАНИЕ! Сначала нужно записать данные в переменную, а затем вызывать метод загрузки данных (Show()). 
+            //В противном случае мы не получим данные в дочерней форме
+            //SF.X = nudMinerX.Value;
+            //SF.Y = nudMinerY.Value;
 
-                    button.Width = 50;
-                    button.Height = 50;
-
-                    button.Location = new Point(button.Width * i, button.Height * j+24);
-                    button.Text = (i+1).ToString();
-                    button.Tag = j* nudMinerY.Value + i+1;
-                    button.Visible = true;
-
-                    _buttons[i, j] = button;
-                    this.Controls.Add(button);
-                    
-
-                    /*if (button.Text == @"16")
-                        button.Visible = false;*/
-                }
-            
-       
+            //Грузим дочернюю форму
+            //
+            //this.BackColor = Color.Aquamarine;
+            StaticData.X = nudMinerX.Value;
+            StaticData.Y = nudMinerY.Value;
+            StaticData.S = nudComplicate.Value;
+            SlaveForm SF = new SlaveForm(); SF.Show();
         }
 
         private void tabMiner_Click(object sender, EventArgs e)
         {
 
         }
+    }
+    
+//Статический класс, одна из переменных которого выступит в качестве буфера для данных
+    public static class StaticData
+    {
+        //Буфер данных
+        public static Decimal X = 0;
+        public static Decimal Y = 0;
+        public static Decimal S = 0;
+    }
+    public partial class SlaveForm : Form
+    {
+        int X;
+        int Y;
+        int S;
+        int W = 30;
+        int H = 30;
+        Button[,] _buttons = new Button[20, 20];
+        int[,] minespole = new int[20,20];
+       // private Label mines_counter = new Label();
+        private Button Start = new Button();
+        private Button FlagSW = new Button();
+        Random rnd = new Random();
+        public SlaveForm()
+        {
+           // InitializeComponent();
+           // Полученные в качестве аргумента данные напрямую пишем в свойство Text текстбокса
+            
+            Text = "Тихо! Идет разминирование ...";
+            X = Convert.ToInt32(StaticData.X);
+            Y = Convert.ToInt32(StaticData.Y);
+            S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/10)); /*количество мин исходя из уровня сложности */
+            // вычисляем размер окна
+            this.Width =5+Convert.ToInt32(X)*(W+2);
+            this.Height = 70+Convert.ToInt32(Y)*(H+2);
+            // оформим кнопки управления и счетчик мин
+            var labelcont = new Label();
+             labelcont.Width = 50;
+            //labelcont.Height = 20;
+            labelcont.Visible = true;
+            //labelcont.Location = new Point(20,20 );
+
+
+
+            var labelfont = new Font("Arial", 14, FontStyle.Bold);
+            labelcont.ForeColor = Color.Red; //цвет шрифта
+            labelcont.BackColor = Color.White; // цвет фона
+            labelcont.TextAlign = ContentAlignment.MiddleCenter;
+            labelcont.Font = labelfont;
+            labelcont.Text = S.ToString();
+            if (S < 100) labelcont.Text = "0" + labelcont.Text;
+            else if (S<10) labelcont.Text = "00" + labelcont.Text;
+            Controls.Add(labelcont);
+
+
+
+
+            for (int i = 0; i < X; i++)
+                for (int j = 0; j < Y; j++)
+                {
+                    var button = new Button();
+
+                    button.Width = W;
+                    button.Height = H;
+
+                    button.Location = new Point(button.Width * i+1, button.Height * j + 50);
+                   // button.Text = (j * Y + i).ToString();
+                    button.Tag = j * Y + i;// НЕ заминировано, записываем только порядковый номер кнопки
+                    //button.Tag = 0; 
+                    minespole[i, j] = 0; //инициализируем минное поле
+                    //button.Visible = true;
+
+                    _buttons[i, j] = button;
+                    this.Controls.Add(_buttons[i,j]);
+
+
+                    /*if (button.Text == @"16")
+                        button.Visible = false;*/
+                }
+            for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
+            {
+                int x, y;
+                do {
+                    x = rnd.Next(X); y = rnd.Next(Y);
+                } while (minespole[x, y]==10);
+
+
+                minespole[x, y] = 10; //мина
+                this._buttons[x, y].Tag = 10;
+
+                //this._buttons[x, y].Text="*";
+
+
+            }
+            // расчитаем количество мин вокруг каждой из ячеек
+            for (int i = 0; i < X; i++)
+                for (int j = 0; j < Y; j++)
+                {
+                    int around=0; //мин вокруг ячейки
+                    if (minespole[i, j] == 10) {  continue; } //Ячейка с миной, окружение можно не просчитывать
+                    if (i > 0 && minespole[i - 1, j] == 10) around++; //WEST
+                    if (i > 0 && j>0 && minespole[i-1,j-1]==10) around++; //NW
+                    if (j > 0 && minespole[i, j-1] == 10) around++; // Nord
+                    if (i <(X-1) && j >0 && minespole[i + 1, j - 1] == 10) around++; //NordEast
+                    if (i < (X-1) && minespole[i + 1, j] == 10) around++; //East
+                    if (i < (X - 1) && j < (Y - 1) && minespole[i+1,j+1] == 10) around++; //SouthEast
+                    if (j < (Y-1) && minespole[i, j+1] == 10) around++; //South
+                    if (i > 0 && j<(Y-1) && minespole[i - 1, j+1] == 10) around++; //SouthWest
+                    this._buttons[i, j].Tag = around;
+                    this._buttons[i, j].Text = around.ToString(); around = 0;
+                }
+                    /*         
+                  foreach (Button btn in _buttons)
+                  {
+                      btn.Click += (b, eArgs) =>
+                      {
+                           var button = (Button)b;
+                           int i = (int)button.Tag;
+                           int x = i % X;
+                           int y = i / Y;
+
+                           //CheckButton(x, y);
+                      };
+
+                     // btn.TextChanged += (b, eArg) =>
+                      //{
+                      //   var button = (Button)b;
+                     //    int value = int.Parse(button.Text);
+                      //   button.Visible = value != 16;
+                     // };
+                  }*/
+                }
+        private int CheckButton(int x, int y)
+        {
+            int x2 = x;
+            int y2 = y;
+            int mines_around;
+            //Button Button1 = Butt1;
+
+            if (_buttons[x,y].Tag is "100" ) return 100;
+
+           
+               
+
+            string txt = _buttons[x, y].Text;
+            _buttons[x, y].Text = _buttons[x2, y2].Text;
+            _buttons[x2, y2].Text = txt;
+            return 0;
+        }
+        //private void btnStartMiner_Click(object sender, EventArgs e)
+        //{
+        /*
+         foreach (Button btn in _buttons)
+         {
+             btn.Click += (b, eArgs) =>
+             {
+                  var button = (Button)b;
+                  int i = (int)button.Tag;
+                  int x = i % 4;
+                  int y = i / 4;
+
+                  CheckButton(x, y);
+             };
+
+            // btn.TextChanged += (b, eArg) =>
+             //{
+             //   var button = (Button)b;
+            //    int value = int.Parse(button.Text);
+             //   button.Visible = value != 16;
+            // };
+         }*/
+        //}
+
     }
 }
         
