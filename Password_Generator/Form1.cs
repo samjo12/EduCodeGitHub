@@ -13,22 +13,7 @@ namespace Password_Generator
     public partial class Form1 : Form
     {
         Random rnd = new Random();
-        /*
-Цифры[0..9]
-Прописные буквы[a..z]
-Строчные буквы[A..Z]
-Спец.символы ! @ # $ _ / \ |
-Скобки [ ] { } ( ) < >
-Математ.знаки % ^ & * - + = ~
-Знаки препинания ; : , . ` " ' ?
-Пробел " " */
-        int[,] cifer_symbols = new int[2,10];//набор кодов символов Ascii для цифр
-        int[,] small_letters = new int[2, 26]; //набор кодов символов Ascii для маленьких букв
-        int[,] big_letters =  new int[2,26];//набор кодов символов Ascii для больших букв
-        int[,] special_symbols = new int[2,8] { {33, 35, 36, 47, 64, 92, 95, 124 },{ 0,0,0,0,0,0,0,0} }; //! @ # $ _ / \ |
-        int[,] bracket_symbols = new int [2,8] { { 40, 41, 60, 62, 91, 93, 123, 125 },{ 0,0,0,0,0,0,0,0} };
-        int[,] math_symbols = new int [2,8] { { 37, 38, 42, 43, 45, 61, 94, 126 },{ 0,0,0,0,0,0,0,0} };
-        int[,] special_symbols2 = new int[2,8] { { 34, 39, 44, 46, 58, 59, 63, 96 },{ 0,0,0,0,0,0,0,0} };
+
         
         Dictionary<string,double> metrica;
         
@@ -48,16 +33,46 @@ namespace Password_Generator
           
         }
 
+        private void Message_for_user(string s)
+        { /* вывод сообщений об ршибках из генератора паролей*/
+            tbPassword.Text = s ; 
+            tbPassForce.BackColor = Color.LightGray; tbPassForce.Text = "";
+
+            Size len = TextRenderer.MeasureText(tbPassword.Text, tbPassword.Font);
+            /*while(len.Width>tbPassword.Size.Width)
+                {
+                tbPassword.Font.Size.;
+                }*/
+            return;
+        }
+
         private void btnCreatePass_Click(object sender, EventArgs e)
         {
             int passletter=0, nsymbs=0,i,j,unused_groups,rnd_tmp, n_group,n_wanted_words=0;
             int len_wanted_words = 0;//длина в символах всех желаемых слов
             string str_entropy,s;
             string[] wanted_words=new string[70];
-            double entropy = 0;
+            double entropy;
+            Boolean flag_No_space_sym = false; //Если true - отключим символ пробела и снимем галочку
             Boolean flag_SymIgnor;
             Boolean flag_wanted_words = false;
-            
+            /*
+Цифры[0..9]
+Прописные буквы[a..z]
+Строчные буквы[A..Z]
+Спец.символы ! @ # $ _ / \ |
+Скобки [ ] { } ( ) < >
+Математ.знаки % ^ & * - + = ~
+Знаки препинания ; : , . ` " ' ?
+Пробел " " */
+            int[,] cifer_symbols = new int[2, 10];//набор кодов символов Ascii для цифр
+            int[,] small_letters = new int[2, 26]; //набор кодов символов Ascii для маленьких букв
+            int[,] big_letters = new int[2, 26];//набор кодов символов Ascii для больших букв
+            int[,] special_symbols = new int[2, 8] { { 33, 35, 36, 47, 64, 92, 95, 124 }, { 0, 0, 0, 0, 0, 0, 0, 0 } }; //! @ # $ _ / \ |
+            int[,] bracket_symbols = new int[2, 8] { { 40, 41, 60, 62, 91, 93, 123, 125 }, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+            int[,] math_symbols = new int[2, 8] { { 37, 38, 42, 43, 45, 61, 94, 126 }, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+            int[,] special_symbols2 = new int[2, 8] { { 34, 39, 44, 46, 58, 59, 63, 96 }, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+
             pb1.Value = 0;// обнуляем прогрессбар
             string password = "";
 
@@ -76,10 +91,16 @@ namespace Password_Generator
                       big_letters[1,passletter - 65] = 1;                 
                     if ( passletter>=97 && passletter<=122) // встречен символ из массива [a..z]
                       small_letters[1,passletter - 97] = 1;
+                    for (j = 0; j < 8; j++) if (passletter == special_symbols[0,j]) special_symbols[1,j] = 1; //проверяем отмечены ли специальные символы
+                    for (j = 0; j < 8; j++) if (passletter == bracket_symbols[0, j]) bracket_symbols[1, j] = 1; //проверяем отмечены ли  символы скобок
+                    for (j = 0; j < 8; j++) if (passletter == special_symbols2[0, j]) special_symbols2[1, j] = 1; //проверяем отмечены ли символы препинания
+                    for (j = 0; j < 8; j++) if (passletter == math_symbols[0, j]) math_symbols[1, j] = 1; //проверяем отмечены ли математические символы
+                    if (passletter == 32) //найден пробел, отключаем группу символа пробела
+                    { flag_No_space_sym = true;   }
                 }
                 // дополнительно отключаем символы запрещенные в чекбоксах, если нужно
                 if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
-                { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; };/*отключаем буквы I и O*/
+                { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; } /*отключаем буквы I и O*/
                 if (cbDisableLetter_o.Checked == true) // отмечена галка о запрете символа o
                   small_letters[1, 111 - 97] = 1;  //отключаем букву o
                 if (cbDisableUnderline.Checked == true)//отметка о запрете символа _ 
@@ -276,6 +297,7 @@ namespace Password_Generator
                         passletter = math_symbols[0, rnd_tmp];
                         break;
                     case "Символ пробела":
+                        if(flag_No_space_sym is true) { clbPassSymbols.SetItemChecked(7, false); Message_for_user("Вы добавили пробел в список неиспользуемых символов");  return; }
                         if ((i == 1 || i == nudPassLength.Value) || (i >1 && password[password.Length-1] == 32)) { i--; continue; } //не может быть первым и последним символом в пароле или двойным
                         passletter = 32;
                         break;
