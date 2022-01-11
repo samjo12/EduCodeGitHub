@@ -1,0 +1,3 @@
+C:\Users\amsad\source\EduCodeGitHub\MyUtils\obj\Debug\MyUtils.csproj.AssemblyReference.cache
+C:\Users\amsad\source\EduCodeGitHub\MyUtils\obj\Debug\MyUtils.MainForm.resources
+C:\Users\amsad\source\EduCodeGitHub\MyUtils\obj\Debug\MyUtils.csproj.GenerateResource.cache

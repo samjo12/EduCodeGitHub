@@ -30,15 +30,14 @@ namespace Password_Generator
         private void InitializeComponent()
         {
             this.tcPassGen = new System.Windows.Forms.TabControl();
-            this.tabConverter = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cbConverterMetrica = new System.Windows.Forms.ComboBox();
-            this.btnConverterSwap = new System.Windows.Forms.Button();
-            this.tbConverterTo = new System.Windows.Forms.TextBox();
-            this.tbConverterFrom = new System.Windows.Forms.TextBox();
-            this.btnConvert = new System.Windows.Forms.Button();
-            this.cbConverterTo = new System.Windows.Forms.ComboBox();
-            this.cbConverterFrom = new System.Windows.Forms.ComboBox();
+            this.tabMiner = new System.Windows.Forms.TabPage();
+            this.btnStartMiner = new System.Windows.Forms.Button();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.nudMinerY = new System.Windows.Forms.NumericUpDown();
+            this.nudMinerX = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabPassword = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
             this.tbMyStr = new System.Windows.Forms.TextBox();
@@ -55,33 +54,349 @@ namespace Password_Generator
             this.nudPassLength = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.clbPassSymbols = new System.Windows.Forms.CheckedListBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            this.label5 = new System.Windows.Forms.Label();
-            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
+            this.tabConverter = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbConverterMetrica = new System.Windows.Forms.ComboBox();
+            this.btnConverterSwap = new System.Windows.Forms.Button();
+            this.tbConverterTo = new System.Windows.Forms.TextBox();
+            this.tbConverterFrom = new System.Windows.Forms.TextBox();
+            this.btnConvert = new System.Windows.Forms.Button();
+            this.cbConverterTo = new System.Windows.Forms.ComboBox();
+            this.cbConverterFrom = new System.Windows.Forms.ComboBox();
             this.tcPassGen.SuspendLayout();
-            this.tabConverter.SuspendLayout();
+            this.tabMiner.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).BeginInit();
             this.tabPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).BeginInit();
-            this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            this.tabConverter.SuspendLayout();
             this.SuspendLayout();
             // 
             // tcPassGen
             // 
+            this.tcPassGen.Controls.Add(this.tabMiner);
             this.tcPassGen.Controls.Add(this.tabPassword);
             this.tcPassGen.Controls.Add(this.tabConverter);
-            this.tcPassGen.Controls.Add(this.tabPage1);
             this.tcPassGen.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcPassGen.Location = new System.Drawing.Point(0, 0);
             this.tcPassGen.Name = "tcPassGen";
             this.tcPassGen.SelectedIndex = 0;
             this.tcPassGen.Size = new System.Drawing.Size(547, 409);
             this.tcPassGen.TabIndex = 0;
+            // 
+            // tabMiner
+            // 
+            this.tabMiner.BackColor = System.Drawing.Color.White;
+            this.tabMiner.Controls.Add(this.btnStartMiner);
+            this.tabMiner.Controls.Add(this.numericUpDown3);
+            this.tabMiner.Controls.Add(this.label7);
+            this.tabMiner.Controls.Add(this.label6);
+            this.tabMiner.Controls.Add(this.nudMinerY);
+            this.tabMiner.Controls.Add(this.nudMinerX);
+            this.tabMiner.Controls.Add(this.label5);
+            this.tabMiner.Location = new System.Drawing.Point(4, 24);
+            this.tabMiner.Name = "tabMiner";
+            this.tabMiner.Size = new System.Drawing.Size(539, 381);
+            this.tabMiner.TabIndex = 2;
+            this.tabMiner.Text = "Минер";
+            this.tabMiner.Click += new System.EventHandler(this.tabMiner_Click);
+            // 
+            // btnStartMiner
+            // 
+            this.btnStartMiner.BackColor = System.Drawing.Color.White;
+            this.btnStartMiner.Location = new System.Drawing.Point(8, 32);
+            this.btnStartMiner.Name = "btnStartMiner";
+            this.btnStartMiner.Size = new System.Drawing.Size(75, 23);
+            this.btnStartMiner.TabIndex = 8;
+            this.btnStartMiner.Text = "Начать";
+            this.btnStartMiner.UseVisualStyleBackColor = false;
+            this.btnStartMiner.Click += new System.EventHandler(this.btnStartMiner_Click);
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Location = new System.Drawing.Point(422, 5);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(39, 23);
+            this.numericUpDown3.TabIndex = 7;
+            this.numericUpDown3.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(343, 6);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(72, 15);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Сложность:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(258, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(13, 15);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "x";
+            // 
+            // nudMinerY
+            // 
+            this.nudMinerY.Location = new System.Drawing.Point(277, 3);
+            this.nudMinerY.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudMinerY.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudMinerY.Name = "nudMinerY";
+            this.nudMinerY.Size = new System.Drawing.Size(45, 23);
+            this.nudMinerY.TabIndex = 4;
+            this.nudMinerY.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // nudMinerX
+            // 
+            this.nudMinerX.Location = new System.Drawing.Point(210, 3);
+            this.nudMinerX.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudMinerX.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudMinerX.Name = "nudMinerX";
+            this.nudMinerX.Size = new System.Drawing.Size(42, 23);
+            this.nudMinerX.TabIndex = 3;
+            this.nudMinerX.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 5);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(197, 15);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Размеры игрового поля в клетках:";
+            // 
+            // tabPassword
+            // 
+            this.tabPassword.BackColor = System.Drawing.Color.Transparent;
+            this.tabPassword.Controls.Add(this.label4);
+            this.tabPassword.Controls.Add(this.tbMyStr);
+            this.tabPassword.Controls.Add(this.pb1);
+            this.tabPassword.Controls.Add(this.tbPassForce);
+            this.tabPassword.Controls.Add(this.tbSymIgnor);
+            this.tabPassword.Controls.Add(this.label3);
+            this.tabPassword.Controls.Add(this.cbDisableUnderline);
+            this.tabPassword.Controls.Add(this.cbDisableMinus);
+            this.tabPassword.Controls.Add(this.cbDisableLetter_O_I);
+            this.tabPassword.Controls.Add(this.cbDisableLetter_o);
+            this.tabPassword.Controls.Add(this.tbPassword);
+            this.tabPassword.Controls.Add(this.btnCreatePass);
+            this.tabPassword.Controls.Add(this.nudPassLength);
+            this.tabPassword.Controls.Add(this.label1);
+            this.tabPassword.Controls.Add(this.clbPassSymbols);
+            this.tabPassword.Location = new System.Drawing.Point(4, 24);
+            this.tabPassword.Name = "tabPassword";
+            this.tabPassword.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPassword.Size = new System.Drawing.Size(539, 381);
+            this.tabPassword.TabIndex = 0;
+            this.tabPassword.Text = "Генератор пароля";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(9, 216);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(507, 15);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Использовать в пароле свои последовательности символов, можно ввести через  ; ,\" " +
+    "\" : ";
+            // 
+            // tbMyStr
+            // 
+            this.tbMyStr.Location = new System.Drawing.Point(9, 234);
+            this.tbMyStr.MaxLength = 70;
+            this.tbMyStr.Name = "tbMyStr";
+            this.tbMyStr.Size = new System.Drawing.Size(521, 23);
+            this.tbMyStr.TabIndex = 15;
+            // 
+            // pb1
+            // 
+            this.pb1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.pb1.ForeColor = System.Drawing.SystemColors.Control;
+            this.pb1.Location = new System.Drawing.Point(9, 350);
+            this.pb1.Name = "pb1";
+            this.pb1.Size = new System.Drawing.Size(521, 23);
+            this.pb1.TabIndex = 14;
+            // 
+            // tbPassForce
+            // 
+            this.tbPassForce.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.tbPassForce.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbPassForce.Location = new System.Drawing.Point(9, 324);
+            this.tbPassForce.Name = "tbPassForce";
+            this.tbPassForce.Size = new System.Drawing.Size(521, 29);
+            this.tbPassForce.TabIndex = 13;
+            this.tbPassForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbSymIgnor
+            // 
+            this.tbSymIgnor.Location = new System.Drawing.Point(9, 186);
+            this.tbSymIgnor.MaxLength = 70;
+            this.tbSymIgnor.Name = "tbSymIgnor";
+            this.tbSymIgnor.Size = new System.Drawing.Size(521, 23);
+            this.tbSymIgnor.TabIndex = 12;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label3.Location = new System.Drawing.Point(8, 168);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(466, 15);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Не использовать в пароле следующие символы (можно ввести до 70 символов):";
+            // 
+            // cbDisableUnderline
+            // 
+            this.cbDisableUnderline.AutoSize = true;
+            this.cbDisableUnderline.Location = new System.Drawing.Point(242, 74);
+            this.cbDisableUnderline.Name = "cbDisableUnderline";
+            this.cbDisableUnderline.Size = new System.Drawing.Size(276, 19);
+            this.cbDisableUnderline.TabIndex = 10;
+            this.cbDisableUnderline.Text = "Не использовать символ \" _ \" подчеркивания";
+            this.cbDisableUnderline.UseVisualStyleBackColor = true;
+            // 
+            // cbDisableMinus
+            // 
+            this.cbDisableMinus.AutoSize = true;
+            this.cbDisableMinus.Location = new System.Drawing.Point(242, 56);
+            this.cbDisableMinus.Name = "cbDisableMinus";
+            this.cbDisableMinus.Size = new System.Drawing.Size(181, 19);
+            this.cbDisableMinus.TabIndex = 9;
+            this.cbDisableMinus.Text = "Не использовать \" - \" минус";
+            this.cbDisableMinus.UseVisualStyleBackColor = true;
+            // 
+            // cbDisableLetter_O_I
+            // 
+            this.cbDisableLetter_O_I.AutoSize = true;
+            this.cbDisableLetter_O_I.Location = new System.Drawing.Point(242, 38);
+            this.cbDisableLetter_O_I.Name = "cbDisableLetter_O_I";
+            this.cbDisableLetter_O_I.Size = new System.Drawing.Size(207, 19);
+            this.cbDisableLetter_O_I.TabIndex = 8;
+            this.cbDisableLetter_O_I.Text = "Не импользовать буквы \"O\" и \"I\"";
+            this.cbDisableLetter_O_I.UseVisualStyleBackColor = true;
+            // 
+            // cbDisableLetter_o
+            // 
+            this.cbDisableLetter_o.AutoSize = true;
+            this.cbDisableLetter_o.Location = new System.Drawing.Point(242, 20);
+            this.cbDisableLetter_o.Name = "cbDisableLetter_o";
+            this.cbDisableLetter_o.Size = new System.Drawing.Size(173, 19);
+            this.cbDisableLetter_o.TabIndex = 7;
+            this.cbDisableLetter_o.Text = "Не использовать букву \"о\"";
+            this.cbDisableLetter_o.UseVisualStyleBackColor = true;
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.tbPassword.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbPassword.Location = new System.Drawing.Point(9, 291);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.tbPassword.Size = new System.Drawing.Size(521, 33);
+            this.tbPassword.TabIndex = 4;
+            // 
+            // btnCreatePass
+            // 
+            this.btnCreatePass.Location = new System.Drawing.Point(198, 262);
+            this.btnCreatePass.Name = "btnCreatePass";
+            this.btnCreatePass.Size = new System.Drawing.Size(140, 23);
+            this.btnCreatePass.TabIndex = 3;
+            this.btnCreatePass.Text = "Создать пароль";
+            this.btnCreatePass.UseVisualStyleBackColor = true;
+            this.btnCreatePass.Click += new System.EventHandler(this.btnCreatePass_Click);
+            // 
+            // nudPassLength
+            // 
+            this.nudPassLength.Cursor = System.Windows.Forms.Cursors.Default;
+            this.nudPassLength.Location = new System.Drawing.Point(102, 263);
+            this.nudPassLength.Maximum = new decimal(new int[] {
+            80,
+            0,
+            0,
+            0});
+            this.nudPassLength.Minimum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.nudPassLength.Name = "nudPassLength";
+            this.nudPassLength.Size = new System.Drawing.Size(47, 23);
+            this.nudPassLength.TabIndex = 2;
+            this.nudPassLength.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 265);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(88, 15);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Длина пароля:";
+            // 
+            // clbPassSymbols
+            // 
+            this.clbPassSymbols.BackColor = System.Drawing.SystemColors.Info;
+            this.clbPassSymbols.CheckOnClick = true;
+            this.clbPassSymbols.FormattingEnabled = true;
+            this.clbPassSymbols.Items.AddRange(new object[] {
+            "Цифры [0..9]",
+            "Прописные буквы [A..Z]",
+            "Строчные буквы [a..z]",
+            "Спец.символы ! @ # $ _ / |",
+            "Скобки [ ] { } ( ) < >",
+            "Математ.знаки % ^ & * - + = ~",
+            "Знаки препинания  ; : , . ? кавычки",
+            "Символ пробела"});
+            this.clbPassSymbols.Location = new System.Drawing.Point(8, 17);
+            this.clbPassSymbols.Name = "clbPassSymbols";
+            this.clbPassSymbols.Size = new System.Drawing.Size(215, 148);
+            this.clbPassSymbols.TabIndex = 0;
             // 
             // tabConverter
             // 
@@ -192,261 +507,6 @@ namespace Password_Generator
             this.cbConverterFrom.TabIndex = 0;
             this.cbConverterFrom.Text = "mm - millimeters";
             // 
-            // tabPassword
-            // 
-            this.tabPassword.BackColor = System.Drawing.Color.Transparent;
-            this.tabPassword.Controls.Add(this.label4);
-            this.tabPassword.Controls.Add(this.tbMyStr);
-            this.tabPassword.Controls.Add(this.pb1);
-            this.tabPassword.Controls.Add(this.tbPassForce);
-            this.tabPassword.Controls.Add(this.tbSymIgnor);
-            this.tabPassword.Controls.Add(this.label3);
-            this.tabPassword.Controls.Add(this.cbDisableUnderline);
-            this.tabPassword.Controls.Add(this.cbDisableMinus);
-            this.tabPassword.Controls.Add(this.cbDisableLetter_O_I);
-            this.tabPassword.Controls.Add(this.cbDisableLetter_o);
-            this.tabPassword.Controls.Add(this.tbPassword);
-            this.tabPassword.Controls.Add(this.btnCreatePass);
-            this.tabPassword.Controls.Add(this.nudPassLength);
-            this.tabPassword.Controls.Add(this.label1);
-            this.tabPassword.Controls.Add(this.clbPassSymbols);
-            this.tabPassword.Location = new System.Drawing.Point(4, 24);
-            this.tabPassword.Name = "tabPassword";
-            this.tabPassword.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPassword.Size = new System.Drawing.Size(539, 381);
-            this.tabPassword.TabIndex = 0;
-            this.tabPassword.Text = "Генератор пароля";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(9, 216);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(507, 15);
-            this.label4.TabIndex = 16;
-            this.label4.Text = "Использовать в пароле свои последовательности символов, можно ввести через  ; ,\" " +
-    "\" : ";
-            // 
-            // tbMyStr
-            // 
-            this.tbMyStr.Location = new System.Drawing.Point(9, 234);
-            this.tbMyStr.MaxLength = 70;
-            this.tbMyStr.Name = "tbMyStr";
-            this.tbMyStr.Size = new System.Drawing.Size(521, 23);
-            this.tbMyStr.TabIndex = 15;
-            // 
-            // pb1
-            // 
-            this.pb1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.pb1.ForeColor = System.Drawing.SystemColors.Control;
-            this.pb1.Location = new System.Drawing.Point(9, 350);
-            this.pb1.Name = "pb1";
-            this.pb1.Size = new System.Drawing.Size(521, 23);
-            this.pb1.TabIndex = 14;
-            // 
-            // tbPassForce
-            // 
-            this.tbPassForce.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.tbPassForce.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.tbPassForce.Location = new System.Drawing.Point(9, 324);
-            this.tbPassForce.Name = "tbPassForce";
-            this.tbPassForce.Size = new System.Drawing.Size(521, 29);
-            this.tbPassForce.TabIndex = 13;
-            this.tbPassForce.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // tbSymIgnor
-            // 
-            this.tbSymIgnor.Location = new System.Drawing.Point(9, 186);
-            this.tbSymIgnor.MaxLength = 70;
-            this.tbSymIgnor.Name = "tbSymIgnor";
-            this.tbSymIgnor.Size = new System.Drawing.Size(521, 23);
-            this.tbSymIgnor.TabIndex = 12;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(8, 168);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(466, 15);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Не использовать в пароле следующие символы (можно ввести до 70 символов):";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            // 
-            // cbDisableUnderline
-            // 
-            this.cbDisableUnderline.AutoSize = true;
-            this.cbDisableUnderline.Location = new System.Drawing.Point(242, 74);
-            this.cbDisableUnderline.Name = "cbDisableUnderline";
-            this.cbDisableUnderline.Size = new System.Drawing.Size(276, 19);
-            this.cbDisableUnderline.TabIndex = 10;
-            this.cbDisableUnderline.Text = "Не использовать символ \" _ \" подчеркивания";
-            this.cbDisableUnderline.UseVisualStyleBackColor = true;
-            // 
-            // cbDisableMinus
-            // 
-            this.cbDisableMinus.AutoSize = true;
-            this.cbDisableMinus.Location = new System.Drawing.Point(242, 56);
-            this.cbDisableMinus.Name = "cbDisableMinus";
-            this.cbDisableMinus.Size = new System.Drawing.Size(181, 19);
-            this.cbDisableMinus.TabIndex = 9;
-            this.cbDisableMinus.Text = "Не использовать \" - \" минус";
-            this.cbDisableMinus.UseVisualStyleBackColor = true;
-            // 
-            // cbDisableLetter_O_I
-            // 
-            this.cbDisableLetter_O_I.AutoSize = true;
-            this.cbDisableLetter_O_I.Location = new System.Drawing.Point(242, 38);
-            this.cbDisableLetter_O_I.Name = "cbDisableLetter_O_I";
-            this.cbDisableLetter_O_I.Size = new System.Drawing.Size(207, 19);
-            this.cbDisableLetter_O_I.TabIndex = 8;
-            this.cbDisableLetter_O_I.Text = "Не импользовать буквы \"O\" и \"I\"";
-            this.cbDisableLetter_O_I.UseVisualStyleBackColor = true;
-            // 
-            // cbDisableLetter_o
-            // 
-            this.cbDisableLetter_o.AutoSize = true;
-            this.cbDisableLetter_o.Location = new System.Drawing.Point(242, 20);
-            this.cbDisableLetter_o.Name = "cbDisableLetter_o";
-            this.cbDisableLetter_o.Size = new System.Drawing.Size(173, 19);
-            this.cbDisableLetter_o.TabIndex = 7;
-            this.cbDisableLetter_o.Text = "Не использовать букву \"о\"";
-            this.cbDisableLetter_o.UseVisualStyleBackColor = true;
-            // 
-            // tbPassword
-            // 
-            this.tbPassword.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.tbPassword.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.tbPassword.Location = new System.Drawing.Point(9, 291);
-            this.tbPassword.Name = "tbPassword";
-            this.tbPassword.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.tbPassword.Size = new System.Drawing.Size(521, 33);
-            this.tbPassword.TabIndex = 4;
-            // 
-            // btnCreatePass
-            // 
-            this.btnCreatePass.Location = new System.Drawing.Point(198, 262);
-            this.btnCreatePass.Name = "btnCreatePass";
-            this.btnCreatePass.Size = new System.Drawing.Size(140, 23);
-            this.btnCreatePass.TabIndex = 3;
-            this.btnCreatePass.Text = "Создать пароль";
-            this.btnCreatePass.UseVisualStyleBackColor = true;
-            this.btnCreatePass.Click += new System.EventHandler(this.btnCreatePass_Click);
-            // 
-            // nudPassLength
-            // 
-            this.nudPassLength.Cursor = System.Windows.Forms.Cursors.Default;
-            this.nudPassLength.Location = new System.Drawing.Point(102, 263);
-            this.nudPassLength.Maximum = new decimal(new int[] {
-            80,
-            0,
-            0,
-            0});
-            this.nudPassLength.Minimum = new decimal(new int[] {
-            6,
-            0,
-            0,
-            0});
-            this.nudPassLength.Name = "nudPassLength";
-            this.nudPassLength.Size = new System.Drawing.Size(47, 23);
-            this.nudPassLength.TabIndex = 2;
-            this.nudPassLength.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            this.nudPassLength.ValueChanged += new System.EventHandler(this.nudPassLength_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 265);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Длина пароля:";
-            // 
-            // clbPassSymbols
-            // 
-            this.clbPassSymbols.BackColor = System.Drawing.SystemColors.Info;
-            this.clbPassSymbols.CheckOnClick = true;
-            this.clbPassSymbols.FormattingEnabled = true;
-            this.clbPassSymbols.Items.AddRange(new object[] {
-            "Цифры [0..9]",
-            "Прописные буквы [A..Z]",
-            "Строчные буквы [a..z]",
-            "Спец.символы ! @ # $ _ / |",
-            "Скобки [ ] { } ( ) < >",
-            "Математ.знаки % ^ & * - + = ~",
-            "Знаки препинания  ; : , . ? кавычки",
-            "Символ пробела"});
-            this.clbPassSymbols.Location = new System.Drawing.Point(8, 17);
-            this.clbPassSymbols.Name = "clbPassSymbols";
-            this.clbPassSymbols.Size = new System.Drawing.Size(215, 148);
-            this.clbPassSymbols.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.tabPage1.Controls.Add(this.label6);
-            this.tabPage1.Controls.Add(this.numericUpDown2);
-            this.tabPage1.Controls.Add(this.numericUpDown1);
-            this.tabPage1.Controls.Add(this.vScrollBar1);
-            this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.hScrollBar1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(539, 381);
-            this.tabPage1.TabIndex = 2;
-            this.tabPage1.Text = "X0 -пять в ряд";
-            // 
-            // hScrollBar1
-            // 
-            this.hScrollBar1.Location = new System.Drawing.Point(0, 364);
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(539, 21);
-            this.hScrollBar1.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(196, 15);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "Размеры Игрового поля в клетках";
-            // 
-            // vScrollBar1
-            // 
-            this.vScrollBar1.Location = new System.Drawing.Point(516, 5);
-            this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(23, 356);
-            this.vScrollBar1.TabIndex = 2;
-            // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(220, 3);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(55, 23);
-            this.numericUpDown1.TabIndex = 3;
-            // 
-            // numericUpDown2
-            // 
-            this.numericUpDown2.Location = new System.Drawing.Point(344, 2);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(51, 23);
-            this.numericUpDown2.TabIndex = 4;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(295, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(38, 15);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "label6";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -456,15 +516,16 @@ namespace Password_Generator
             this.Name = "Form1";
             this.Text = "Мои утилиты";
             this.tcPassGen.ResumeLayout(false);
-            this.tabConverter.ResumeLayout(false);
-            this.tabConverter.PerformLayout();
+            this.tabMiner.ResumeLayout(false);
+            this.tabMiner.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).EndInit();
             this.tabPassword.ResumeLayout(false);
             this.tabPassword.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).EndInit();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            this.tabConverter.ResumeLayout(false);
+            this.tabConverter.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -497,13 +558,14 @@ namespace Password_Generator
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbMyStr;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabMiner;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.NumericUpDown nudMinerY;
+        private System.Windows.Forms.NumericUpDown nudMinerX;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.HScrollBar hScrollBar1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnStartMiner;
+        private System.Windows.Forms.NumericUpDown numericUpDown3;
     }
 }
 

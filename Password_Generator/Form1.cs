@@ -13,29 +13,28 @@ namespace Password_Generator
     public partial class Form1 : Form
     {
         Random rnd = new Random();
+ 
 
-        
-        Dictionary<string,double> metrica;
-        
+        Dictionary<string, double> metrica;
+
         public Form1()
         {
             InitializeComponent();
-            clbPassSymbols.SetItemChecked(0,true);
+            clbPassSymbols.SetItemChecked(0, true);
             clbPassSymbols.SetItemChecked(1, true);
             clbPassSymbols.SetItemChecked(2, true);
-            metrica = new Dictionary<string, double> ();
-            metrica.Add("mm - millimeters",1);
+            metrica = new Dictionary<string, double>();
+            metrica.Add("mm - millimeters", 1);
             metrica.Add("cm - cantimeters", 10);
             metrica.Add("dm - decimeters", 100);
             metrica.Add("m - meters", 1000);
             metrica.Add("km - kilometers", 1000000);
             metrica.Add("ml - miles", 1609344);
-          
         }
-
+        private Button[,] _buttons = new Button[20, 20];
         private void Message_for_user(string s)
         { /* вывод сообщений об ршибках из генератора паролей*/
-            tbPassword.Text = s ; 
+            tbPassword.Text = s;
             tbPassForce.BackColor = Color.LightGray; tbPassForce.Text = "";
 
             Size len = TextRenderer.MeasureText(tbPassword.Text, tbPassword.Font);
@@ -48,10 +47,10 @@ namespace Password_Generator
 
         private void btnCreatePass_Click(object sender, EventArgs e)
         {
-            int passletter=0, nsymbs=0,i,j,unused_groups,rnd_tmp, n_group,n_wanted_words=0;
+            int passletter = 0, nsymbs = 0, i, j, unused_groups, rnd_tmp, n_group, n_wanted_words = 0;
             int len_wanted_words = 0;//длина в символах всех желаемых слов
-            string str_entropy,s;
-            string[] wanted_words=new string[70];
+            string str_entropy, s;
+            string[] wanted_words = new string[70];
             double entropy;
             Boolean flag_No_space_sym = false; //Если true - отключим символ пробела и снимем галочку
             Boolean flag_SymIgnor;
@@ -77,114 +76,114 @@ namespace Password_Generator
             string password = "";
 
             if (clbPassSymbols.CheckedItems.Count == 0) return; // никаких наборов символов для пароля не выбрано
-                                                                
 
 
-              //переберем список игнорируемых символов 
-             
-                for (i = 0; i < tbSymIgnor.Text.Length; i++)// переберем все запрещенные символы 
-                {                                           // и отметим их в массивах символов 1
-                    passletter = Convert.ToInt32(tbSymIgnor.Text[i]);
-                    if (passletter >= 48 && passletter <=57)// встречен запрещенный символ в цифрах
-                    { cifer_symbols[1,passletter - 48] = 1; } // отмечаем в массиве символов , что символ запрещен
-                    if ( passletter>=65 && passletter<=90) // встречен символ из массива [A..Z]
-                      big_letters[1,passletter - 65] = 1;                 
-                    if ( passletter>=97 && passletter<=122) // встречен символ из массива [a..z]
-                      small_letters[1,passletter - 97] = 1;
-                    for (j = 0; j < 8; j++) if (passletter == special_symbols[0,j]) special_symbols[1,j] = 1; //проверяем отмечены ли специальные символы
-                    for (j = 0; j < 8; j++) if (passletter == bracket_symbols[0, j]) bracket_symbols[1, j] = 1; //проверяем отмечены ли  символы скобок
-                    for (j = 0; j < 8; j++) if (passletter == special_symbols2[0, j]) special_symbols2[1, j] = 1; //проверяем отмечены ли символы препинания
-                    for (j = 0; j < 8; j++) if (passletter == math_symbols[0, j]) math_symbols[1, j] = 1; //проверяем отмечены ли математические символы
-                    if (passletter == 32) //найден пробел, отключаем группу символа пробела
-                    { flag_No_space_sym = true;   }
-                }
-                // дополнительно отключаем символы запрещенные в чекбоксах, если нужно
-                if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
-                { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; } /*отключаем буквы I и O*/
-                if (cbDisableLetter_o.Checked == true) // отмечена галка о запрете символа o
-                  small_letters[1, 111 - 97] = 1;  //отключаем букву o
-                if (cbDisableUnderline.Checked == true)//отметка о запрете символа _ 
-                  special_symbols[1, 6] = 1; //отключаем символ _
-                if (cbDisableMinus.Checked == true)//отметка о запрете символа -
-                  math_symbols[1,4] = 1; //отключаем минус
 
-                if (clbPassSymbols.GetItemChecked(0) is true)// группа цифр выбрана
+            //переберем список игнорируемых символов 
+
+            for (i = 0; i < tbSymIgnor.Text.Length; i++)// переберем все запрещенные символы 
+            {                                           // и отметим их в массивах символов 1
+                passletter = Convert.ToInt32(tbSymIgnor.Text[i]);
+                if (passletter >= 48 && passletter <= 57)// встречен запрещенный символ в цифрах
+                { cifer_symbols[1, passletter - 48] = 1; } // отмечаем в массиве символов , что символ запрещен
+                if (passletter >= 65 && passletter <= 90) // встречен символ из массива [A..Z]
+                    big_letters[1, passletter - 65] = 1;
+                if (passletter >= 97 && passletter <= 122) // встречен символ из массива [a..z]
+                    small_letters[1, passletter - 97] = 1;
+                for (j = 0; j < 8; j++) if (passletter == special_symbols[0, j]) special_symbols[1, j] = 1; //проверяем отмечены ли специальные символы
+                for (j = 0; j < 8; j++) if (passletter == bracket_symbols[0, j]) bracket_symbols[1, j] = 1; //проверяем отмечены ли  символы скобок
+                for (j = 0; j < 8; j++) if (passletter == special_symbols2[0, j]) special_symbols2[1, j] = 1; //проверяем отмечены ли символы препинания
+                for (j = 0; j < 8; j++) if (passletter == math_symbols[0, j]) math_symbols[1, j] = 1; //проверяем отмечены ли математические символы
+                if (passletter == 32) //найден пробел, отключаем группу символа пробела
+                { flag_No_space_sym = true; }
+            }
+            // дополнительно отключаем символы запрещенные в чекбоксах, если нужно
+            if (cbDisableLetter_O_I.Checked == true) // отмечена галка о запрете символов O и I
+            { big_letters[1, 73 - 65] = 1; big_letters[1, 79 - 65] = 1; } /*отключаем буквы I и O*/
+            if (cbDisableLetter_o.Checked == true) // отмечена галка о запрете символа o
+                small_letters[1, 111 - 97] = 1;  //отключаем букву o
+            if (cbDisableUnderline.Checked == true)//отметка о запрете символа _ 
+                special_symbols[1, 6] = 1; //отключаем символ _
+            if (cbDisableMinus.Checked == true)//отметка о запрете символа -
+                math_symbols[1, 4] = 1; //отключаем минус
+
+            if (clbPassSymbols.GetItemChecked(0) is true)// группа цифр выбрана
+            {
+                flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+
+                for (i = 0; i < 10; i++) // изначальна все цифры разрешены, кроме запрещенных
                 {
-                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+                    if (cifer_symbols[1, i] != 1) { cifer_symbols[1, i] = 0; flag_SymIgnor = true; }
 
-                    for (i = 0; i < 10; i++) // изначальна все цифры разрешены, кроме запрещенных
-                    {
-                        if (cifer_symbols[1, i] != 1) { cifer_symbols[1, i] = 0; flag_SymIgnor = true; }
-                   
-                        cifer_symbols[0, i] = i + 48; //инициализируем символы цифр в массиве
-                    }
-                    if (flag_SymIgnor == false)// цифры полностью запрещены
-                    {  // отключим галочку выбора группы цифр
-                        clbPassSymbols.SetItemChecked(0, false); return;
-                    }
-                    else { nsymbs += 10; }/*подсчитаем количество символов в алфавите пароля + [0..9]*/
+                    cifer_symbols[0, i] = i + 48; //инициализируем символы цифр в массиве
                 }
-                if (clbPassSymbols.GetItemChecked(1) is true)// группа букв [A..Z]
+                if (flag_SymIgnor == false)// цифры полностью запрещены
+                {  // отключим галочку выбора группы цифр
+                    clbPassSymbols.SetItemChecked(0, false); return;
+                }
+                else { nsymbs += 10; }/*подсчитаем количество символов в алфавите пароля + [0..9]*/
+            }
+            if (clbPassSymbols.GetItemChecked(1) is true)// группа букв [A..Z]
+            {
+                flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+                for (i = 0; i < 26; i++) // изначальна все цифры разрешены, если группа цифр разрешена
                 {
-                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
-                    for (i = 0; i < 26; i++) // изначальна все цифры разрешены, если группа цифр разрешена
-                    {
-                        if (big_letters[1, i] != 1) { big_letters[1, i] = 0; flag_SymIgnor = true; }
-                        big_letters[0, i] = i + 65; //инициализируем символы цифр в массиве
-                    }
-
-                    if (flag_SymIgnor == false)// группа [A..Z] полностью запрещена
-                    {  // отключим галочку выбора группы [A..Z]
-                        clbPassSymbols.SetItemChecked(1, false); return;
-                    }
-                    else { nsymbs += 26;  }/*подсчитаем количество символов в алфавите пароля + [A..Z]*/
+                    if (big_letters[1, i] != 1) { big_letters[1, i] = 0; flag_SymIgnor = true; }
+                    big_letters[0, i] = i + 65; //инициализируем символы цифр в массиве
                 }
 
-                if (clbPassSymbols.GetItemChecked(2) is true)// группа букв [a..z]
+                if (flag_SymIgnor == false)// группа [A..Z] полностью запрещена
+                {  // отключим галочку выбора группы [A..Z]
+                    clbPassSymbols.SetItemChecked(1, false); return;
+                }
+                else { nsymbs += 26; }/*подсчитаем количество символов в алфавите пароля + [A..Z]*/
+            }
+
+            if (clbPassSymbols.GetItemChecked(2) is true)// группа букв [a..z]
+            {
+                flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+                for (i = 0; i < 26; i++) // изначальна все цифры разрешены, если группа цифр разрешена
                 {
-                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
-                    for (i = 0; i < 26; i++) // изначальна все цифры разрешены, если группа цифр разрешена
-                    {
-                        if (small_letters[1, i] != 1) { small_letters[1, i] = 0; flag_SymIgnor = true; }
-                        small_letters[0, i] = i + 97; //инициализируем символы цифр в массиве
-                    }
-
-                    if (flag_SymIgnor == false)// группа [A..Z] полностью запрещена
-                    {  // отключим галочку выбора группы [A..Z]
-                        clbPassSymbols.SetItemChecked(2, false); return;
-                    }
-                    else { nsymbs += 26;  }/*подсчитаем количество символов в алфавите пароля + [a..z]*/
+                    if (small_letters[1, i] != 1) { small_letters[1, i] = 0; flag_SymIgnor = true; }
+                    small_letters[0, i] = i + 97; //инициализируем символы цифр в массиве
                 }
 
-                if (clbPassSymbols.GetItemChecked(3) is true)// группа спец символов ! @ # $ _ / \ |
+                if (flag_SymIgnor == false)// группа [A..Z] полностью запрещена
+                {  // отключим галочку выбора группы [A..Z]
+                    clbPassSymbols.SetItemChecked(2, false); return;
+                }
+                else { nsymbs += 26; }/*подсчитаем количество символов в алфавите пароля + [a..z]*/
+            }
+
+            if (clbPassSymbols.GetItemChecked(3) is true)// группа спец символов ! @ # $ _ / \ |
+            {
+                flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+                for (i = 0; i < 8; i++)
                 {
-                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
-                    for (i=0; i<8; i++)
-                    {
-                        if (special_symbols[1, i] == 0)
-                         { flag_SymIgnor = true; break; }//в группе цифр есть как минимум один разрешенный символ
-                    }
-                    if (flag_SymIgnor == false)// группа спецсимволов полностью запрещена
-                    {  // отключим галочку выбора группы спецсимволов
-                        clbPassSymbols.SetItemChecked(3, false); return;
-                    }
-                    else { nsymbs += 8; }/*подсчитаем количество символов в алфавите пароля + ! @ # $ _ / \ |*/
+                    if (special_symbols[1, i] == 0)
+                    { flag_SymIgnor = true; break; }//в группе цифр есть как минимум один разрешенный символ
                 }
+                if (flag_SymIgnor == false)// группа спецсимволов полностью запрещена
+                {  // отключим галочку выбора группы спецсимволов
+                    clbPassSymbols.SetItemChecked(3, false); return;
+                }
+                else { nsymbs += 8; }/*подсчитаем количество символов в алфавите пароля + ! @ # $ _ / \ |*/
+            }
 
-                if (clbPassSymbols.GetItemChecked(4) is true)// группа символов скобок [ ] { } ( ) < >
+            if (clbPassSymbols.GetItemChecked(4) is true)// группа символов скобок [ ] { } ( ) < >
+            {
+                flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
+                for (i = 0; i < 8; i++)
                 {
-                    flag_SymIgnor = false; //флаг наличия хотя бы одного символа в группе не находящегося под запретом
-                    for (i=0; i<8; i++)
-                    {
-                        if (bracket_symbols[1, i] == 0)
-                         { flag_SymIgnor = true; break; }//в группе цифр есть как минимум один разрешенный символ
-                    }
-                    if (flag_SymIgnor == false)// группа спецсимволов полностью запрещена
-                    {  // отключим галочку выбора группы спецсимволов
-                        clbPassSymbols.SetItemChecked(4, false); return;
-                    }
-                    else { nsymbs += 8; }/*подсчитаем количество символов в алфавите пароля + [ ] { } ( ) < >*/
+                    if (bracket_symbols[1, i] == 0)
+                    { flag_SymIgnor = true; break; }//в группе цифр есть как минимум один разрешенный символ
                 }
+                if (flag_SymIgnor == false)// группа спецсимволов полностью запрещена
+                {  // отключим галочку выбора группы спецсимволов
+                    clbPassSymbols.SetItemChecked(4, false); return;
+                }
+                else { nsymbs += 8; }/*подсчитаем количество символов в алфавите пароля + [ ] { } ( ) < >*/
+            }
 
             if (clbPassSymbols.GetItemChecked(5) is true)// группа математических символов  % ^ & * - + = ~
             {
@@ -223,46 +222,46 @@ namespace Password_Generator
             if (tbMyStr.TextLength != 0) // присутствуют желаемые слова и выражения
             { // проверим строчку на количество слов
                 char[] delimiterChars = { ' ', ',', '.', ':' }; //возможные символы разделители
-                string [] words = tbMyStr.Text.Split(delimiterChars); //соскладируем желаемые слова в массив
-                foreach(string word in words)
+                string[] words = tbMyStr.Text.Split(delimiterChars); //соскладируем желаемые слова в массив
+                foreach (string word in words)
                 {
-                   wanted_words[n_wanted_words] = word;
+                    wanted_words[n_wanted_words] = word;
                     len_wanted_words += word.Length;
-                    n_wanted_words++; 
+                    n_wanted_words++;
                 }
-                
-                if ((len_wanted_words + clbPassSymbols.CheckedItems.Count) >nudPassLength.Value) 
+
+                if ((len_wanted_words + clbPassSymbols.CheckedItems.Count) > nudPassLength.Value)
                 {// длина желаемых слов и символов из отмеченных групп превышает выбранную длину пароля
                     tbPassword.Text = "Длина пароля мала для выбранного набора символов";
                     nudPassLength.Value = len_wanted_words + clbPassSymbols.CheckedItems.Count; //корректируем длину пароля
                     tbPassForce.BackColor = Color.LightGray; tbPassForce.Text = "";
                     return; // показываем пользователю новую длину пароля
                 }
-                
+
 
             }
             Boolean[] group_sym = new Boolean[clbPassSymbols.CheckedItems.Count + n_wanted_words]; //используемые в пароле группы символов
 
             for (i = 0; i < (clbPassSymbols.CheckedItems.Count + n_wanted_words); i++) group_sym[i] = false; // initial group_sym
                                                                                                              // отмечаем отмеченные группы символов и желаемые слова как неиспользованные группы
-            for (i = 1; i<=nudPassLength.Value; i++) //цикл по длине пароля /подбор
+            for (i = 1; i <= nudPassLength.Value; i++) //цикл по длине пароля /подбор
             {
-                
-                n_group = rnd.Next(0, clbPassSymbols.CheckedItems.Count+n_wanted_words); //случайно выбираем группу символов учитывая группы с желаемыми словами
+
+                n_group = rnd.Next(0, clbPassSymbols.CheckedItems.Count + n_wanted_words); //случайно выбираем группу символов учитывая группы с желаемыми словами
 
                 if (group_sym[n_group] == true) // в подборе пароля уже была ипользована такая группа символов
                 {
                     //подсчитаем сколько отмеченных груп символов Небыло использовано
                     unused_groups = 0;
                     for (j = 0; j < (clbPassSymbols.CheckedItems.Count); j++) if (group_sym[j] == false) unused_groups++;
-                    for (j = 0; j <  n_wanted_words; j++) if (group_sym[j+ clbPassSymbols.CheckedItems.Count] == false) unused_groups+=wanted_words[j].Length;
+                    for (j = 0; j < n_wanted_words; j++) if (group_sym[j + clbPassSymbols.CheckedItems.Count] == false) unused_groups += wanted_words[j].Length;
 
                     if ((nudPassLength.Value - i) < unused_groups) { i--; continue; }
                     if (n_group >= clbPassSymbols.CheckedItems.Count) { i--; continue; } //желаемое слово не повторяем дважды
                 }
                 else { group_sym[n_group] = true; }/*отмечаем, что сейчас выбeрем символ из этой группы*/
 
-                if (n_group< clbPassSymbols.CheckedItems.Count) s = clbPassSymbols.CheckedItems[n_group].ToString(); //получаем его содержимое в строку s
+                if (n_group < clbPassSymbols.CheckedItems.Count) s = clbPassSymbols.CheckedItems[n_group].ToString(); //получаем его содержимое в строку s
                 else s = "Wanted"; // прописываем строку в switch для default:
                 switch (s)
                 {
@@ -297,8 +296,8 @@ namespace Password_Generator
                         passletter = math_symbols[0, rnd_tmp];
                         break;
                     case "Символ пробела":
-                        if(flag_No_space_sym is true) { clbPassSymbols.SetItemChecked(7, false); Message_for_user("Вы добавили пробел в список неиспользуемых символов");  return; }
-                        if ((i == 1 || i == nudPassLength.Value) || (i >1 && password[password.Length-1] == 32)) { i--; continue; } //не может быть первым и последним символом в пароле или двойным
+                        if (flag_No_space_sym is true) { clbPassSymbols.SetItemChecked(7, false); Message_for_user("Вы добавили пробел в список неиспользуемых символов"); return; }
+                        if ((i == 1 || i == nudPassLength.Value) || (i > 1 && password[password.Length - 1] == 32)) { i--; continue; } //не может быть первым и последним символом в пароле или двойным
                         passletter = 32;
                         break;
                     case "Знаки препинания  ; : , . ? кавычки":
@@ -314,8 +313,8 @@ namespace Password_Generator
                 if (flag_wanted_words == true)// вставка желаемых слов
                 {
                     flag_wanted_words = false;//сброс флага группы
-                    password += wanted_words[n_group- clbPassSymbols.CheckedItems.Count];
-                    i += wanted_words[n_group - clbPassSymbols.CheckedItems.Count].Length-1;
+                    password += wanted_words[n_group - clbPassSymbols.CheckedItems.Count];
+                    i += wanted_words[n_group - clbPassSymbols.CheckedItems.Count].Length - 1;
                     continue;
                 }
                 if (tbSymIgnor.Text.Length != 0) //проверим полученный символ на вхождение в список запрещенных
@@ -329,12 +328,12 @@ namespace Password_Generator
                             flag_SymIgnor = true;
                             break;
                         }
-                                               
+
                     }
                     if (flag_SymIgnor == true) { continue; } // выбираем следующий символ пароля в цикле i
                     else { password += Convert.ToChar(passletter); }
                 }
-                else { password += Convert.ToChar(passletter);  }
+                else { password += Convert.ToChar(passletter); }
 
             }
 
@@ -368,39 +367,39 @@ namespace Password_Generator
             else { tbPassForce.BackColor = Color.Green; tbPassForce.Text = " bits - хороший "; pb1.Value = 100; }//<=80bit -is Good
             tbPassForce.Text = str_entropy + tbPassForce.Text + "пароль";
             tbPassword.Text = password; //выводим пароль в окно
-           
+
             Clipboard.SetText(password); // записываем пароль в clipboard
         }
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
-            
+
             double m1 = metrica[cbConverterFrom.Text];
             double m2 = metrica[cbConverterTo.Text];
             double n, Res_Double;
             Int64 Res_Int;
             if (tbConverterFrom.Text is "") return; //проверяем что входное значение не пустое
-            
+
             try
             {
                 n = Double.Parse(tbConverterFrom.Text);
             }
             catch (FormatException)
             {
-                tbConverterTo.Text="Неверные данные !"; 
+                tbConverterTo.Text = "Неверные данные !";
                 tbConverterFrom.Text = "1";
                 return;
-                
+
             }
             n = Convert.ToDouble(tbConverterFrom.Text); //читаем входное значение в виде числа
-            
-            
+
+
             switch (cbConverterMetrica.Text)
             {
                 case "Длины":
                     Res_Int = Convert.ToInt64(n * m1 / m2);
-                    Res_Double =Convert.ToDouble(n * m1 / m2);
-                    
+                    Res_Double = Convert.ToDouble(n * m1 / m2);
+
                     break;
                 case "Температура":
                     if (cbConverterTo.Text == "F - градусы Форенгейта")
@@ -416,8 +415,8 @@ namespace Password_Generator
                     }
                     else
                     {
-                        Res_Int = Convert.ToInt64((n -32)* m1 / m2);
-                        Res_Double = Convert.ToDouble((n-32) * m1 / m2 );
+                        Res_Int = Convert.ToInt64((n - 32) * m1 / m2);
+                        Res_Double = Convert.ToDouble((n - 32) * m1 / m2);
                         if (n < -459.67) // проверка на абсолютный 0
                         {
                             tbConverterTo.Text = "Неверные данные !";
@@ -429,8 +428,8 @@ namespace Password_Generator
                     break;
                 default:
                     Res_Int = Convert.ToInt64(n * m1 / m2);
-                    Res_Double = Convert.ToDouble(n * m1 / m2); 
-                   break;
+                    Res_Double = Convert.ToDouble(n * m1 / m2);
+                    break;
             }
             // Вывод результатов
             if (Res_Int == Res_Double)
@@ -448,7 +447,7 @@ namespace Password_Generator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string tmp_swap=cbConverterFrom.Text;
+            string tmp_swap = cbConverterFrom.Text;
             cbConverterFrom.Text = cbConverterTo.Text;
             cbConverterTo.Text = tmp_swap;
         }
@@ -513,11 +512,11 @@ namespace Password_Generator
                     metrica.Clear();
                     metrica.Add("С - градусы Цельсия", 1.8);
                     metrica.Add("F - градусы Форенгейта", 1);
-              
+
                     cbConverterFrom.Items.Clear();
                     cbConverterFrom.Items.Add("С - градусы Цельсия");
                     cbConverterFrom.Items.Add("F - градусы Форенгейта");
-                
+
                     cbConverterFrom.Text = "С - градусы Цельсия";
                     cbConverterTo.Items.Clear();
                     cbConverterTo.Items.Add("С - градусы Цельсия");
@@ -530,15 +529,41 @@ namespace Password_Generator
             }
         }
 
-        private void label3_Click(object sender, EventArgs e)
+        private void btnStartMiner_Click(object sender, EventArgs e)
         {
+            int buttonsCount = Convert.ToInt32(nudMinerX.Value * nudMinerY.Value);
+   
+            
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    var button = new Button();
 
+                    button.Width = 50;
+                    button.Height = 50;
+
+                    button.Location = new Point(button.Width * i, button.Height * j+24);
+                    button.Text = (i+1).ToString();
+                    button.Tag = j* nudMinerY.Value + i+1;
+                    button.Visible = true;
+
+                    _buttons[i, j] = button;
+                    this.Controls.Add(button);
+                    
+
+                    /*if (button.Text == @"16")
+                        button.Visible = false;*/
+                }
+            
+       
         }
 
-        private void nudPassLength_ValueChanged(object sender, EventArgs e)
+        private void tabMiner_Click(object sender, EventArgs e)
         {
 
         }
     }
 }
+        
+    
 
