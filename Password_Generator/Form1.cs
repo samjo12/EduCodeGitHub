@@ -569,6 +569,11 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
+
+
+        DateTime date1 = new DateTime(0, 0);
+        
+        Label labeltime = new Label();
         int W = 30;
         int H = 30;
         Button[,] _buttons = new Button[20, 20];
@@ -587,26 +592,38 @@ namespace Password_Generator
             Y = Convert.ToInt32(StaticData.Y);
             S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/10)); /*количество мин исходя из уровня сложности */
             // вычисляем размер окна
-            this.Width =5+Convert.ToInt32(X)*(W+2);
+            this.Width =40+Convert.ToInt32(X)*(W+1);
             this.Height = 70+Convert.ToInt32(Y)*(H+2);
-            // оформим кнопки управления и счетчик мин
-            var labelcont = new Label();
-             labelcont.Width = 50;
-            //labelcont.Height = 20;
+            // оформим кнопки управления и счетчики мин и времени
+            var labelfont = new Font("Arial", 16, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
+            var labelcont = new Label(); // счетчик мин
+            labelcont.Width = 50;
+            labelcont.Height = 25;
             labelcont.Visible = true;
-            //labelcont.Location = new Point(20,20 );
-
-
-
-            var labelfont = new Font("Arial", 14, FontStyle.Bold);
+           
             labelcont.ForeColor = Color.Red; //цвет шрифта
-            labelcont.BackColor = Color.White; // цвет фона
+            labelcont.BackColor = Color.Black; // цвет фона
             labelcont.TextAlign = ContentAlignment.MiddleCenter;
             labelcont.Font = labelfont;
             labelcont.Text = S.ToString();
             if (S < 100) labelcont.Text = "0" + labelcont.Text;
             else if (S<10) labelcont.Text = "00" + labelcont.Text;
+            labelcont.Location = new Point(20, 0);
             Controls.Add(labelcont);
+            
+ 
+               
+            labeltime.Width = 70;
+            labeltime.Height = 25;
+            labeltime.Visible = true;
+
+            labeltime.ForeColor = Color.Red; //цвет шрифта
+            labeltime.BackColor = Color.Black; // цвет фона
+            labeltime.TextAlign = ContentAlignment.MiddleCenter;
+            labeltime.Font = labelfont;
+            labeltime.Text = "00:00";
+            labeltime.Location = new Point(this.Width-labeltime.Width-30,0);
+            Controls.Add(labeltime);
 
 
 
@@ -619,8 +636,9 @@ namespace Password_Generator
                     button.Width = W;
                     button.Height = H;
 
-                    button.Location = new Point(button.Width * i+1, button.Height * j + 50);
-                   // button.Text = (j * Y + i).ToString();
+                    button.Location = new Point(button.Width * i+20, button.Height * j+35); //20 и 35 - отсттупы слева и сверху
+                    // button.Text = (j * Y + i).ToString();
+                    button.FlatStyle = FlatStyle.Popup;
                     button.Tag = j * Y + i;// НЕ заминировано, записываем только порядковый номер кнопки
                     //button.Tag = 0; 
                     minespole[i, j] = 0; //инициализируем минное поле
@@ -665,27 +683,35 @@ namespace Password_Generator
                     this._buttons[i, j].Tag = around;
                     this._buttons[i, j].Text = around.ToString(); around = 0;
                 }
-                    /*         
-                  foreach (Button btn in _buttons)
-                  {
-                      btn.Click += (b, eArgs) =>
-                      {
-                           var button = (Button)b;
-                           int i = (int)button.Tag;
-                           int x = i % X;
-                           int y = i / Y;
+                  
+          foreach (Button btn in _buttons)
+          {
+              btn.Click += (b, eArgs) =>
+              {
+                   var button = (Button)b;
+                   int i = (int)button.Tag;
+                   int x = i % X;
+                   int y = i / Y;
 
-                           //CheckButton(x, y);
-                      };
+                   CheckButton(x, y);
+              };
 
-                     // btn.TextChanged += (b, eArg) =>
-                      //{
-                      //   var button = (Button)b;
-                     //    int value = int.Parse(button.Text);
-                      //   button.Visible = value != 16;
-                     // };
-                  }*/
-                }
+              /*btn.TextChanged += (b, eArg) =>
+              {
+                 var button = (Button)b;
+                 int value = .button.Tag;
+                 button.Visible = value != 10;
+             };*/
+          }
+        /*if (timer1.Enabled == true) timer1.Enabled = false; //включаем таймер
+           else  timer1.Enabled = true;
+            */
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            date1 = date1.AddSeconds(1);
+            labeltime.Text = date1.ToString("mm:ss");
+        }
         private int CheckButton(int x, int y)
         {
             int x2 = x;
