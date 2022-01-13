@@ -572,7 +572,9 @@ namespace Password_Generator
 
 
         DateTime date1 = new DateTime(0, 0);
-        
+        Timer timer1 = new Timer();
+       
+
         Label labeltime = new Label();
         int W = 30;
         int H = 30;
@@ -639,6 +641,7 @@ namespace Password_Generator
                     button.Location = new Point(button.Width * i+20, button.Height * j+35); //20 и 35 - отсттупы слева и сверху
                     // button.Text = (j * Y + i).ToString();
                     button.FlatStyle = FlatStyle.Popup;
+
                     button.Tag = j * Y + i;// НЕ заминировано, записываем только порядковый номер кнопки
                     //button.Tag = 0; 
                     minespole[i, j] = 0; //инициализируем минное поле
@@ -646,10 +649,9 @@ namespace Password_Generator
 
                     _buttons[i, j] = button;
                     this.Controls.Add(_buttons[i,j]);
+                    this._buttons[i,j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
 
 
-                    /*if (button.Text == @"16")
-                        button.Visible = false;*/
                 }
             for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
             {
@@ -662,56 +664,87 @@ namespace Password_Generator
                 minespole[x, y] = 10; //мина
                 this._buttons[x, y].Tag = 10;
 
-                //this._buttons[x, y].Text="*";
-
-
             }
-            // расчитаем количество мин вокруг каждой из ячеек
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                    int around=0; //мин вокруг ячейки
-                    if (minespole[i, j] == 10) {  continue; } //Ячейка с миной, окружение можно не просчитывать
+                    int around = 0; //мин вокруг ячейки
+                    if (minespole[i, j] == 10) { continue; } //Ячейка с миной, окружение можно не просчитывать
                     if (i > 0 && minespole[i - 1, j] == 10) around++; //WEST
-                    if (i > 0 && j>0 && minespole[i-1,j-1]==10) around++; //NW
-                    if (j > 0 && minespole[i, j-1] == 10) around++; // Nord
-                    if (i <(X-1) && j >0 && minespole[i + 1, j - 1] == 10) around++; //NordEast
-                    if (i < (X-1) && minespole[i + 1, j] == 10) around++; //East
-                    if (i < (X - 1) && j < (Y - 1) && minespole[i+1,j+1] == 10) around++; //SouthEast
-                    if (j < (Y-1) && minespole[i, j+1] == 10) around++; //South
-                    if (i > 0 && j<(Y-1) && minespole[i - 1, j+1] == 10) around++; //SouthWest
-                    this._buttons[i, j].Tag = around;
-                    this._buttons[i, j].Text = around.ToString(); around = 0;
+                    if (i > 0 && j > 0 && minespole[i - 1, j - 1] == 10) around++; //NW
+                    if (j > 0 && minespole[i, j - 1] == 10) around++; // Nord
+                    if (i < (X - 1) && j > 0 && minespole[i + 1, j - 1] == 10) around++; //NordEast
+                    if (i < (X - 1) && minespole[i + 1, j] == 10) around++; //East
+                    if (i < (X - 1) && j < (Y - 1) && minespole[i + 1, j + 1] == 10) around++; //SouthEast
+                    if (j < (Y - 1) && minespole[i, j + 1] == 10) around++; //South
+                    if (i > 0 && j < (Y - 1) && minespole[i - 1, j + 1] == 10) around++; //SouthWest
+                    minespole[i, j] = around; // указываем количество мин вокруг от 0 до 9
                 }
-                  
-          foreach (Button btn in _buttons)
-          {
-              btn.Click += (b, eArgs) =>
-              {
-                   var button = (Button)b;
-                   int i = (int)button.Tag;
-                   int x = i % X;
-                   int y = i / Y;
 
-                   CheckButton(x, y);
-              };
-
-              /*btn.TextChanged += (b, eArg) =>
-              {
-                 var button = (Button)b;
-                 int value = .button.Tag;
-                 button.Visible = value != 10;
-             };*/
-          }
-        /*if (timer1.Enabled == true) timer1.Enabled = false; //включаем таймер
-           else  timer1.Enabled = true;
-            */
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             date1 = date1.AddSeconds(1);
             labeltime.Text = date1.ToString("mm:ss");
+            
+
+            //Controls.Add(labeltime);
         }
+        private void button1_Click(object sender, EventArgs eventArgs)
+        {
+            int index = Convert.ToInt32((sender as Button).Tag);
+            var button = (Button)sender;
+            /*if (button == null)
+            {
+                MessageBox.Show("Прощай " + button.Name);
+                button.Dispose();
+            }*/
+            // расчитаем количество мин вокруг каждой из ячеек
+            int t = (int)button.Tag;
+            int x = t % Y;
+            int y = t / Y;
+            
+            timer1.Start();
+
+            //MessageBox.Show(minespole[x,y].ToString());
+            if (minespole[x, y] == 10)
+            { /*Игра окончена*/
+               timer1.Enabled = false; //останавливаем таймер
+               /*Блокируем все кнопки и выводим мины*/
+                for (int i=0;i<x;i++)
+                    for(int j=0;j<y;j++)
+                    {
+                       // dispose_button(x, y);
+
+                    }
+
+            }
+            this._buttons[x, y].Text = minespole[x, y].ToString();
+            //this._buttons[i, j].Text = around.ToString(); around = 0;
+            /* if ((sender as Button).Name == "button01")
+             {
+                 music.controls.stop();
+                 music.URL = boxes[0].Text;
+                 music.controls.play();
+             }
+             else if ((sender as Button).Name == "button02")
+             {
+                 music.controls.stop();
+                 music.URL = boxes[1].Text;
+                 music.controls.play();
+             }
+             else if ((sender as Button).Name == "button03")
+             {
+                 music.controls.stop();
+                 music.URL = boxes[2].Text;
+                 music.controls.play();
+             }*/
+            //и т.д тонны кода из else if для всех остальных элементов массива
+            //MessageBox.Show((sender as Button).Text);
+            //var button = (Button)b;
+
+        }
+      
         private int CheckButton(int x, int y)
         {
             int x2 = x;
@@ -719,42 +752,46 @@ namespace Password_Generator
             int mines_around;
             //Button Button1 = Butt1;
 
-            if (_buttons[x,y].Tag is "100" ) return 100;
+            if (_buttons[x, y].Tag is "100") return 100;
 
-           
-               
+
+
 
             string txt = _buttons[x, y].Text;
             _buttons[x, y].Text = _buttons[x2, y2].Text;
             _buttons[x2, y2].Text = txt;
             return 0;
         }
-        //private void btnStartMiner_Click(object sender, EventArgs e)
-        //{
-        /*
-         foreach (Button btn in _buttons)
-         {
-             btn.Click += (b, eArgs) =>
-             {
-                  var button = (Button)b;
-                  int i = (int)button.Tag;
-                  int x = i % 4;
-                  int y = i / 4;
-
-                  CheckButton(x, y);
-             };
-
-            // btn.TextChanged += (b, eArg) =>
-             //{
-             //   var button = (Button)b;
-            //    int value = int.Parse(button.Text);
-             //   button.Visible = value != 16;
-            // };
-         }*/
-        //}
-
+       
     }
+   
+    //private void btnStartMiner_Click(object sender, EventArgs e)
+    //{
+    /*
+     foreach (Button btn in _buttons)
+     {
+         btn.Click += (b, eArgs) =>
+         {
+              var button = (Button)b;
+              int i = (int)button.Tag;
+              int x = i % 4;
+              int y = i / 4;
+
+              CheckButton(x, y);
+         };
+
+        // btn.TextChanged += (b, eArg) =>
+         //{
+         //   var button = (Button)b;
+        //    int value = int.Parse(button.Text);
+         //   button.Visible = value != 16;
+        // };
+     }*/
+    //}
+
+
 }
+
         
     
 
