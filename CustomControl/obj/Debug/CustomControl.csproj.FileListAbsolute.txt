@@ -1,0 +1,5 @@
+C:\Users\usr\source\repos\CustomControl\obj\Debug\CustomControl.csproj.CoreCompileInputs.cache
+C:\Users\usr\source\repos\CustomControl\bin\Debug\CustomControl.dll
+C:\Users\usr\source\repos\CustomControl\bin\Debug\CustomControl.pdb
+C:\Users\usr\source\repos\CustomControl\obj\Debug\CustomControl.dll
+C:\Users\usr\source\repos\CustomControl\obj\Debug\CustomControl.pdb
