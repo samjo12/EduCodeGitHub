@@ -582,7 +582,9 @@ namespace Password_Generator
         int Z; // количество действующих кнопок
         public Button[,] _buttons = new Button[30, 30];
         Boolean[,] buttonflags = new Boolean[30, 30];
+        Boolean[,] buttonopened = new Boolean[30, 30];
         Label[,] LButtons = new Label[30, 30];
+        Boolean flag_detonation = false;
         public int[,] minespole = new int[20,20];
        // private Label mines_counter = new Label();
         private Button Start = new Button();
@@ -597,13 +599,10 @@ namespace Password_Generator
             X = Convert.ToInt32(StaticData.X);
             Y = Convert.ToInt32(StaticData.Y);
             S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/10)); /*количество мин исходя из уровня сложности */
-            Z = X * Y;
+            Z = S; // количество мин
             // вычисляем размер окна
             this.Width =40+Convert.ToInt32(X)*(W+1);
             this.Height = 70+Convert.ToInt32(Y)*(H+2);
-            // задать размеры dataGridView1.
-            // Высота - 200 пикселей. Ширина - 350 пикселей
-
 
             // оформим кнопки управления и счетчики мин и времени
             var labelfont = new Font("Arial", 16, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
@@ -622,8 +621,6 @@ namespace Password_Generator
             labelcont.Location = new Point(20, 0);
             Controls.Add(labelcont);
             
- 
-               
             labeltime.Width = 70;
             labeltime.Height = 25;
             labeltime.Visible = true;
@@ -655,12 +652,14 @@ namespace Password_Generator
                     //button.Tag = 0; 
                     minespole[i, j] = 0; //инициализируем минное поле
                     buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
+                    buttonopened[i, j] = false;//ini массива нажатых кнопок
                     //button.Visible = true;
 
                     _buttons[i, j] = button;
                     this.Controls.Add(_buttons[i, j]);
                    this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // отслеживаем правую кнопку мыши
                     this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+                    this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
                 }
             for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
             {
@@ -690,132 +689,146 @@ namespace Password_Generator
                     if (i > 0 && j < (Y - 1) && minespole[i - 1, j + 1] == 10) around++; //SouthWest
                     minespole[i, j] = around; // указываем количество мин вокруг от 0 до 9
                 }
-            timer1.Start(); timer1.Enabled = true;
+            timer1.Enabled = true;
 
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            date1 = date1.AddSeconds(1);
+            date1 = date1.AddMilliseconds(1);
             labeltime.Text = date1.ToString("mm:ss");
-            
-
-            //Controls.Add(labeltime);
-        }
-        private void Victory()
-        {
-            MessageBox.Show ("Victory");
         }
 
-   
-
-        private void dispose_button(Button b)
+        private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
             int t = (int)b.Tag;
-            
             int x = t % Y;
             int y = t / Y;
-            
-            // Создаем на месте убитой кнопки лейбл с элементом минного поля
+
+            if (buttonflags[x, y] is true) return; // На клетке стоит флаг, ничего отключать не нужно
+
             var labelfont = new Font("Arial", 14, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
             var labelbutton = new Label(); // счетчик мин
+            labelbutton.Text = minespole[x, y].ToString();
+
+            switch (minespole[x, y])
+            {
+                case 0: labelbutton.Text = "";  // нажата пустая клетка -отключаем кнопку и
+                                                // очищаем также все соседние клетки вокруг
+                    
+                        if (x > 0 && minespole[x - 1, y] < 10)
+                        {
+                            minespole[x, y] = 100; //теперь это очищенная пустая область
+                            dispose_button(_buttons[x - 1, y]);
+                        }//WEST 1
+                        if (x > 0 && y > 0 && minespole[x - 1, y - 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область \
+                            dispose_button(_buttons[x - 1, y - 1]);
+                        } //NW 2
+
+                        if (y > 0 && minespole[x, y - 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x, y - 1]);
+                        } // Nord 3
+                        if (x < (X - 1) && y > 0 && minespole[x + 1, y - 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x + 1, y - 1]);
+                        }//NordEast 4
+
+                        if (x < (X - 1) && minespole[x + 1, y] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x + 1, y]);
+                        }  //East 5
+                        if (x < (X - 1) && y < (Y - 1) && minespole[x + 1, y + 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x + 1, y + 1]);
+                        }//SouthEast 6
+                        if (y < (Y - 1) && minespole[x, y + 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x, y + 1]);
+                        }//South 7
+                        if (x > 0 && y < (Y - 1) && minespole[x - 1, y + 1] < 10)
+                        {
+                            minespole[x, y] = 100;//теперь это очищенная пустая область
+                            dispose_button(_buttons[x - 1, y + 1]);
+                        }//SouthWest 8
+                        break;
+                    //цвет шрифта числа мин вокруг
+                case 1: labelbutton.ForeColor = Color.Blue; break;
+                case 2: labelbutton.ForeColor = Color.Green; break;
+                case 3: labelbutton.ForeColor = Color.Red; break;
+                case 4: labelbutton.ForeColor = Color.Navy; break;
+                case 5: labelbutton.ForeColor = Color.DeepPink; break;
+                case 6: labelbutton.ForeColor = Color.Brown; break;
+                case 7: labelbutton.ForeColor = Color.OrangeRed; break;
+                case 8: labelbutton.ForeColor = Color.Indigo; break;
+                case 9: labelbutton.ForeColor = Color.Yellow; break;
+                case 10: labelbutton.ForeColor = Color.Black; //рисуем мину
+                    labelbutton.Text = "*";
+                    if (flag_detonation is true) 
+                    { flag_detonation = false; labelbutton.BackColor = Color.Red; } // цвет фона разорвавшейся мины
+                    labelfont = new Font("Arial", 18, FontStyle.Bold);
+                    break;
+                default: return; //это очищенная пустая область
+                
+            }
+            // Создаем на месте убитой кнопки лейбл с элементом минного поля
+
             labelbutton.Width = W;
             labelbutton.Height = H;
             labelbutton.Visible = true;
 
-            labelbutton.ForeColor = Color.Red; //цвет шрифта
+            //labelbutton.ForeColor = Color.Red; //цвет шрифта
             //labelcont.BackColor = Color.Black; // цвет фона
             labelbutton.TextAlign = ContentAlignment.MiddleCenter;
             labelbutton.BorderStyle = BorderStyle.Fixed3D;
             labelbutton.Font = labelfont;
-            labelbutton.Text = minespole[x,y].ToString();
-            if (buttonflags[x,y] is true) return;
-            b.Dispose();  
-            switch (minespole[x, y])
+            
+            
+            b.Dispose();
+            labelbutton.Location = new Point(W * x + 20, H * y + 35);
+            Controls.Add(labelbutton);
+            buttonopened[x, y] = true;
+            if (S == 0) Victory(); // Если число флагов и мин совпадает -проверим достигнута ли победа
+
+            
+    
+        }
+        private void Victory()
+        {
+            int z = X * Y;
+            for (int i = 0; i < X; i++)
+                for (int j = 0; j < Y; j++)
+                    //if (_buttons[i,j].Visible is false) z--;
+                    if (buttonopened[i, j] is true) z--;
+
+            if (S == 0 && z == Z) // стоит максимальное кол-во флажков и количесво неоткрытых кнопок соответствует числу мин
             {
-                case 0: labelbutton.Text = "";  // нечего выводить - пустая клетка
-                                                // очищаем также все соседние клетки
-                    if (x > 0 && minespole[x - 1, y] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x - 1, y]);
-                    }//WEST 1
-                    if (x > 0 && y > 0 && minespole[x - 1, y - 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область \
-                        dispose_button(_buttons[x - 1, y - 1]);
-                    } //NW 2
-
-                    if (y > 0 && minespole[x, y - 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x, y - 1]);
-                    } // Nord 3
-                    if (x < (X - 1) && y > 0 && minespole[x + 1, y - 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x + 1, y - 1]); 
-                    }//NordEast 4
-
-                    if (x < (X - 1) && minespole[x + 1, y] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x + 1, y]);
-                    }  //East 5
-                    if (x < (X - 1) && y < (Y - 1) && minespole[x + 1, y + 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x + 1, y + 1]);
-                    }//SouthEast 6
-                    if (y < (Y - 1) && minespole[x, y + 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x, y + 1]);
-                    }//South 7
-                    if (x > 0 && y < (Y - 1) && minespole[x - 1, y + 1] <10 && buttonflags[x, y] is false)
-                    {
-                        minespole[x, y] = 100;//теперь это очищенная пустая область
-                        dispose_button(_buttons[x - 1, y + 1]);
-                    }//SouthWest 8
-                        break; 
-                case 1: labelbutton.ForeColor = Color.Blue; //цвет шрифта
-                    break;
-                case 2: labelbutton.ForeColor = Color.Green;
-                    break;
-                case 3: labelbutton.ForeColor = Color.Red;
-                    break;
-                case 4: labelbutton.ForeColor = Color.Navy;
-                    break;
-                case 5: labelbutton.ForeColor = Color.DeepPink;
-                    break;
-                case 6: labelbutton.ForeColor = Color.Brown;
-                    break;
-                case 7: labelbutton.ForeColor = Color.OrangeRed;
-                    break;
-                case 8: labelbutton.ForeColor = Color.Indigo;
-                    break;
-                case 9: labelbutton.ForeColor = Color.Yellow;
-                    break;
-                case 10: labelbutton.ForeColor = Color.Black; labelbutton.Text = "*";
-                    break;
-               
-                default: return; //это очищенная пустая область
+                timer1.Enabled = false;  //выключаем таймер
+                MessageBox.Show("Victory");
+                this.Close();
 
             }
-
-            labelbutton.Location = new Point(W * x + 20, H * y + 35);
-            Z--;
-            if (Z == 0)
-                MessageBox.Show("Z=0");//отключаем кнопку
-            Controls.Add(labelbutton);
-    
         }
         private void setflag(int x, int y, Boolean flag)
         {
             buttonflags[x, y] = flag;
             if (flag is true)
-            { if (S == 0) { if (Z==0) Victory();return; }// нельзя ставить мин больше чем по счетчику
-              _buttons[x, y].Text = "?"; S--; Z--; labelcont.Text = Convert.ToString(S);}
-            else {  _buttons[x, y].Text = ""; S++; Z++; labelcont.Text = Convert.ToString(S); }
+            {
+                if (S == 0) return;// нельзя ставить мин больше чем по счетчику
+                S--;_buttons[x, y].Text = "?"; labelcont.Text = Convert.ToString(S);
+                if (S == 0) {  Victory();  return; }
+              
+            }
+            else 
+            {  //убираем флаг, и прибавляем значение счетчика
+                _buttons[x, y].Text = ""; S++; labelcont.Text = Convert.ToString(S); 
+            }
           
         }
 
@@ -824,9 +837,6 @@ namespace Password_Generator
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
             var button = (Button)sender;
-
-            //MessageBox.Show("Прощай " + button.Name);
-            //button.Dispose();
 
             // расчитаем количество мин вокруг каждой из ячеек
            
@@ -837,18 +847,14 @@ namespace Password_Generator
                 int y = t / Y;
                 if (buttonflags[x, y] is false)setflag(x, y, true); 
                 else setflag(x, y, false);
-
-                
                 return;
             }
-
         }
         private void button1_Click(object sender,  EventArgs eventArgs) // обработка левой кнопки мыши
         {
             var button = (Button)sender;
             
             //MessageBox.Show("Прощай " + button.Name);
-
             // расчитаем количество мин вокруг каждой из ячеек
             int t = (int)button.Tag;
             int x = t % Y;
@@ -858,24 +864,23 @@ namespace Password_Generator
             if (buttonflags[x, y] is true) return;  // стот флажек - не обрабатываем нажатие
             if (minespole[x, y] == 10)
              { /*Игра окончена*/
+                timer1.Enabled = false;//останавливаем таймер
+                flag_detonation = true;
+                dispose_button(_buttons[x, y]); 
                 //MessageBox.Show("Game OVER " + button.Name);
-                timer1.Enabled = false; //останавливаем таймер
-               /*Блокируем все кнопки и выводим мины*/
-               
-               for (int i = 0; i < X; i++)
-                 for (int j = 0; j < Y; j++)
-                 {
+                /*Блокируем все кнопки и выводим мины*/
 
-                   if(_buttons[i,j] !=null)dispose_button(_buttons[i, j]); // не открываем отсутствующие кнопки
-                           
-                 }
+                for (int i = 0; i < X; i++)
+                 for (int j = 0; j < Y; j++)
+                   if(_buttons[i,j].Visible is true)dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                
+                MessageBox.Show("Вы проиграли");
+                this.Close(); //закрываем окно 
                 return; //game over
 
              }
             dispose_button(_buttons[x, y]);
-            if (S == 0 && Z == 0){ Victory(); return; }
-
-
+            if (S == 0 ){ Victory(); return; }
 
         }
         private void button2_Click(object sender, EventArgs eventArgs)
@@ -883,13 +888,8 @@ namespace Password_Generator
 
         }
 
-         
-       
     }
    
-   
-
-
 }
 
         
