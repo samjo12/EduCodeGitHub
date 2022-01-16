@@ -105,7 +105,7 @@ namespace Password_Generator
             // btnStartMiner
             // 
             this.btnStartMiner.BackColor = System.Drawing.Color.White;
-            this.btnStartMiner.Location = new System.Drawing.Point(8, 32);
+            this.btnStartMiner.Location = new System.Drawing.Point(231, 91);
             this.btnStartMiner.Name = "btnStartMiner";
             this.btnStartMiner.Size = new System.Drawing.Size(75, 23);
             this.btnStartMiner.TabIndex = 8;
@@ -157,7 +157,7 @@ namespace Password_Generator
             // 
             this.nudMinerY.Location = new System.Drawing.Point(277, 3);
             this.nudMinerY.Maximum = new decimal(new int[] {
-            20,
+            30,
             0,
             0,
             0});
@@ -179,7 +179,7 @@ namespace Password_Generator
             // 
             this.nudMinerX.Location = new System.Drawing.Point(210, 3);
             this.nudMinerX.Maximum = new decimal(new int[] {
-            20,
+            30,
             0,
             0,
             0});

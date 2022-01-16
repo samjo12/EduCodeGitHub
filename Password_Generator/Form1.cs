@@ -548,8 +548,17 @@ namespace Password_Generator
             StaticData.X = nudMinerX.Value;
             StaticData.Y = nudMinerY.Value;
             StaticData.S = nudComplicate.Value;
-            SlaveForm SF = new SlaveForm(); SF.Show();
-        }
+            SlaveForm SF = new SlaveForm();
+            
+            SF.DialogResult = DialogResult.Retry;
+            while (SF.DialogResult == DialogResult.Retry)
+            {
+                SF.DialogResult = DialogResult.OK;
+                //SF = new SlaveForm();
+                SF.Show(); 
+            }
+
+        }    
 
         private void tabMiner_Click(object sender, EventArgs e)
         {
@@ -564,6 +573,7 @@ namespace Password_Generator
         public static Decimal X = 0;
         public static Decimal Y = 0;
         public static Decimal S = 0;
+
     }
     public partial class SlaveForm : Form
     {
@@ -571,29 +581,27 @@ namespace Password_Generator
         int Y;
         int S;
 
-
-        public DateTime date1 = new DateTime(0, 0);
-        public Timer timer1 = new Timer();
+        DateTime date1 = new DateTime(0, 0);
+        Timer timer1 = new Timer();
 
         Label labelcont = new Label(); // счетчик мин
-        public Label labeltime = new Label();
+        Label labeltime = new Label();
         int W = 30;
         int H = 30;
         int Z; // количество действующих кнопок
-        public Button[,] _buttons = new Button[30, 30];
+        Button[,] _buttons = new Button[30, 30];
         Boolean[,] buttonflags = new Boolean[30, 30];
         Boolean[,] buttonopened = new Boolean[30, 30];
         Label[,] LButtons = new Label[30, 30];
         Boolean flag_detonation = false;
-        public int[,] minespole = new int[20,20];
-       // private Label mines_counter = new Label();
-        private Button Start = new Button();
-        private Button FlagSW = new Button();
+        int[,] minespole = new int[30,30];
+        Button Start = new Button();
+        Button FlagSW = new Button();
         Random rnd = new Random();
         public SlaveForm()
         {
-           // InitializeComponent();
-           // Полученные в качестве аргумента данные напрямую пишем в свойство Text текстбокса
+            // InitializeComponent();
+            // Полученные в качестве аргумента данные напрямую пишем в свойство Text текстбокса
             
             Text = "Тихо! Идет разминирование ...";
             X = Convert.ToInt32(StaticData.X);
@@ -615,10 +623,9 @@ namespace Password_Generator
             labelcont.BackColor = Color.Black; // цвет фона
             labelcont.TextAlign = ContentAlignment.MiddleCenter;
             labelcont.Font = labelfont;
-            labelcont.Text = S.ToString();
-            if (S < 100) labelcont.Text = "0" + labelcont.Text;
-            else if (S<10) labelcont.Text = "00" + labelcont.Text;
-            labelcont.Location = new Point(20, 0);
+            labelcont.Text = S.ToString("000");
+     
+            labelcont.Location = new Point(20, 5);
             Controls.Add(labelcont);
             
             labeltime.Width = 70;
@@ -630,25 +637,30 @@ namespace Password_Generator
             labeltime.TextAlign = ContentAlignment.MiddleCenter;
             labeltime.Font = labelfont;
             labeltime.Text = date1.ToString("mm:ss");
-            labeltime.Location = new Point(this.Width-labeltime.Width-30,0);
+            labeltime.Location = new Point(this.Width-labeltime.Width-30,5);
             Controls.Add(labeltime);
+            //Создаем кнопку переключения нажатий/режимы тык/флаг
 
-
+            /* draw_all_labels();
+             MessageBox.Show("!!");*/
+            //BtnFocus.Focus();
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
                     var button = new Button();
 
                     button.Width = W;
-                    button.Height = H;
+                    button.Height = H; 
 
-                    button.Location = new Point(button.Width * i + 20, button.Height * j + 35); //20 и 35 - отступы слева и сверху
-                    //button.Text = (j * Y + i).ToString();
-                    button.FlatStyle = FlatStyle.Popup;
+                    button.Location = new Point((button.Width) * i+1 + 20, (button.Height) * j+1 + 35); //20 и 35 - отступы слева и сверху
+                    button.Text = "";
+                    //button.FlatStyle = FlatStyle.Popup;
+                    button.BackColor = Color.AntiqueWhite;
                     var buttonfont = new Font("Arial", 14, FontStyle.Bold);
                     button.Font = buttonfont;
 
-                    button.Tag = j * Y + i;// НЕ заминировано, записываем только порядковый номер кнопки
+                    button.Tag = j * X + i;// НЕ заминировано, записываем только порядковый номер кнопки
+                    //button.Text = (j * X + i).ToString();
                     //button.Tag = 0; 
                     minespole[i, j] = 0; //инициализируем минное поле
                     buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
@@ -656,11 +668,12 @@ namespace Password_Generator
                     //button.Visible = true;
 
                     _buttons[i, j] = button;
-                    this.Controls.Add(_buttons[i, j]);
-                   this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // отслеживаем правую кнопку мыши
-                    this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+                    this.Controls.Add(_buttons[i, j]); //выводим кнопку с заданными ранее параметрами
+                   this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на наши кнопки  обработчик нажатий  кнопок мыши
+                   // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
                     this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
                 }
+            
             for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
             {
                 int x, y;
@@ -668,11 +681,7 @@ namespace Password_Generator
                     x = rnd.Next(0,X-1); 
                     y = rnd.Next(0,Y-1);
                 } while (minespole[x, y]==10);
-
-
                 minespole[x, y] = 10; //мина
-                //this._buttons[x, y].Tag = 10;
-
             }
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
@@ -689,7 +698,7 @@ namespace Password_Generator
                     if (i > 0 && j < (Y - 1) && minespole[i - 1, j + 1] == 10) around++; //SouthWest
                     minespole[i, j] = around; // указываем количество мин вокруг от 0 до 9
                 }
-            timer1.Enabled = true;
+           
 
         }
         private void timer1_Tick(object sender, EventArgs e)
@@ -697,17 +706,18 @@ namespace Password_Generator
             date1 = date1.AddMilliseconds(1);
             labeltime.Text = date1.ToString("mm:ss");
         }
-
-        private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
+       
+            private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
             int t = (int)b.Tag;
-            int x = t % Y;
-            int y = t / Y;
-
+            int x = t % X;
+            int y = t / X;
+            
             if (buttonflags[x, y] is true) return; // На клетке стоит флаг, ничего отключать не нужно
 
             var labelfont = new Font("Arial", 14, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
             var labelbutton = new Label(); // счетчик мин
+            //labelbutton.Text = x.ToString() + y.ToString();
             labelbutton.Text = minespole[x, y].ToString();
 
             switch (minespole[x, y])
@@ -770,11 +780,13 @@ namespace Password_Generator
                 case 9: labelbutton.ForeColor = Color.Yellow; break;
                 case 10: labelbutton.ForeColor = Color.Black; //рисуем мину
                     labelbutton.Text = "*";
-                    if (flag_detonation is true) 
-                    { flag_detonation = false; labelbutton.BackColor = Color.Red; } // цвет фона разорвавшейся мины
-                    labelfont = new Font("Arial", 18, FontStyle.Bold);
+                    if (flag_detonation is true) // нажал прямо в эту мину .... :(
+                    { 
+                      labelbutton.BackColor = Color.Red;// цвет фона разорвавшейся мины
+                      labelfont = new Font("Arial", 18, FontStyle.Bold);
+                    } 
                     break;
-                default: return; //это очищенная пустая область
+                default: GameOver(); return; //это очищенная пустая область
                 
             }
             // Создаем на месте убитой кнопки лейбл с элементом минного поля
@@ -794,102 +806,121 @@ namespace Password_Generator
             labelbutton.Location = new Point(W * x + 20, H * y + 35);
             Controls.Add(labelbutton);
             buttonopened[x, y] = true;
-            if (S == 0) Victory(); // Если число флагов и мин совпадает -проверим достигнута ли победа
-
-            
-    
+            if (S == 0 || flag_detonation is true) GameOver(); // Если число флагов и мин совпадает -проверим достигнута ли победа
         }
-        private void Victory()
+
+
+
+        private void GameOver() //проверяем на достижение конца игры и чистим хвосты
         {
             int z = X * Y;
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                     //if (_buttons[i,j].Visible is false) z--;
                     if (buttonopened[i, j] is true) z--;
+            if(flag_detonation is true)
+            {
+                flag_detonation = false;
+                for (int i = 0; i < X; i++)
+                    for (int j = 0; j < Y; j++)
+                        if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                if (timer1 != null) { timer1.Dispose(); timer1 = null; }//убиваем таймер, чтобы избежать артефактов при перезапуске
+
+                MessageBox.Show("GameOver ... Try Again .");
+                this.DialogResult = DialogResult.Retry;
+                this.Close();
+                return;
+            }
 
             if (S == 0 && z == Z) // стоит максимальное кол-во флажков и количесво неоткрытых кнопок соответствует числу мин
             {
-                timer1.Enabled = false;  //выключаем таймер
-                MessageBox.Show("Victory");
-                this.Close();
+                //выключаем таймер
+                if (timer1 != null) { timer1.Dispose(); timer1 = null; }
+                
+                MessageBox.Show("YOU ARE WIN !!!");
+                this.DialogResult = DialogResult.Retry;
+                this.Close(); 
+                return;
+            }
+            if (S != 0 && z == Z) //Проигрыш
+            {
+                if (timer1 != null) { timer1.Dispose(); timer1 = null; }//убиваем таймер, чтобы избежать артефактов при перезапуске
 
+                MessageBox.Show("GameOver ... Try Again .");
+                this.DialogResult = DialogResult.Retry;
+                this.Close(); 
+                return;
             }
         }
-        private void setflag(int x, int y, Boolean flag)
+        private void setflag(int x, int y, Boolean flag) // устанавливает/снимает флаг с кнопки
         {
-            buttonflags[x, y] = flag;
+              
             if (flag is true)
             {
                 if (S == 0) return;// нельзя ставить мин больше чем по счетчику
-                S--;_buttons[x, y].Text = "?"; labelcont.Text = Convert.ToString(S);
-                if (S == 0) {  Victory();  return; }
-              
+                buttonflags[x, y] = flag;
+                S--;_buttons[x, y].Text = "?";labelcont.Text = S.ToString("000");
+                if (S == 0) {  GameOver();  return; } //проверим - не достигнут ли конец игры
+                
             }
             else 
-            {  //убираем флаг, и прибавляем значение счетчика
-                _buttons[x, y].Text = ""; S++; labelcont.Text = Convert.ToString(S); 
+            {  //убираем флаг, и прибавляем значение счетчика неотмеченных мин
+                _buttons[x, y].Text = ""; S++; labelcont.Text = S.ToString("000"); 
+                buttonflags[x, y] = flag;// массив с флагами на кнопках 
             }
           
         }
 
-      
 
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
             var button = (Button)sender;
+            int t = (int)button.Tag;
+            int x = t % X;
+            int y = t / X;
+            if (e.Button==MouseButtons.Left) //нажата левая кнопка мыши
+            {
 
-            // расчитаем количество мин вокруг каждой из ячеек
-           
-            if (e.Button == MouseButtons.Right)
+                if(timer1.Enabled is false)timer1.Start(); //запускаем таймер,если еще этого не сделали
+                if (buttonflags[x, y] is true) return;  // стоит флажек - не обрабатываем нажатие
+                if (minespole[x, y] == 10)
+                { /*Игра окончена*/
+                    timer1.Enabled = false;//останавливаем таймер - взрыв
+                    flag_detonation = true; //ставим флаг, что нажата кнопка с миной
+                }
+                dispose_button(_buttons[x, y]);
+                //if (S == 0) { GameOver(); return; }
+                return;
+            }
+                    
+            if (e.Button == MouseButtons.Right) //нажата правая кнопка мыши
             { 
-                int t = (int)button.Tag;
-                int x = t % Y;
-                int y = t / Y;
-                if (buttonflags[x, y] is false)setflag(x, y, true); 
+                if (buttonflags[x, y] is false)setflag(x, y, true); // ставим или снимаем флажек с кнопки
                 else setflag(x, y, false);
                 return;
             }
-        }
-        private void button1_Click(object sender,  EventArgs eventArgs) // обработка левой кнопки мыши
-        {
-            var button = (Button)sender;
-            
-            //MessageBox.Show("Прощай " + button.Name);
-            // расчитаем количество мин вокруг каждой из ячеек
-            int t = (int)button.Tag;
-            int x = t % Y;
-            int y = t / Y;
-           
-            //timer1.Start();
-            if (buttonflags[x, y] is true) return;  // стот флажек - не обрабатываем нажатие
-            if (minespole[x, y] == 10)
-             { /*Игра окончена*/
-                timer1.Enabled = false;//останавливаем таймер
-                flag_detonation = true;
-                dispose_button(_buttons[x, y]); 
-                //MessageBox.Show("Game OVER " + button.Name);
-                /*Блокируем все кнопки и выводим мины*/
-
-                for (int i = 0; i < X; i++)
-                 for (int j = 0; j < Y; j++)
-                   if(_buttons[i,j].Visible is true)dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
-                
-                MessageBox.Show("Вы проиграли");
-                this.Close(); //закрываем окно 
-                return; //game over
-
-             }
-            dispose_button(_buttons[x, y]);
-            if (S == 0 ){ Victory(); return; }
 
         }
-        private void button2_Click(object sender, EventArgs eventArgs)
-        {
+        /* private void button1_Click(object sender, EventArgs eventArgs) // обработка левой кнопки мыши
+ {
+     var button = (Button)sender;
+     int t = (int)button.Tag;
+     int x = t % Y;
+     int y = t / Y;
 
-        }
+     timer1.Start();
+     if (buttonflags[x, y] is true) return;  // стоит флажек - не обрабатываем нажатие
+     if (minespole[x, y] == 10)
+     { //Игра окончена
+         timer1.Enabled = false;//останавливаем таймер
+         flag_detonation = true; //ставим флаг, что нажата кнопка с миной
+     }
+     dispose_button(_buttons[x, y]);
+     //if (S == 0) { GameOver(); return; }
+ }*/
 
     }
-   
+
 }
 
         
