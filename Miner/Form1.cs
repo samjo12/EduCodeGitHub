@@ -460,17 +460,17 @@ namespace Password_Generator
         }
         void Miner2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //if (e.CloseReason == CloseReason.UserClosing)
+            if (e.CloseReason == CloseReason.UserClosing)
                 e.Cancel = true;
-            //if(timer1!=null)timer1.Dispose(); //if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-            /*for (int i = 0; i < X; i++)
+            if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
+            for (int i = 0; i < X; i++)
                 for (int j = 0; j<Y; j++)
                 {
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
-                }*/
+                }
             miner1.Visible = Enabled;
-            this.Close();
+            this.Hide();
         }
         private void NewGameINI ()
         {
@@ -486,6 +486,7 @@ namespace Password_Generator
                 for (int j = 0; j < Y; j++)
                 {
                    _buttons[i,j].Visible = true; //показать кнопки
+                    _buttons[i, j].Text = "";
                     minespole[i, j] = 0; //инициализируем минное поле
                     buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
                     buttonopened[i, j] = false;//ini массива нажатых кнопок
