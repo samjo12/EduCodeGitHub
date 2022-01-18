@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -280,6 +281,10 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
+        Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
+        //PictureBox imageControl = new PictureBox();
+        //private GifImage gifImage = null;
+        //private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
@@ -307,8 +312,9 @@ namespace Password_Generator
         {
             miner1 = owner;
             this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
-            //InitializeComponent();
-
+                                                                                     //InitializeComponent();
+            //gifImage = new GifImage(filePath);
+            //gifImage.ReverseAtEnd = false; //dont reverse at end
 
             this.Text = "Take it Easy ...";
             
@@ -553,8 +559,12 @@ namespace Password_Generator
         {
             date1 = date1.AddMilliseconds(1);
             labeltime.Text = date1.ToString("mm:ss");
+           // pictureBox1.Image = gifImage.GetNextFrame();
         }
-       
+        private void Explode_mine()
+        {
+            //PictureBox(,);
+        }
         private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
             int t = (int)b.Tag;
@@ -611,8 +621,8 @@ namespace Password_Generator
                             dispose_button(_buttons[x - 1, y + 1]);
                         }//SouthWest 8
                         break;
-                    //цвет шрифта числа мин вокруг
-                case 1-9: /*LButtons[x,y].ForeColor = Color.Blue; */break;
+                //цвет шрифта числа мин вокруг
+                case 1 - 9: /*LButtons[x,y].ForeColor = Color.Blue; */break;
                 /*case 2: LButtons[x, y].ForeColor = Color.Green; break;
                 case 3: LButtons[x, y].ForeColor = Color.Red; break;
                 case 4: LButtons[x, y].ForeColor = Color.Navy; break;
@@ -627,6 +637,9 @@ namespace Password_Generator
                     {
                         LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
                         LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
+                        //gifImage = new GifImage(filePath);
+                        //gifImage.ReverseAtEnd = false; //dont reverse at end
+                        LButtons[x, y].Image =pictureBox1;
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область
@@ -725,7 +738,65 @@ namespace Password_Generator
                 return;
             }
         }
-    }
+    }/*
+    public class GifImage
+    {
+        private Image gifImage;
+        private FrameDimension dimension;
+        private int frameCount;
+        private int currentFrame = -1;
+        private bool reverse;
+        private int step = 1;
+
+        public GifImage(string path)
+        {
+            gifImage = Image.FromFile(path);
+            //initialize
+            dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
+            //gets the GUID
+            //total frames in the animation
+            frameCount = gifImage.GetFrameCount(dimension);
+        }
+
+        public bool ReverseAtEnd
+        {
+            //whether the gif should play backwards when it reaches the end
+            get { return reverse; }
+            set { reverse = value; }
+        }
+
+        public Image GetNextFrame()
+        {
+
+            currentFrame += step;
+
+            //if the animation reaches a boundary...
+            if (currentFrame >= frameCount || currentFrame < 0)
+            {
+                if (reverse)
+                {
+                    step *= -1;
+                    //...reverse the count
+                    //apply it
+                    currentFrame += step;
+                }
+                else
+                {
+                    currentFrame = 0;
+                    //...or start over
+                }
+            }
+            return GetFrame(currentFrame);
+        }
+
+        public Image GetFrame(int index)
+        {
+            gifImage.SelectActiveFrame(dimension, index);
+            //find the frame
+            return (Image)gifImage.Clone();
+            //return a copy of it
+        }
+    }*/
 }
 
         
