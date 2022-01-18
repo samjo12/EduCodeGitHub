@@ -171,6 +171,7 @@ namespace Password_Generator
             */
             this.Visible = false; //отключаем основное окно
             new Miner2(this).Show();//открываем дочернюю форму с полем игры
+            
         }
 
         private void tbSizePlayfield_KeyDown(object sender, KeyEventArgs e)///object sender, KeyPressEventArgs e
@@ -383,7 +384,6 @@ namespace Password_Generator
                     
                 }
 
-            //this.Close();
             for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
             {
                 int x, y;
@@ -463,12 +463,12 @@ namespace Password_Generator
             if (e.CloseReason == CloseReason.UserClosing)
                 e.Cancel = true;
             if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-            for (int i = 0; i < X; i++)
+           /* for (int i = 0; i < X; i++)
                 for (int j = 0; j<Y; j++)
                 {
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
-                }
+                }*/
             miner1.Visible = Enabled;
             this.Hide();
         }
@@ -477,8 +477,10 @@ namespace Password_Generator
             S=Z; // количество мин
             flag_detonation = false;
             flag_restart = false;
-            timer1.Dispose(); timer1 = null; timer1 = new Timer();
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick); // создаем новый таймер
+            //timer1.Dispose(); timer1 = null; timer1 = new Timer();
+
+            // this.timer1.Tick += new System.EventHandler(this.timer1_Tick); // создаем новый таймер
+            date1 = new DateTime(0, 0);
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
             labeltime.Text = "00:00";//date1.ToString("mm:ss");
             var labelfont1 = new Font("Arial", 14, FontStyle.Bold);
@@ -645,21 +647,21 @@ namespace Password_Generator
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                     if (buttonopened[i, j] is true) z--;
-            if(flag_detonation is true)
+            if(flag_detonation is true) //взорвалась мина
             {
-                flag_detonation = false;
+                timer1.Stop(); 
+                flag_detonation = false; // сбрасываем флаг взрыва
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
                         if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
                 flag_restart = true; // игра окончена
-                timer1.Stop();
                 return;
             }
 
             if (S == 0 && z == Z) // стоит максимальное кол-во флажков и количесво неоткрытых кнопок соответствует числу мин
             {
-                flag_restart = true; // игра окончена
                 timer1.Stop();
+                flag_restart = true; // игра окончена
                 return;
             }
             if (S != 0 && z == Z) //Проигрыш
@@ -671,10 +673,9 @@ namespace Password_Generator
         }
         private void setflag(int x, int y, Boolean flag) // устанавливает/снимает флаг с кнопки
         {
-              
             if (flag is true)
             {
-                if (S == 0) return;// нельзя ставить мин больше чем по счетчику
+                if (S == 0) return;// нельзя ставить флажков больше, чем есть мин по счетчику
                 buttonflags[x, y] = flag;
                 S--;_buttons[x, y].Text = "?";labelcont.Text = S.ToString("000");
                 if (S == 0) {  GameOver_check();  return; } //проверим - не достигнут ли конец игры
@@ -704,10 +705,10 @@ namespace Password_Generator
             y = t / X;
             if (e.Button==MouseButtons.Left) //нажата левая кнопка мыши
             {
-                //if (flag_detonation is true) { MessageBox.Show("GameOver_check"); }
+                //if (flag_detonation is true) { MessageBox.Show("GameOver_check"); }///////////// DEL ME
                 if(timer1.Enabled is false)timer1.Start(); //запускаем таймер,если еще этого не сделали
                 if (buttonflags[x, y] is true) return;  // на этой кнопке стоит флажек - не обрабатываем этот клик
-                if (minespole[x, y] == 10)
+                if (minespole[x, y] == 10) //ой, наступили на мину!
                 { /*Игра окончена*/
                     timer1.Enabled = false;//останавливаем таймер - взрыв
                     flag_detonation = true; //ставим флаг, что нажата кнопка с миной
