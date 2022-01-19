@@ -29,8 +29,6 @@ namespace Password_Generator
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.MenuStartGame = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuGameLevel = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,25 +46,6 @@ namespace Password_Generator
             this.YSizePlayfield = new System.Windows.Forms.ToolStripTextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.AccessibleRole = System.Windows.Forms.AccessibleRole.Border;
-            this.toolStripMenuItem1.Enabled = false;
-            this.toolStripMenuItem1.MergeAction = System.Windows.Forms.MergeAction.Replace;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
-            this.toolStripMenuItem1.Text = "Size X (not more 30):";
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.AccessibleRole = System.Windows.Forms.AccessibleRole.Border;
-            this.toolStripMenuItem2.Enabled = false;
-            this.toolStripMenuItem2.MergeAction = System.Windows.Forms.MergeAction.Replace;
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.ShowShortcutKeys = false;
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(224, 26);
-            this.toolStripMenuItem2.Text = "Size Y (not more 30):";
             // 
             // menuStrip1
             // 
@@ -86,7 +65,7 @@ namespace Password_Generator
             this.MenuStartGame.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MenuStartGame.ForeColor = System.Drawing.Color.Green;
             this.MenuStartGame.Name = "MenuStartGame";
-            this.MenuStartGame.Size = new System.Drawing.Size(96, 25);
+            this.MenuStartGame.Size = new System.Drawing.Size(95, 25);
             this.MenuStartGame.Text = "StartGame";
             this.MenuStartGame.Click += new System.EventHandler(this.MenuStartGame_Click);
             // 
@@ -185,10 +164,8 @@ namespace Password_Generator
             // 
             this.MenuSizePlayfieldCustom.CheckOnClick = true;
             this.MenuSizePlayfieldCustom.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
             this.XSizePlayfield,
             this.toolStripSeparator1,
-            this.toolStripMenuItem2,
             this.YSizePlayfield});
             this.MenuSizePlayfieldCustom.Name = "MenuSizePlayfieldCustom";
             this.MenuSizePlayfieldCustom.Size = new System.Drawing.Size(180, 26);
@@ -203,6 +180,7 @@ namespace Password_Generator
             this.XSizePlayfield.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.XSizePlayfield.Name = "XSizePlayfield";
             this.XSizePlayfield.Size = new System.Drawing.Size(120, 25);
+            this.XSizePlayfield.Text = "Size X:";
             this.XSizePlayfield.ToolTipText = "Enter value in range 5..30";
             this.XSizePlayfield.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSizePlayfield_KeyDown);
             this.XSizePlayfield.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSizePlayfield_KeyPress);
@@ -211,7 +189,7 @@ namespace Password_Generator
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(221, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // YSizePlayfield
             // 
@@ -221,6 +199,7 @@ namespace Password_Generator
             this.YSizePlayfield.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.YSizePlayfield.Name = "YSizePlayfield";
             this.YSizePlayfield.Size = new System.Drawing.Size(120, 25);
+            this.YSizePlayfield.Text = "Size Y:";
             this.YSizePlayfield.ToolTipText = "Enter value in range 5..30";
             this.YSizePlayfield.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSizePlayfield_KeyDown);
             this.YSizePlayfield.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSizePlayfield_KeyPress);
@@ -257,10 +236,8 @@ namespace Password_Generator
         private System.Windows.Forms.ToolStripMenuItem MenuSizePlayfield30;
         private System.Windows.Forms.ToolStripMenuItem MenuSizePlayfieldCustom;
         private System.Windows.Forms.ToolStripTextBox YSizePlayfield;
-        private System.Windows.Forms.ToolStripTextBox XSizePlayfield;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripTextBox XSizePlayfield;
     }
 }
 

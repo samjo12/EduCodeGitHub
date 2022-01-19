@@ -17,7 +17,8 @@ namespace Password_Generator
         Random rnd = new Random();
           int nudMinerX = 10;
           int nudMinerY = 10;
-          int nudComplicate = 1;
+          int nudComplicate = 12; //12% мин
+          
 
         public Miner1()
         {
@@ -25,57 +26,55 @@ namespace Password_Generator
             this.CenterToScreen(); // устанавливаем положение формы  по центру экрана
         }
 
-
         public void GameLevelChanging(object sender, EventArgs e)
-    {
-        // Determine if clicked menu item is the GameLevel menu item.
-        if (sender == MenuGameLevelEasy)
         {
-            // Set the checkmark
-            MenuGameLevelEasy.Checked = true;
-            // Uncheck other GameLevel menu items.
-            MenuGameLevelMedium.Checked = false;
-            MenuGameLevelHard.Checked = false;
-            MenuGameLevelNightmare.Checked = false;
-            // Set the color of the text in the TextBox control to Blue.
-            nudComplicate = 1;
-        }
-        else if (sender == MenuGameLevelMedium)
-        {
-            // Set the checkmark
-            MenuGameLevelMedium.Checked = true;
-            // Uncheck others menu items.
-            MenuGameLevelEasy.Checked = false;
-            MenuGameLevelHard.Checked = false;
-            MenuGameLevelNightmare.Checked = false;
-            nudComplicate = 2;
-        }
-        else if (sender == MenuGameLevelHard)
-        {
-            // Set the checkmark
-            MenuGameLevelHard.Checked = true;
-            // Uncheck the menuItemRed and menuItemBlue menu items.
-            MenuGameLevelEasy.Checked = false;
-            MenuGameLevelMedium.Checked = false;
-            MenuGameLevelNightmare.Checked = false;
-            // Set the color of the text in the TextBox control to Blue.
-            nudComplicate = 3;
-        }
-        else
-        {
-            MenuGameLevelEasy.Checked = false;
-            MenuGameLevelMedium.Checked = false;
-            MenuGameLevelHard.Checked = false;
-            MenuGameLevelNightmare.Checked = true;
-        }
-
-
+         // Determine if clicked menu item is the GameLevel menu item.
+            if (sender == MenuGameLevelEasy)
+            {
+                // Set the checkmark
+                MenuGameLevelEasy.Checked = true;
+                // Uncheck other GameLevel menu items.
+                MenuGameLevelMedium.Checked = false;
+                MenuGameLevelHard.Checked = false;
+                MenuGameLevelNightmare.Checked = false;
+                // Set the color of the text in the TextBox control to Blue.
+                nudComplicate = 12; //% мин
+            }
+            else if (sender == MenuGameLevelMedium)
+            {
+                // Set the checkmark
+                MenuGameLevelMedium.Checked = true;
+                // Uncheck others menu items.
+                MenuGameLevelEasy.Checked = false;
+                MenuGameLevelHard.Checked = false;
+                MenuGameLevelNightmare.Checked = false;
+                nudComplicate = 19; //%мин
+            }
+            else if (sender == MenuGameLevelHard)
+            {
+                // Set the checkmark
+                MenuGameLevelHard.Checked = true;
+                // Uncheck the menuItemRed and menuItemBlue menu items.
+                MenuGameLevelEasy.Checked = false;
+                MenuGameLevelMedium.Checked = false;
+                MenuGameLevelNightmare.Checked = false;
+                // Set the color of the text in the TextBox control to Blue.
+                nudComplicate = 26; // %
+            }
+            else //nightmare
+            {
+                MenuGameLevelEasy.Checked = false;
+                MenuGameLevelMedium.Checked = false;
+                MenuGameLevelHard.Checked = false;
+                MenuGameLevelNightmare.Checked = true;
+                nudComplicate = 34; // %
+            }
     }
 
     public void SizePlayfieldChanging(object sender, EventArgs e)
     {
         // Determine if clicked menu item is the Playfield menu item.
-        if (sender == MenuSizePlayfield10)
+        if (sender == MenuSizePlayfield10)  //easy
         {
             // Set the checkmark
             MenuSizePlayfield10.Checked = true;
@@ -84,6 +83,7 @@ namespace Password_Generator
             MenuSizePlayfield30.Checked = false;
             MenuSizePlayfieldCustom.Checked = false;
             nudMinerX = 10; nudMinerY = 10;
+            XSizePlayfield.Text = "Size X:"; YSizePlayfield.Text = "Size Y:"; // заполняем поля с подсказками
         }
         else if (sender == MenuSizePlayfield20)
         {
@@ -92,27 +92,47 @@ namespace Password_Generator
             MenuSizePlayfield30.Checked = false;
             MenuSizePlayfieldCustom.Checked = false;
             nudMinerX = 20; nudMinerY = 20;
+            XSizePlayfield.Text = "Size X:"; YSizePlayfield.Text = "Size Y:"; // заполняем поля с подсказками
         }
-        else if (sender == MenuSizePlayfield30)
+            else if (sender == MenuSizePlayfield30)
         {
             MenuSizePlayfield30.Checked = true;
             MenuSizePlayfield10.Checked = false;
             MenuSizePlayfield20.Checked = false;
             MenuSizePlayfieldCustom.Checked = false;
             nudMinerX = 30; nudMinerY = 30;
+            XSizePlayfield.Text = "Size X:"; YSizePlayfield.Text = "Size Y:"; // заполняем поля с подсказками
+
         }
-        else //if (sender == MenuSizePlayfieldCustom || XSizePlayfieldcustom || YSizePlayfield
+        else if (sender == MenuSizePlayfieldCustom) 
         {
             MenuSizePlayfield10.Checked = false;
             MenuSizePlayfield20.Checked = false;
             MenuSizePlayfield30.Checked = false;
             MenuSizePlayfieldCustom.Checked = true;
-          /*  if (nudMinerX < 0 && nudMinerX > 30) { nudMinerX = 0; XSizePlayfield.Text = ""; }
-            if (nudMinerY < 0 && nudMinerY > 30) { nudMinerY = 0; YSizePlayfield.Text = ""; }*/
-        nudMinerX = 0; XSizePlayfield.Text = ""; nudMinerY = 0; YSizePlayfield.Text = "";
-            }
+            if (XSizePlayfield.Text is "") { XSizePlayfield.Text = "Size X:"; nudMinerX = 0; }
+            if (YSizePlayfield.Text is "") { YSizePlayfield.Text = "Size Y:"; nudMinerY = 0; }
+            // nudMinerX = 0; nudMinerY = 0; XSizePlayfield.Text = "Size X:"; YSizePlayfield.Text = "Size Y:";
+        } 
+        else if (sender == XSizePlayfield)
+        {
+          MenuSizePlayfield10.Checked = false;
+          MenuSizePlayfield20.Checked = false;
+          MenuSizePlayfield30.Checked = false;
+          MenuSizePlayfieldCustom.Checked = true;
+          XSizePlayfield.Text = ""; nudMinerX = 0;
+          if (nudMinerY == 0) YSizePlayfield.Text = "Size Y:"; 
         }
-
+        else // sender ==YSizePlayfield
+        {
+           MenuSizePlayfield10.Checked = false;
+           MenuSizePlayfield20.Checked = false;
+           MenuSizePlayfield30.Checked = false;
+           MenuSizePlayfieldCustom.Checked = true;
+           YSizePlayfield.Text = ""; nudMinerY = 0;
+           if (nudMinerX == 0) XSizePlayfield.Text = "Size X:"; 
+        }
+    }
 
         void MenuStartGame_Click(object sender, EventArgs e)
         {
@@ -172,7 +192,6 @@ namespace Password_Generator
             */
             this.Visible = false; //отключаем основное окно
             new Miner2(this).Show();//открываем дочернюю форму с полем игры
-            
         }
 
         private void tbSizePlayfield_KeyDown(object sender, KeyEventArgs e)///object sender, KeyPressEventArgs e
@@ -193,8 +212,10 @@ namespace Password_Generator
                e.Handled = true; // не пропускать символ
                 return;
             }
+            
             if (sender == XSizePlayfield) //пришла цифра из текстбокса XSizePlayfield
             {
+                if (XSizePlayfield.Text.Length > 3) XSizePlayfield.Text = ""; // если на вход залетело слово вместо цифр
                 string tmpstr = XSizePlayfield.Text + number;
                 switch(tmpstr.Length) //проверим новую длину текстбокса включая цифру number
                 {
@@ -221,17 +242,21 @@ namespace Password_Generator
                          nudMinerX = Convert.ToInt32(XSizePlayfield.Text);
                          return;
                         }
+                        nudMinerX = Convert.ToInt32(tmpstr);
                         break;
-                  default: // 
+                  default:
+                        //XSizePlayfield.Text = tmpstr; это делает textbox на автомате :)
+                        nudMinerX = Convert.ToInt32(tmpstr);// вводится первый символ
                         break;
                 }
-                if (XSizePlayfield.Text.Length > 0) nudMinerX = Convert.ToInt32(tmpstr); else nudMinerX = 0;
+                
+               // if (XSizePlayfield.Text.Length > 0) nudMinerX = Convert.ToInt32(tmpstr); else nudMinerX = 0;
                 return;
             }
 
-
             if (sender == YSizePlayfield) //пришла цифра из текстбокса YSizePlayfield
             {
+                if (YSizePlayfield.Text.Length > 3) YSizePlayfield.Text = ""; // если на вход залетело слово вместо цифр
                 string tmpstr = YSizePlayfield.Text + number;
                 switch (tmpstr.Length) //проверим новую длину текстбокса включая символ number
                 {
@@ -246,7 +271,7 @@ namespace Password_Generator
                             return;
                         } //иначе оставляем в текстбоксе два последних символа
                         YSizePlayfield.Text = ts2;
-                        e.Handled = true; // не пропускать символ, т.к. мы строку отредактировали уже здесь.
+                        e.Handled = true; // не пропускать символ, т.к. мы отредактировали строку  уже здесь.
                         nudMinerY = Convert.ToInt32(ts2);
                         return;
                     case 2:// вводится второй символ ... например 4+1
@@ -257,20 +282,26 @@ namespace Password_Generator
                             nudMinerY = Convert.ToInt32(YSizePlayfield.Text);
                             return;
                         }
+                        nudMinerY = Convert.ToInt32(tmpstr);
                         break;
-                    default: // 
+                    default:
+                        //YSizePlayfield.Text = tmpstr; это делает textbox на автомате :)
+                        nudMinerY = Convert.ToInt32(tmpstr);
                         break;
                 }
-                if (YSizePlayfield.Text.Length > 0) nudMinerY = Convert.ToInt32(tmpstr); else nudMinerY = 0;
+                //if (YSizePlayfield.Text.Length > 0) nudMinerY = Convert.ToInt32(tmpstr); else nudMinerY = 0;
                 return;
             }
         }
-       
+        private void tbSizePlayfield_FocusDown(object sender, EventArgs e) //если поля остаются полсле редактирования пустыми
+        {
+        }
+
     }
 
     public static class StaticData  //Статический класс, который выступает в качестве буфера для обмена данными между формами
     {
-        //Буфер данных
+        //класс для обмена данными
         public static Decimal X = 0;
         public static Decimal Y = 0;
         public static Decimal S = 0;
@@ -281,7 +312,8 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-        Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
+        //Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
+        Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
         //PictureBox imageControl = new PictureBox();
         //private GifImage gifImage = null;
         //private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
@@ -320,7 +352,7 @@ namespace Password_Generator
             
             X = Convert.ToInt32(StaticData.X);
             Y = Convert.ToInt32(StaticData.Y);
-            S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/10)); /*количество мин исходя из уровня сложности */
+            S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
             Z = S; // количество мин
             // вычисляем размер окна
             this.Width =40+Convert.ToInt32(X)*(W+1);
