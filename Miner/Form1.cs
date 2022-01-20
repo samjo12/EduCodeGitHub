@@ -312,14 +312,17 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-        //Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
-        Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
+        Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
+        //Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
         //PictureBox imageControl = new PictureBox();
-        //private GifImage gifImage = null;
-        //private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
+        private GifImage gifImage = null;
+        private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
+        private string path = @"C:\Users\usr\source\repos\Miner\mine55.gif";
+        int index;
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
+        Timer timerpic = new Timer();
         public Color LabelBackColour =Color.Azure;
         Label labelcont = new Label(); // счетчик мин
         Label labeltime = new Label();
@@ -345,11 +348,11 @@ namespace Password_Generator
             miner1 = owner;
             this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
                                                                                      //InitializeComponent();
-            //gifImage = new GifImage(filePath);
-            //gifImage.ReverseAtEnd = false; //dont reverse at end
+            gifImage = new GifImage(filePath);
+            gifImage.ReverseAtEnd = false; //dont reverse at end
 
             this.Text = "Take it Easy ...";
-            
+
             X = Convert.ToInt32(StaticData.X);
             Y = Convert.ToInt32(StaticData.Y);
             S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
@@ -388,8 +391,6 @@ namespace Password_Generator
             Controls.Add(labeltime);
             //Создаем кнопку переключения нажатий/режимы тык/флаг
 
-            /* draw_all_labels();
-             MessageBox.Show("!!");*/
             //BtnFocus.Focus();
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
@@ -398,7 +399,6 @@ namespace Password_Generator
 
                     button.Width = W;
                     button.Height = H; 
-
                     button.Location = new Point((button.Width) * i+1 + 20, (button.Height) * j+1 + 35); //20 и 35 - отступы слева и сверху
                     button.Text = "";
                     //button.FlatStyle = FlatStyle.Popup;
@@ -501,12 +501,12 @@ namespace Password_Generator
             if (e.CloseReason == CloseReason.UserClosing)
                 e.Cancel = true;
             if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-           /* for (int i = 0; i < X; i++)
+           for (int i = 0; i < X; i++)
                 for (int j = 0; j<Y; j++)
                 {
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
-                }*/
+                }
             miner1.Visible = Enabled;
             this.Hide();
         }
@@ -667,11 +667,16 @@ namespace Password_Generator
                     
                     if (flag_detonation is true) // флаг, что нажал прямо в эту мину .... :(
                     {
-                        LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
+                        //LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
                         LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
-                        //gifImage = new GifImage(filePath);
-                        //gifImage.ReverseAtEnd = false; //dont reverse at end
-                        LButtons[x, y].Image =pictureBox1;
+                        LButtons[x,y].Text = "";
+                        Image gifImage = Image.FromFile(path);
+                        FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList [0]);
+                        int frameCount = gifImage.GetFrameCount(dimension);
+                        
+                        gifImage.SelectActiveFrame(dimension, frameCount);
+                        //LButtons[x, y].Image = pictureBox1;
+                        //for (int l=0;l<30;l++)for(int k=0;k<10;k++)LButtons[x, y].Image = gifImage.GetFrame(k);
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область
@@ -755,7 +760,7 @@ namespace Password_Generator
                 if (buttonflags[x, y] is true) return;  // на этой кнопке стоит флажек - не обрабатываем этот клик
                 if (minespole[x, y] == 10) //ой, наступили на мину!
                 { /*Игра окончена*/
-                    timer1.Enabled = false;//останавливаем таймер - взрыв
+                    timer1.Stop();//останавливаем таймер - взрыв
                     flag_detonation = true; //ставим флаг, что нажата кнопка с миной
                 }
                 dispose_button(_buttons[x, y]);
@@ -770,7 +775,7 @@ namespace Password_Generator
                 return;
             }
         }
-    }/*
+    }
     public class GifImage
     {
         private Image gifImage;
@@ -786,8 +791,7 @@ namespace Password_Generator
             //initialize
             dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
             //gets the GUID
-            //total frames in the animation
-            frameCount = gifImage.GetFrameCount(dimension);
+            frameCount = gifImage.GetFrameCount(dimension);//всего кадров в анимации
         }
 
         public bool ReverseAtEnd
@@ -828,7 +832,7 @@ namespace Password_Generator
             return (Image)gifImage.Clone();
             //return a copy of it
         }
-    }*/
+    }
 }
 
         
