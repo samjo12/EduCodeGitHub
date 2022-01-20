@@ -312,13 +312,17 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-        Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
-        //Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
-        //PictureBox imageControl = new PictureBox();
-        private GifImage gifImage = null;
-        private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
-        private string path = @"C:\Users\usr\source\repos\Miner\mine55.gif";
-        int index;
+        //Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
+
+       // Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
+       // Image pictureBox2 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
+     //   PictureBox pb1 = new PictureBox();
+          
+      private GifImage gifImage = null;
+      private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";//
+      private string path = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine55.gif";// C:\Users\usr\source\repos\Miner\mine55.gif";
+      int index;
+
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
@@ -347,13 +351,13 @@ namespace Password_Generator
         {
             miner1 = owner;
             this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
-                                                                                     //InitializeComponent();
-            gifImage = new GifImage(filePath);
-            gifImage.ReverseAtEnd = false; //dont reverse at end
+
 
             this.Text = "Take it Easy ...";
 
-            X = Convert.ToInt32(StaticData.X);
+       
+
+        X = Convert.ToInt32(StaticData.X);
             Y = Convert.ToInt32(StaticData.Y);
             S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
             Z = S; // количество мин
@@ -667,16 +671,31 @@ namespace Password_Generator
                     
                     if (flag_detonation is true) // флаг, что нажал прямо в эту мину .... :(
                     {
-                        //LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
-                        LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
-                        LButtons[x,y].Text = "";
-                        Image gifImage = Image.FromFile(path);
-                        FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList [0]);
-                        int frameCount = gifImage.GetFrameCount(dimension);
-                        
-                        gifImage.SelectActiveFrame(dimension, frameCount);
+                        LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
+                      LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
+                        LButtons[x,y].Text = "*";
+
                         //LButtons[x, y].Image = pictureBox1;
                         //for (int l=0;l<30;l++)for(int k=0;k<10;k++)LButtons[x, y].Image = gifImage.GetFrame(k);
+                        Image gifImage = Image.FromFile(path);
+                        FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
+                        int frameCount = gifImage.GetFrameCount(dimension);
+                        gifImage.SelectActiveFrame(dimension, index);//index);
+                        //gifImage.GetFrame(10);
+                        for (int k = 0; k < frameCount; k++)
+                        { gifImage.SelectActiveFrame(dimension, k); LButtons[x, y].Image = gifImage; }// = pictureBox1;
+
+                        /* SelectActiveFrame will return an integer that you do not necessarily need. 
+                         * The important part is it will transform the image into only the selected frame.
+                        Conclusion
+
+                         There are a few things to keep in mind.The SelectActivateFrame C# function modifies 
+                        the same Image object, in which case you need to call the Clone() method before returning the new frame.
+
+                         The above C# class for displaying animated GIFs also shows a small sample of the possibities 
+                        of manually extracting frames from a GIF. One being that the frames are displayed backwards 
+                        when the animation reaches the end. The GetFrame C# function allows direct access to any frame, 
+                        which opens to door to custom FPS (frames per second) display...*/
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область
@@ -685,7 +704,7 @@ namespace Password_Generator
             /*Control control = (Control)sender;
     var name = control.Name;
     MessageBox.Show(string.Format("I pressed this {0} and showed me this messagebox",name));*/
-            if (S == 0 || flag_detonation is true) GameOver_check(); // Если число флагов и мин совпадает -проверим достигнута ли победа
+                        if (S == 0 || flag_detonation is true) GameOver_check(); // Если число флагов и мин совпадает -проверим достигнута ли победа
             //b.Visible=false;
             //LButtons[x, y].Visible = true;
         }
@@ -777,7 +796,7 @@ namespace Password_Generator
         }
     }
     public class GifImage
-    {
+    {   // we need the  System.Drawing.Imaging namespace.
         private Image gifImage;
         private FrameDimension dimension;
         private int frameCount;

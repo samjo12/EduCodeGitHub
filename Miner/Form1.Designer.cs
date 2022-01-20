@@ -137,7 +137,7 @@ namespace Password_Generator
             this.MenuSizePlayfield10.CheckOnClick = true;
             this.MenuSizePlayfield10.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MenuSizePlayfield10.Name = "MenuSizePlayfield10";
-            this.MenuSizePlayfield10.Size = new System.Drawing.Size(180, 26);
+            this.MenuSizePlayfield10.Size = new System.Drawing.Size(134, 26);
             this.MenuSizePlayfield10.Tag = "10";
             this.MenuSizePlayfield10.Text = "10 x 10";
             this.MenuSizePlayfield10.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -146,7 +146,7 @@ namespace Password_Generator
             // 
             this.MenuSizePlayfield20.CheckOnClick = true;
             this.MenuSizePlayfield20.Name = "MenuSizePlayfield20";
-            this.MenuSizePlayfield20.Size = new System.Drawing.Size(180, 26);
+            this.MenuSizePlayfield20.Size = new System.Drawing.Size(134, 26);
             this.MenuSizePlayfield20.Tag = "20";
             this.MenuSizePlayfield20.Text = "20 x 20";
             this.MenuSizePlayfield20.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -155,7 +155,7 @@ namespace Password_Generator
             // 
             this.MenuSizePlayfield30.CheckOnClick = true;
             this.MenuSizePlayfield30.Name = "MenuSizePlayfield30";
-            this.MenuSizePlayfield30.Size = new System.Drawing.Size(180, 26);
+            this.MenuSizePlayfield30.Size = new System.Drawing.Size(134, 26);
             this.MenuSizePlayfield30.Tag = "30";
             this.MenuSizePlayfield30.Text = "30 x 30";
             this.MenuSizePlayfield30.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -168,7 +168,7 @@ namespace Password_Generator
             this.toolStripSeparator1,
             this.YSizePlayfield});
             this.MenuSizePlayfieldCustom.Name = "MenuSizePlayfieldCustom";
-            this.MenuSizePlayfieldCustom.Size = new System.Drawing.Size(180, 26);
+            this.MenuSizePlayfieldCustom.Size = new System.Drawing.Size(134, 26);
             this.MenuSizePlayfieldCustom.Text = "Custom";
             this.MenuSizePlayfieldCustom.Click += new System.EventHandler(this.SizePlayfieldChanging);
             // 
