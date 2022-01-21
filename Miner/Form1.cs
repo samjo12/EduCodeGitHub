@@ -323,6 +323,7 @@ namespace Password_Generator
       private string path = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine55.gif";// C:\Users\usr\source\repos\Miner\mine55.gif";
       int index;
 
+        PictureBox[] pct = new PictureBox[320];
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
@@ -683,7 +684,18 @@ namespace Password_Generator
                         gifImage.SelectActiveFrame(dimension, index);//index);
                         //gifImage.GetFrame(10);
                         for (int k = 0; k < frameCount; k++)
-                        { gifImage.SelectActiveFrame(dimension, k); LButtons[x, y].Image = gifImage; }// = pictureBox1;
+                        { gifImage.SelectActiveFrame(dimension, k); LButtons[x, y].Image = gifImage; 
+                           PictureBox pctt = new PictureBox();
+
+                            pctt.Height = 55;
+                            pctt.Width = 55;
+                            pctt.Name = "pct" + k;
+                            pctt.Left = 20 + x * 30;
+                            pctt.Top = 30+y*30;
+                            pctt.Image = gifImage;
+                            pct[k] = pctt;
+                            Controls.Add(pct[k]);
+                        }// = pictureBox1;
 
                         /* SelectActiveFrame will return an integer that you do not necessarily need. 
                          * The important part is it will transform the image into only the selected frame.
@@ -696,6 +708,8 @@ namespace Password_Generator
                         of manually extracting frames from a GIF. One being that the frames are displayed backwards 
                         when the animation reaches the end. The GetFrame C# function allows direct access to any frame, 
                         which opens to door to custom FPS (frames per second) display...*/
+                     
+                        
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область

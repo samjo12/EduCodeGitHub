@@ -1,0 +1,69 @@
+// Create a new bitmap object
+using (Bitmap bmp = new Bitmap(200, 300))
+{
+    // Obtain a Graphics object from that bitmap
+    using (Graphics g = Graphics.FromImage(bmp))
+    {
+        // Draw onto the bitmap here
+        // ....
+        g.DrawRectangle(Pens.Red, 10, 10, 50, 50);
+    }
+
+    // Save the bitmap to a file on disk, or do whatever else with it
+    // ...
+    bmp.Save("C:\\MyImage.bmp");
+}
+
+
+3
+
+Since nobody answered the actual question after 9 years...
+
+// System.Windows.Forms.Internal.IntUnsafeNativeMethods
+[DllImport("gdi32.dll", CharSet = CharSet.Auto, EntryPoint = "GetCurrentObject", ExactSpelling = true, SetLastError = true)]
+public static extern IntPtr IntGetCurrentObject(HandleRef hDC, int uObjectType);
+
+
+IntPtr hdc = graphics.GetHdc();
+// This is a HBITMAP, which is the actual buffer that is being drawn to by hdc.
+IntPtr hbitmap = IntGetCurrentObject(new HandleRef(null, hdc), 7 /*OBJ_BITMAP*/);
+// You can create a Gdiplus::Bitmap object from this, but it will copy all image data.
+//Bitmap bitmap = Image.FromHbitmap(hbitmap);
+// To manipulate the actual bitmap pixel data directly, see below.
+
+// Put these in finally:
+//bitmap.Dispose();
+// NOTE: You cannot use the graphics object before ReleaseHdc is called.
+graphics.ReleaseHdc(hdc);
+
+To get to the actual bitmap bits, you have to know something about GDI bitmaps first. There are so-called device-dependent bitmaps (DDB, or often simply just "Bitmap" in the API), and device-independent bitmaps (DIB). A full explanation of the difference would be out of scope for this answer.
+
+If you use this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);, then the graphics object in OnPaint will use a DIB, otherwise it will use a DDB.
+
+If your HBITMAP is a DDB, you cannot read/write the pixel data directly (even though it's technically possible, Windows exposes no way to do it). You have to use GetDIBits to copy them to a device independent buffer, using a particular format, and then SetDIBits to copy them back.
+
+If your HBITMAP is a DIB, then you can get the actual pixel bits (as a pointer), and read/write them directly in memory using GetObject (not to be confused with GetCurrentObject):
+
+[DllImport("gdi32.dll")]
+static extern unsafe int GetObject(IntPtr hobj, int cb, void* data);
+
+[StructLayout(LayoutKind.Sequential)]
+unsafe struct BITMAP
+{
+    int        bmType;
+    int        bmWidth;
+    int        bmHeight;
+    int        bmWidthBytes;
+    ushort     bmPlanes;
+    ushort     bmBitsPixel;
+    void*      bmBits;
+}
+
+BITMAP BitmapDesc = new BITMAP();
+GetObject(hbitmap, sizeof(BITMAP), &BitmapDesc);
+
+BITMAP.bmBits will be null if it was a DDB, and it will be a valid memory address if it's a DIB. If you just want to copy this data, you can directly use bmBits; the total length is bmHeight * bmWidthBytes.
+
+If you actually want to manipulate pixel data in memory, you need to know the exact pixel format of the DIB in order to manipulate it correctly. There are many possibilities what the pixel format can be (number of bits per pixel 1/4/8/16/24/32, RGB vs BGR, palettes, etc). It's a lot of work if you really want to support everything.
+
+To do that, know that when being given an HBITMAP, the GetObject function will either accept a BITMAP struct (as shown in the code example above), or a DIBSECTION struct. Note that DIBSECTION starts with a BITMAP, this makes the two structs compatible. Iff the HBITMAP is a DIB, then GetObject will fill in a valid (non-null) bmBits pointer, and it will also fill in the DIBSECTION's BITMAPINFOHEADER struct, which you can then use to inspect the pixel format of the DIB. Examining the BITMAPINFOHEADER will be painful.
