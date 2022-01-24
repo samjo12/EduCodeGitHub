@@ -312,28 +312,28 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-        //Image pictureBox1 = Image.FromFile("C:/Users/usr/source/repos/Miner/mine55.gif");
-
-       // Image pictureBox1 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
-       // Image pictureBox2 = Image.FromFile("C:/Users/amsad/source/EduCodeGitHub/Miner/mine55.gif");
-     //   PictureBox pb1 = new PictureBox();
           
-      private GifImage gifImage = null;
-      private string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";//
-      private string path = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine55.gif";// C:\Users\usr\source\repos\Miner\mine55.gif";
-      int index;
+      public GifImage gifImage = null;
 
-        PictureBox[] pct = new PictureBox[320];
+      public string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
+      //private string path = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine55.gif";
+        public string path = @"C:\Users\usr\source\repos\Miner\mine55.gif";
+       // int index;
+
+        public PictureBox pct = new PictureBox();
+        public Rectangle Rect = new Rectangle();
 
         DateTime date1 = new DateTime(0, 0);
+        DateTime date2 = new DateTime(0, 0);
         Timer timer1 = new Timer();
-        Timer timerpic = new Timer();
+        Timer timer2 = new Timer();
+
         public Color LabelBackColour =Color.Azure;
         Label labelcont = new Label(); // счетчик мин
         Label labeltime = new Label();
         int W = 30; //размеры кнопок в пикселях -ширина
         int H = 30; //размеры кнопок в пикселях -высота
-        int Z;      // исходное количество мин. ихначально равно S
+        int Z;      // исходное количество мин. изначально равно S
         Button[,] _buttons = new Button[30, 30];
         Boolean[,] buttonflags = new Boolean[30, 30];
         Boolean[,] buttonopened = new Boolean[30, 30];
@@ -351,14 +351,17 @@ namespace Password_Generator
         public Miner2(Miner1 owner)
         {
             miner1 = owner;
-            this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
+            
+            gifImage = new GifImage(filePath); //2
+            gifImage.ReverseAtEnd = false; // 2 dont reverse at end
 
+            
+
+            this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
 
             this.Text = "Take it Easy ...";
 
-       
-
-        X = Convert.ToInt32(StaticData.X);
+            X = Convert.ToInt32(StaticData.X);
             Y = Convert.ToInt32(StaticData.Y);
             S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
             Z = S; // количество мин
@@ -506,12 +509,14 @@ namespace Password_Generator
             if (e.CloseReason == CloseReason.UserClosing)
                 e.Cancel = true;
             if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-           for (int i = 0; i < X; i++)
+            if (timer2 != null) timer2.Dispose(); if (timer2 != null) timer2 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
+            for (int i = 0; i < X; i++)
                 for (int j = 0; j<Y; j++)
                 {
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
                 }
+            pct.Dispose(); // освобождаем память под анимацию
             miner1.Visible = Enabled;
             this.Hide();
         }
@@ -520,10 +525,10 @@ namespace Password_Generator
             S=Z; // количество мин
             flag_detonation = false;
             flag_restart = false;
-            //timer1.Dispose(); timer1 = null; timer1 = new Timer();
+            timer2.Stop();
+            //pct.Image = null;
 
-            // this.timer1.Tick += new System.EventHandler(this.timer1_Tick); // создаем новый таймер
-            date1 = new DateTime(0, 0);
+            date1 = new DateTime(0, 0); date2 = new DateTime(0, 0);
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
             labeltime.Text = "00:00";//date1.ToString("mm:ss");
             var labelfont1 = new Font("Arial", 14, FontStyle.Bold);
@@ -537,6 +542,7 @@ namespace Password_Generator
                     buttonopened[i, j] = false;//ini массива нажатых кнопок
                     LButtons[i, j].Visible = true;
                     LButtons[i, j].Text = "";
+                    LButtons[i, j].Image = null;
                     LButtons[i, j].BackColor = LabelBackColour;
                     LButtons[i, j].Font = labelfont1;
                 }
@@ -598,9 +604,17 @@ namespace Password_Generator
             labeltime.Text = date1.ToString("mm:ss");
            // pictureBox1.Image = gifImage.GetNextFrame();
         }
-        private void Explode_mine()
+        private void OnFrameChanged(object sender, EventArgs e)
         {
-            //PictureBox(,);
+            // frame change
+            this.Invalidate();
+        }
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            System.Drawing.ImageAnimator.StopAnimate(pct.Image, OnFrameChanged);
+            this.Invalidate();
+            timer2.Stop();
+
         }
         private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
@@ -672,44 +686,65 @@ namespace Password_Generator
                     
                     if (flag_detonation is true) // флаг, что нажал прямо в эту мину .... :(
                     {
-                        LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
-                      LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
-                        LButtons[x,y].Text = "*";
+                        /* LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
+                       LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
+                         LButtons[x,y].Text = "*";*/
 
                         //LButtons[x, y].Image = pictureBox1;
                         //for (int l=0;l<30;l++)for(int k=0;k<10;k++)LButtons[x, y].Image = gifImage.GetFrame(k);
-                        Image gifImage = Image.FromFile(path);
-                        FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
-                        int frameCount = gifImage.GetFrameCount(dimension);
-                        gifImage.SelectActiveFrame(dimension, index);//index);
-                        //gifImage.GetFrame(10);
-                        for (int k = 0; k < frameCount; k++)
-                        { gifImage.SelectActiveFrame(dimension, k); LButtons[x, y].Image = gifImage; 
-                           PictureBox pctt = new PictureBox();
+                        //Image gifImage = Image.FromFile(path); //1
 
-                            pctt.Height = 55;
-                            pctt.Width = 55;
-                            pctt.Name = "pct" + k;
-                            pctt.Left = 20 + x * 30;
-                            pctt.Top = 30+y*30;
-                            pctt.Image = gifImage;
-                            pct[k] = pctt;
-                            Controls.Add(pct[k]);
-                        }// = pictureBox1;
-
-                        /* SelectActiveFrame will return an integer that you do not necessarily need. 
-                         * The important part is it will transform the image into only the selected frame.
-                        Conclusion
-
-                         There are a few things to keep in mind.The SelectActivateFrame C# function modifies 
-                        the same Image object, in which case you need to call the Clone() method before returning the new frame.
-
-                         The above C# class for displaying animated GIFs also shows a small sample of the possibities 
-                        of manually extracting frames from a GIF. One being that the frames are displayed backwards 
-                        when the animation reaches the end. The GetFrame C# function allows direct access to any frame, 
-                        which opens to door to custom FPS (frames per second) display...*/
-                     
                         
+                        //FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList[0]); //1
+                        //int frameCount = gifImage.GetFrameCount(dimension); //1
+                        // LButtons[x, y].Image = (Image)gifImage.Clone();
+                        LButtons[x, y].Visible = false;
+                     
+                        pct.Enabled = true;       
+                            pct.Height = 30;
+                            pct.Width = 30;
+                            //pct.Name = "pct";
+                            pct.Left =20+x * 30;
+                            pct.Top = 35+y*30;
+                        //pct.Image = gifImage.GetFrame(0);
+                        gifImage.ReverseAtEnd = false; // 2 dont reverse at end
+                        pct.Image = gifImage.GetNextFrame(); 
+                        System.Drawing.ImageAnimator.Animate(pct.Image, OnFrameChanged);
+                        
+                        Controls.Add(pct);
+                        this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
+                        //timer2.Interval = 1000;
+                        timer2.Start();
+                        //pct.Enabled = false;
+                        //gifImage.GetNextFrame();
+                        
+
+
+                        /*  for (int index = 0; index < frameCount; index++)
+                          {
+                            gifImage.SelectActiveFrame(dimension, index);
+
+                            //LButtons[x, y].Image = (Image)gifImage.Clone();
+
+                          }                             
+
+
+
+                       // = pictureBox1;
+
+                          /* SelectActiveFrame will return an integer that you do not necessarily need. 
+                           * The important part is it will transform the image into only the selected frame.
+                          Conclusion
+
+                           There are a few things to keep in mind.The SelectActivateFrame C# function modifies 
+                          the same Image object, in which case you need to call the Clone() method before returning the new frame.
+
+                           The above C# class for displaying animated GIFs also shows a small sample of the possibities 
+                          of manually extracting frames from a GIF. One being that the frames are displayed backwards 
+                          when the animation reaches the end. The GetFrame C# function allows direct access to any frame, 
+                          which opens to door to custom FPS (frames per second) display...*/
+
+
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область
@@ -838,7 +873,7 @@ namespace Password_Generator
         {
 
             currentFrame += step;
-
+            //if (currentFrame > frameCount) return null;//типа нехочу начинать с начала
             //if the animation reaches a boundary...
             if (currentFrame >= frameCount || currentFrame < 0)
             {
@@ -851,6 +886,7 @@ namespace Password_Generator
                 }
                 else
                 {
+                    
                     currentFrame = 0;
                     //...or start over
                 }
