@@ -313,18 +313,16 @@ namespace Password_Generator
         int Y;
         int S;
           
-      public GifImage gifImage = null;
+        public GifImage gifImage = null;
+        public GifImage gifMine = null;
 
-      public string filePath = @"C:\Users\usr\source\repos\Miner\mine55.gif";
-      //private string path = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine55.gif";
-        public string path = @"C:\Users\usr\source\repos\Miner\mine55.gif";
-       // int index;
+        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30.gif"; //взрыв
+        public string filePath2 = @"C:\Users\usr\source\repos\Miner\minepic30.gif"; //мина на взводе
+        public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
 
-        public PictureBox pct = new PictureBox();
-        public Rectangle Rect = new Rectangle();
 
         DateTime date1 = new DateTime(0, 0);
-        DateTime date2 = new DateTime(0, 0);
+       // DateTime date2 = new DateTime(0, 0);
         Timer timer1 = new Timer();
         Timer timer2 = new Timer();
 
@@ -342,6 +340,8 @@ namespace Password_Generator
         Boolean flag_detonation = false;
         bool flag_restart = false;
         int[,] minespole = new int[30,30];
+        int explodeX;
+        int explodeY;
         Button Startbtn = new Button(); //кнопка рестарт
         Button Restartbtn = new Button();// После окончания игры создадим эту кнопку на все окно дря рестарта
         Button FlagSWbtn = new Button();// кнопка смена режимов клавищ мыши, меняем местами левую и правую кнопки мыши
@@ -354,6 +354,8 @@ namespace Password_Generator
             
             gifImage = new GifImage(filePath); //2
             gifImage.ReverseAtEnd = false; // 2 dont reverse at end
+
+            gifMine = new GifImage(filePath2);
 
             
 
@@ -476,8 +478,10 @@ namespace Password_Generator
                         case 7: labelbutton.ForeColor = Color.OrangeRed; break;
                         case 8: labelbutton.ForeColor = Color.Indigo; break;
                         case 9: labelbutton.ForeColor = Color.Yellow; break;
-                        case 10: labelbutton.ForeColor = Color.Black; //рисуем мину
-                                 labelbutton.Text = "*"; break;
+                        case 10: //labelbutton.ForeColor = Color.Black; //рисуем мину
+                                 labelbutton.Text = "";
+                                 labelbutton.Image = gifMine.GetNextFrame(); 
+                                break;
                         default: break; //это очищенная пустая область
 
                     }
@@ -497,8 +501,12 @@ namespace Password_Generator
 
                     LButtons[i, j] = labelbutton;
                     this.Controls.Add(labelbutton);
-                    
+
                     //labelbutton.BringToFront(); // вытащим на передний план
+
+                    // timer2 для анимации на лейблах
+                    this.timer2.Interval = 1500;// настраиваем интервал таймера
+                    this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
 
                     this.LButtons[i, j].MouseDown += new MouseEventHandler(this.button2_MouseDown); // вешаем на лейблы  обработчик нажатий  кнопок мыши
                 }
@@ -516,7 +524,7 @@ namespace Password_Generator
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
                 }
-            pct.Dispose(); // освобождаем память под анимацию
+            //pct.Dispose(); // освобождаем память под анимацию
             miner1.Visible = Enabled;
             this.Hide();
         }
@@ -525,26 +533,27 @@ namespace Password_Generator
             S=Z; // количество мин
             flag_detonation = false;
             flag_restart = false;
-            timer2.Stop();
-            //pct.Image = null;
+            //timer2.Stop();
+         //   pct.Image = null;
+           // pct.Visible = false;
 
-            date1 = new DateTime(0, 0); date2 = new DateTime(0, 0);
+
+            date1 = new DateTime(0, 0); 
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
             labeltime.Text = "00:00";//date1.ToString("mm:ss");
             var labelfont1 = new Font("Arial", 14, FontStyle.Bold);
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                   _buttons[i,j].Visible = true; //показать кнопки
-                    _buttons[i, j].Text = "";
-                    minespole[i, j] = 0; //инициализируем минное поле
-                    buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
-                    buttonopened[i, j] = false;//ini массива нажатых кнопок
                     LButtons[i, j].Visible = true;
                     LButtons[i, j].Text = "";
                     LButtons[i, j].Image = null;
                     LButtons[i, j].BackColor = LabelBackColour;
-                    LButtons[i, j].Font = labelfont1;
+                    LButtons[i, j].Font = labelfont1;                   
+                   
+                    minespole[i, j] = 0; //инициализируем минное поле
+                    buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
+                    buttonopened[i, j] = false;//ini массива нажатых кнопок
                 }
 
             for (int i = 0; i < S; i++) // минируем поле, где S - кол-во мин
@@ -556,12 +565,14 @@ namespace Password_Generator
                     y = rnd.Next(0, Y - 1);
                 } while (minespole[x, y] == 10);
                 minespole[x, y] = 10; //мина
+                LButtons[x, y].Image = gifMine.GetFrame(0);
             }
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
                     int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
-                    if (minespole[i, j] == 10) { around = 10; } //Ячейка с миной, окружение можно не просчитывать
+                    if (minespole[i, j] == 10) 
+                    {  around = 10; } //Ячейка с миной, окружение можно не просчитывать
                     else
                     {
                         if (i > 0 && minespole[i - 1, j] == 10) around++; //WEST
@@ -573,8 +584,9 @@ namespace Password_Generator
                         if (j < (Y - 1) && minespole[i, j + 1] == 10) around++; //South
                         if (i > 0 && j < (Y - 1) && minespole[i - 1, j + 1] == 10) around++; //SouthWest
                         minespole[i, j] = around; // указываем количество мин вокруг от 0 до 9
+                        LButtons[i,j].Text = around.ToString();
                     }
-                    LButtons[i,j].Text = around.ToString();
+                   
                     switch (around)
                     {
                         case 0:
@@ -591,30 +603,33 @@ namespace Password_Generator
                         case 8: LButtons[i, j].ForeColor = Color.Indigo; break;
                         case 9: LButtons[i, j].ForeColor = Color.Yellow; break;
                         case 10:
-                            LButtons[i, j].ForeColor = Color.Black; //рисуем мину
-                            LButtons[i, j].Text = "*"; break;
+                            //LButtons[i, j].ForeColor = Color.Black; //рисуем мину
+                           // LButtons[i, j].Image = gifMine.GetNextFrame(); break;
                         default: break; //это очищенная пустая область
                     }
                     // Создаем прототип лейбла с элементом минного поля
+                    _buttons[i, j].Visible = true; //показать кнопки
+                    _buttons[i, j].Text = "";
                 }
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             date1 = date1.AddMilliseconds(1);
             labeltime.Text = date1.ToString("mm:ss");
-           // pictureBox1.Image = gifImage.GetNextFrame();
         }
-        private void OnFrameChanged(object sender, EventArgs e)
-        {
-            // frame change
-            this.Invalidate();
-        }
+
         private void timer2_Tick(object sender, EventArgs e)
         {
-            System.Drawing.ImageAnimator.StopAnimate(pct.Image, OnFrameChanged);
-            this.Invalidate();
-            timer2.Stop();
-
+            
+            LButtons[explodeX,explodeY].Invalidate();
+            LButtons[explodeX, explodeY].Image=(Bitmap)gifImage.GetNextFrame();
+            
+            
+            if (LButtons[explodeX, explodeY].Image is null) { timer2.Stop(); LButtons[explodeX, explodeY].Image = Image.FromFile(filePath3); return; }
+       /*     int t;
+            if (LButtons[explodeX, explodeY].Text == "") { t = 0; LButtons[explodeX, explodeY].Text = "0"; } else t = Convert.ToInt32(LButtons[explodeX, explodeY].Text);
+            t++;
+            LButtons[explodeX, explodeY].Text = t.ToString();*/
         }
         private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
@@ -682,41 +697,31 @@ namespace Password_Generator
                 case 7: LButtons[x, y].ForeColor = Color.OrangeRed; break;
                 case 8: LButtons[x, y].ForeColor = Color.Indigo; break;
                 case 9: LButtons[x, y].ForeColor = Color.Yellow; break;*/
-                case 10:LButtons[x, y].ForeColor = Color.Black; //цвет мины*/
+                case 10:///LButtons[x, y].ForeColor = Color.Black; //цвет мины*/
                     
                     if (flag_detonation is true) // флаг, что нажал прямо в эту мину .... :(
                     {
-                        /* LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
+                       /*LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
                        LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
-                         LButtons[x,y].Text = "*";*/
-
-                        //LButtons[x, y].Image = pictureBox1;
-                        //for (int l=0;l<30;l++)for(int k=0;k<10;k++)LButtons[x, y].Image = gifImage.GetFrame(k);
-                        //Image gifImage = Image.FromFile(path); //1
-
-                        
-                        //FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList[0]); //1
-                        //int frameCount = gifImage.GetFrameCount(dimension); //1
-                        // LButtons[x, y].Image = (Image)gifImage.Clone();
-                        LButtons[x, y].Visible = false;
-                     
+                       LButtons[x,y].Text = "*";*/
+                        //LButtons[x, y].Visible = false;
+                    /* 
                         pct.Enabled = true;       
-                            pct.Height = 30;
-                            pct.Width = 30;
-                            //pct.Name = "pct";
-                            pct.Left =20+x * 30;
-                            pct.Top = 35+y*30;
-                        //pct.Image = gifImage.GetFrame(0);
+                        pct.Height = 30;
+                        pct.Width = 30;
+                        pct.Left = 20 + x * 30;
+                        pct.Top = 35 + y * 30;
+                    */
                         gifImage.ReverseAtEnd = false; // 2 dont reverse at end
-                        pct.Image = gifImage.GetNextFrame(); 
-                        System.Drawing.ImageAnimator.Animate(pct.Image, OnFrameChanged);
-                        
-                        Controls.Add(pct);
-                        this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
-                        //timer2.Interval = 1000;
-                        timer2.Start();
-                        //pct.Enabled = false;
-                        //gifImage.GetNextFrame();
+                        gifImage.Repeat = false; // 2 dont repeat playback
+                        explodeX = x; explodeY = y;
+                        LButtons[x, y].Image = (Image)gifImage.GetFrame(0);
+
+                        // Controls.Add(pct);
+                        //      this.timer2.Interval = 60;// настраиваем частоту кадров = 1000/60ms =~16кадров/сек
+                        //   this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
+
+                        timer2.Start(); //начнем анимацию
                         
 
 
@@ -851,6 +856,7 @@ namespace Password_Generator
         private int frameCount;
         private int currentFrame = -1;
         private bool reverse;
+        private bool repeat; // dont repeat playback
         private int step = 1;
 
         public GifImage(string path)
@@ -868,6 +874,12 @@ namespace Password_Generator
             get { return reverse; }
             set { reverse = value; }
         }
+        public bool Repeat
+        {
+            //whether the gif should play backwards when it reaches the end
+            get { return repeat; }
+            set { repeat = value; }
+        }
 
         public Image GetNextFrame()
         {
@@ -882,13 +894,15 @@ namespace Password_Generator
                     step *= -1;
                     //...reverse the count
                     //apply it
-                    currentFrame += step;
+                    currentFrame += step; 
                 }
                 else
                 {
-                    
-                    currentFrame = 0;
-                    //...or start over
+                    if (repeat == false)
+                    {
+                         return null;
+                    }
+                    currentFrame = 0;//...or start over
                 }
             }
             return GetFrame(currentFrame);
