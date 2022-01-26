@@ -316,10 +316,16 @@ namespace Password_Generator
         public GifImage gifImage = null;
         public GifImage gifMine = null;
 
-        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30.gif"; //взрыв
-        public string filePath2 = @"C:\Users\usr\source\repos\Miner\minepic30.gif"; //мина на взводе
+        /* public string filePath = @"C:\Users\usr\source\repos\Miner\mine30.gif"; //взрыв
+        public string filePath2 = @"C:\Users\usr\source\repos\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
-
+        public string filePath4 = @"C:\Users\amsad\source\repos\Miner\flag_red30.png";
+        public string filePath5 = @"C:\Users\amsad\source\repos\Miner\flag_yellow30.png";*/
+        public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30.gif"; //взрыв
+        public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
+        public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
+        public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
+        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
 
         DateTime date1 = new DateTime(0, 0);
        // DateTime date2 = new DateTime(0, 0);
@@ -401,38 +407,15 @@ namespace Password_Generator
             Controls.Add(labeltime);
             //Создаем кнопку переключения нажатий/режимы тык/флаг
 
-            //BtnFocus.Focus();
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                    var button = new Button();
-
-                    button.Width = W;
-                    button.Height = H; 
-                    button.Location = new Point((button.Width) * i+1 + 20, (button.Height) * j+1 + 35); //20 и 35 - отступы слева и сверху
-                    button.Text = "";
-                    //button.FlatStyle = FlatStyle.Popup;
-                    button.BackColor = Color.AntiqueWhite;
-                    var buttonfont = new Font("Arial", 14, FontStyle.Bold);
-                    button.Font = buttonfont;
-
-                    button.Tag = j * X + i;// НЕ заминировано, записываем только порядковый номер кнопки
-                    //button.Text = (j * X + i).ToString();
-                    //button.Tag = 0; 
                     minespole[i, j] = 0; //инициализируем минное поле
                     buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
                     buttonopened[i, j] = false;//ini массива нажатых кнопок
-                    //button.Visible = true;
-
-                    _buttons[i, j] = button;
-                    this.Controls.Add(_buttons[i, j]); //выводим кнопку с заданными ранее параметрами
-                    this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на наши кнопки  обработчик нажатий  кнопок мыши
-                   // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
-                    this.timer1.Tick += new System.EventHandler(this.timer1_Tick); // создаем таймер
-                    
                 }
 
-            for (int i =0; i<S; i++) // минируем поле, где S - кол-во мин
+            for (int i = 0; i < S; i++) // минируем поле, где S - кол-во мин
             {
                 int x, y;
                 do {
@@ -480,7 +463,7 @@ namespace Password_Generator
                         case 9: labelbutton.ForeColor = Color.Yellow; break;
                         case 10: //labelbutton.ForeColor = Color.Black; //рисуем мину
                                  labelbutton.Text = "";
-                                 labelbutton.Image = gifMine.GetNextFrame(); 
+                                 labelbutton.Image = gifMine.GetFrame(0); 
                                 break;
                         default: break; //это очищенная пустая область
 
@@ -497,7 +480,7 @@ namespace Password_Generator
                     labelbutton.Font = labelfont;
 
                     labelbutton.Location = new Point(W * i + 20, H * j + 35);
-                    labelbutton.Visible = true;
+                    labelbutton.Visible = false;
 
                     LButtons[i, j] = labelbutton;
                     this.Controls.Add(labelbutton);
@@ -510,7 +493,34 @@ namespace Password_Generator
 
                     this.LButtons[i, j].MouseDown += new MouseEventHandler(this.button2_MouseDown); // вешаем на лейблы  обработчик нажатий  кнопок мыши
                 }
-            
+            for (int i = 0; i < X; i++)
+                for (int j = 0; j < Y; j++)
+                {
+                    var button = new Button();
+
+                    button.Width = W;
+                    button.Height = H;
+                    button.Location = new Point((button.Width) * i + 1 + 20, (button.Height) * j + 1 + 35); //20 и 35 - отступы слева и сверху
+                    button.Text = "";
+                    //button.FlatStyle = FlatStyle.Popup;
+                    button.BackColor = Color.AntiqueWhite;
+                    var buttonfont = new Font("Arial", 14, FontStyle.Bold);
+                    button.Font = buttonfont;
+
+                    button.Tag = j * X + i;// НЕ заминировано, записываем только порядковый номер кнопки
+                    //button.Text = (j * X + i).ToString();
+                    //button.Tag = 0; 
+
+                    button.Visible = true;
+
+                    _buttons[i, j] = button;
+                    this.Controls.Add(_buttons[i, j]); //выводим кнопку с заданными ранее параметрами
+                    this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на наши кнопки  обработчик нажатий  кнопок мыши
+                                                                                                    // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+                    this.timer1.Tick += new System.EventHandler(this.timer1_Tick); // создаем таймер
+
+                }
+
         }
         void Miner2_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -518,12 +528,12 @@ namespace Password_Generator
                 e.Cancel = true;
             if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
             if (timer2 != null) timer2.Dispose(); if (timer2 != null) timer2 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-            for (int i = 0; i < X; i++)
+           /* for (int i = 0; i < X; i++)
                 for (int j = 0; j<Y; j++)
                 {
                     if (_buttons[i, j] != null) _buttons[i, j].Dispose();
                     if (LButtons[i, j] != null) LButtons[i, j].Dispose();
-                }
+                }*/
             //pct.Dispose(); // освобождаем память под анимацию
             miner1.Visible = Enabled;
             this.Hide();
@@ -533,10 +543,6 @@ namespace Password_Generator
             S=Z; // количество мин
             flag_detonation = false;
             flag_restart = false;
-            //timer2.Stop();
-         //   pct.Image = null;
-           // pct.Visible = false;
-
 
             date1 = new DateTime(0, 0); 
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
@@ -608,6 +614,8 @@ namespace Password_Generator
                         default: break; //это очищенная пустая область
                     }
                     // Создаем прототип лейбла с элементом минного поля
+                    LButtons[i, j].Visible = false;
+                    _buttons[i, j].Image = null;
                     _buttons[i, j].Visible = true; //показать кнопки
                     _buttons[i, j].Text = "";
                 }
@@ -776,7 +784,9 @@ namespace Password_Generator
                 flag_detonation = false; // сбрасываем флаг взрыва
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
+                    { if (buttonflags[i,j] is true && minespole[i,j]!=10) _buttons[i,j].Image= Image.FromFile(filePath5); //false flag
                         if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                    }
                 flag_restart = true; // игра окончена
                 return;
             }
@@ -799,14 +809,15 @@ namespace Password_Generator
             if (flag is true)
             {
                 if (S == 0) return;// нельзя ставить флажков больше, чем есть мин по счетчику
-                buttonflags[x, y] = flag;
-                S--;_buttons[x, y].Text = "?";labelcont.Text = S.ToString("000");
+                buttonflags[x, y] = flag; _buttons[x, y].Image = Image.FromFile(filePath4);
+                S--;;labelcont.Text = S.ToString("000");
                 if (S == 0) {  GameOver_check();  return; } //проверим - не достигнут ли конец игры
                 
             }
             else 
             {  //убираем флаг, и прибавляем значение счетчика неотмеченных мин
-                _buttons[x, y].Text = ""; S++; labelcont.Text = S.ToString("000"); 
+                S++; labelcont.Text = S.ToString("000");
+                _buttons[x, y].Image = null;
                 buttonflags[x, y] = flag;// массив с флагами на кнопках 
             }
           
