@@ -17,7 +17,7 @@ namespace Password_Generator
         Random rnd = new Random();
           int nudMinerX = 10;
           int nudMinerY = 10;
-          int nudComplicate = 12; //12% мин
+          int nudComplicate = 12; //12% мин EASY mode
           
 
         public Miner1()
@@ -106,13 +106,12 @@ namespace Password_Generator
         }
         else if (sender == MenuSizePlayfieldCustom) 
         {
-            MenuSizePlayfield10.Checked = false;
-            MenuSizePlayfield20.Checked = false;
-            MenuSizePlayfield30.Checked = false;
-            MenuSizePlayfieldCustom.Checked = true;
-            if (XSizePlayfield.Text is "") { XSizePlayfield.Text = "Size X:"; nudMinerX = 0; }
-            if (YSizePlayfield.Text is "") { YSizePlayfield.Text = "Size Y:"; nudMinerY = 0; }
-            // nudMinerX = 0; nudMinerY = 0; XSizePlayfield.Text = "Size X:"; YSizePlayfield.Text = "Size Y:";
+          MenuSizePlayfield10.Checked = false;
+          MenuSizePlayfield20.Checked = false;
+          MenuSizePlayfield30.Checked = false;
+          MenuSizePlayfieldCustom.Checked = true;
+          if (XSizePlayfield.Text is "") { XSizePlayfield.Text = "Size X:"; nudMinerX = 0; }
+          if (YSizePlayfield.Text is "") { YSizePlayfield.Text = "Size Y:"; nudMinerY = 0; }
         } 
         else if (sender == XSizePlayfield)
         {
@@ -133,17 +132,8 @@ namespace Password_Generator
            if (nudMinerX == 0) XSizePlayfield.Text = "Size X:"; 
         }
     }
-
         void MenuStartGame_Click(object sender, EventArgs e)
         {
-            //
-            //Пишем в переменную InboxData данные.
-            //ВНИМАНИЕ! Сначала нужно записать данные в переменную, а затем вызывать метод загрузки данных (Show()). 
-            //В противном случае мы не получим данные в дочерней форме
-            //SF.X = nudMinerX.Value;
-            //SF.Y = nudMinerY.Value;
-            //this.BackColor = Color.Aquamarine;
-            
           // проверяем что переменные nudMinerX и nudMinerY находятся в диапазоне 5..30
             if (nudMinerX < 5) nudMinerX = 5; 
             if (nudMinerX > 30) nudMinerX = 30;
@@ -152,7 +142,6 @@ namespace Password_Generator
             XSizePlayfield.Text = nudMinerX.ToString();
             YSizePlayfield.Text = nudMinerY.ToString(); 
 
-          //  int buttonsCount = nudMinerX * nudMinerY;
             StaticData.X = nudMinerX;
             StaticData.Y = nudMinerY;
             StaticData.S = nudComplicate;
@@ -249,8 +238,6 @@ namespace Password_Generator
                         nudMinerX = Convert.ToInt32(tmpstr);// вводится первый символ
                         break;
                 }
-                
-               // if (XSizePlayfield.Text.Length > 0) nudMinerX = Convert.ToInt32(tmpstr); else nudMinerX = 0;
                 return;
             }
 
@@ -293,10 +280,6 @@ namespace Password_Generator
                 return;
             }
         }
-        private void tbSizePlayfield_FocusDown(object sender, EventArgs e) //если поля остаются полсле редактирования пустыми
-        {
-        }
-
     }
 
     public static class StaticData  //Статический класс, который выступает в качестве буфера для обмена данными между формами
@@ -316,16 +299,16 @@ namespace Password_Generator
         public GifImage gifImage = null;
         public GifImage gifMine = null;
 
-        /* public string filePath = @"C:\Users\usr\source\repos\Miner\mine30.gif"; //взрыв
+        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30.gif"; //взрыв
         public string filePath2 = @"C:\Users\usr\source\repos\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
-        public string filePath4 = @"C:\Users\amsad\source\repos\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\repos\Miner\flag_yellow30.png";*/
-        public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30.gif"; //взрыв
+        public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
+        public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
+        /*public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30.gif"; //взрыв
         public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
+        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";*/
 
         DateTime date1 = new DateTime(0, 0);
        // DateTime date2 = new DateTime(0, 0);
@@ -353,7 +336,6 @@ namespace Password_Generator
         Button FlagSWbtn = new Button();// кнопка смена режимов клавищ мыши, меняем местами левую и правую кнопки мыши
         bool FlagSwitch = false; // по умолчанию, левая кнопка тыкает, а правая открывает ячейки
         Random rnd = new Random();
-
         public Miner2(Miner1 owner)
         {
             miner1 = owner;
@@ -485,9 +467,6 @@ namespace Password_Generator
                     LButtons[i, j] = labelbutton;
                     this.Controls.Add(labelbutton);
 
-                    //labelbutton.BringToFront(); // вытащим на передний план
-
-                    // timer2 для анимации на лейблах
                     this.timer2.Interval = 1500;// настраиваем интервал таймера
                     this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
 
@@ -543,6 +522,9 @@ namespace Password_Generator
             S=Z; // количество мин
             flag_detonation = false;
             flag_restart = false;
+            timer2.Stop();
+            LButtons[explodeX, explodeY].Image = null;
+            explodeX = 0; explodeY = 0;
 
             date1 = new DateTime(0, 0); 
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
@@ -551,7 +533,8 @@ namespace Password_Generator
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                    LButtons[i, j].Visible = true;
+                    _buttons[i, j].Visible = false;// на случай, если кнопка видна -выключаем
+                    LButtons[i, j].Visible = true; //иначеизмененияв Лейбл не отработаются
                     LButtons[i, j].Text = "";
                     LButtons[i, j].Image = null;
                     LButtons[i, j].BackColor = LabelBackColour;
@@ -571,14 +554,14 @@ namespace Password_Generator
                     y = rnd.Next(0, Y - 1);
                 } while (minespole[x, y] == 10);
                 minespole[x, y] = 10; //мина
-                LButtons[x, y].Image = gifMine.GetFrame(0);
             }
+
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
                     int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
                     if (minespole[i, j] == 10) 
-                    {  around = 10; } //Ячейка с миной, окружение можно не просчитывать
+                    {  around = 10; LButtons[i, j].Image = gifMine.GetFrame(0);} //Ячейка с миной, окружение можно не просчитывать
                     else
                     {
                         if (i > 0 && minespole[i - 1, j] == 10) around++; //WEST
@@ -615,9 +598,10 @@ namespace Password_Generator
                     }
                     // Создаем прототип лейбла с элементом минного поля
                     LButtons[i, j].Visible = false;
-                    _buttons[i, j].Image = null;
+                    
                     _buttons[i, j].Visible = true; //показать кнопки
                     _buttons[i, j].Text = "";
+                    _buttons[i, j].Image = null;
                 }
         }
         private void timer1_Tick(object sender, EventArgs e)
@@ -628,18 +612,15 @@ namespace Password_Generator
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            
-            LButtons[explodeX,explodeY].Invalidate();
             LButtons[explodeX, explodeY].Image=(Bitmap)gifImage.GetNextFrame();
-            
-            
-            if (LButtons[explodeX, explodeY].Image is null) { timer2.Stop(); LButtons[explodeX, explodeY].Image = Image.FromFile(filePath3); return; }
-       /*     int t;
-            if (LButtons[explodeX, explodeY].Text == "") { t = 0; LButtons[explodeX, explodeY].Text = "0"; } else t = Convert.ToInt32(LButtons[explodeX, explodeY].Text);
-            t++;
-            LButtons[explodeX, explodeY].Text = t.ToString();*/
+            if (LButtons[explodeX, explodeY].Image is null) 
+            { 
+                timer2.Stop(); 
+                LButtons[explodeX, explodeY].Image = Image.FromFile(filePath3); 
+                return; 
+            }
         }
-        private void dispose_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
+        private void click_button(Button b) //Нажатие ... отключить кнопку и вывести вместо нее label
         {
             int t = (int)b.Tag;
             int x = t % X;
@@ -657,120 +638,60 @@ namespace Password_Generator
                         if (x > 0 && minespole[x - 1, y] < 10)
                         {
                             minespole[x, y] = 100; //теперь это очищенная пустая область
-                            dispose_button(_buttons[x - 1, y]);
+                            click_button(_buttons[x - 1, y]);
                         }//WEST 1
                         if (x > 0 && y > 0 && minespole[x - 1, y - 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область \
-                            dispose_button(_buttons[x - 1, y - 1]);
+                            click_button(_buttons[x - 1, y - 1]);
                         } //NW 2
                         if (y > 0 && minespole[x, y - 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x, y - 1]);
+                            click_button(_buttons[x, y - 1]);
                         } // Nord 3
                         if (x < (X - 1) && y > 0 && minespole[x + 1, y - 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x + 1, y - 1]);
+                            click_button(_buttons[x + 1, y - 1]);
                         }//NordEast 4
                         if (x < (X - 1) && minespole[x + 1, y] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x + 1, y]);
+                            click_button(_buttons[x + 1, y]);
                         }  //East 5
                         if (x < (X - 1) && y < (Y - 1) && minespole[x + 1, y + 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x + 1, y + 1]);
+                            click_button(_buttons[x + 1, y + 1]);
                         }//SouthEast 6
                         if (y < (Y - 1) && minespole[x, y + 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x, y + 1]);
+                            click_button(_buttons[x, y + 1]);
                         }//South 7
                         if (x > 0 && y < (Y - 1) && minespole[x - 1, y + 1] < 10)
                         {
                             minespole[x, y] = 100;//теперь это очищенная пустая область
-                            dispose_button(_buttons[x - 1, y + 1]);
+                            click_button(_buttons[x - 1, y + 1]);
                         }//SouthWest 8
                         break;
                 //цвет шрифта числа мин вокруг
-                case 1 - 9: /*LButtons[x,y].ForeColor = Color.Blue; */break;
-                /*case 2: LButtons[x, y].ForeColor = Color.Green; break;
-                case 3: LButtons[x, y].ForeColor = Color.Red; break;
-                case 4: LButtons[x, y].ForeColor = Color.Navy; break;
-                case 5: LButtons[x, y].ForeColor = Color.DeepPink; break;
-                case 6: LButtons[x, y].ForeColor = Color.Brown; break;
-                case 7: LButtons[x, y].ForeColor = Color.OrangeRed; break;
-                case 8: LButtons[x, y].ForeColor = Color.Indigo; break;
-                case 9: LButtons[x, y].ForeColor = Color.Yellow; break;*/
-                case 10:///LButtons[x, y].ForeColor = Color.Black; //цвет мины*/
-                    
-                    if (flag_detonation is true) // флаг, что нажал прямо в эту мину .... :(
+                case 1 - 9: break;
+                case 10:// флаг, что нажал прямо в эту мину .... :(
+                    if (flag_detonation is true) 
                     {
-                       /*LButtons[x, y].BackColor = Color.Red;// цвет фона разорвавшейся мины
-                       LButtons[x, y].Font = new Font("Arial", 18, FontStyle.Bold);
-                       LButtons[x,y].Text = "*";*/
-                        //LButtons[x, y].Visible = false;
-                    /* 
-                        pct.Enabled = true;       
-                        pct.Height = 30;
-                        pct.Width = 30;
-                        pct.Left = 20 + x * 30;
-                        pct.Top = 35 + y * 30;
-                    */
-                        gifImage.ReverseAtEnd = false; // 2 dont reverse at end
-                        gifImage.Repeat = false; // 2 dont repeat playback
-                        explodeX = x; explodeY = y;
-                        LButtons[x, y].Image = (Image)gifImage.GetFrame(0);
-
-                        // Controls.Add(pct);
-                        //      this.timer2.Interval = 60;// настраиваем частоту кадров = 1000/60ms =~16кадров/сек
-                        //   this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
-
-                        timer2.Start(); //начнем анимацию
-                        
-
-
-                        /*  for (int index = 0; index < frameCount; index++)
-                          {
-                            gifImage.SelectActiveFrame(dimension, index);
-
-                            //LButtons[x, y].Image = (Image)gifImage.Clone();
-
-                          }                             
-
-
-
-                       // = pictureBox1;
-
-                          /* SelectActiveFrame will return an integer that you do not necessarily need. 
-                           * The important part is it will transform the image into only the selected frame.
-                          Conclusion
-
-                           There are a few things to keep in mind.The SelectActivateFrame C# function modifies 
-                          the same Image object, in which case you need to call the Clone() method before returning the new frame.
-
-                           The above C# class for displaying animated GIFs also shows a small sample of the possibities 
-                          of manually extracting frames from a GIF. One being that the frames are displayed backwards 
-                          when the animation reaches the end. The GetFrame C# function allows direct access to any frame, 
-                          which opens to door to custom FPS (frames per second) display...*/
-
-
+                      gifImage.ReverseAtEnd = false; // 2 dont reverse at end
+                      gifImage.Repeat = false; // 2 dont repeat playback
+                      explodeX = x; explodeY = y;
+                      LButtons[x, y].Image = (Image)gifImage.GetFrame(0);
+                      timer2.Start(); //начнем анимацию
                     } 
                     break;
                 default: GameOver_check(); return; //это очищенная пустая область
-                
             }
-            /*Control control = (Control)sender;
-    var name = control.Name;
-    MessageBox.Show(string.Format("I pressed this {0} and showed me this messagebox",name));*/
-                        if (S == 0 || flag_detonation is true) GameOver_check(); // Если число флагов и мин совпадает -проверим достигнута ли победа
-            //b.Visible=false;
-            //LButtons[x, y].Visible = true;
+            if (S == 0 || flag_detonation is true) GameOver_check(); // Если число флагов и мин совпадает -проверим достигнута ли победа
         }
-
 
         private void GameOver_check() //проверяем на достижение конца игры и чистим хвосты
         {
@@ -785,7 +706,7 @@ namespace Password_Generator
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
                     { if (buttonflags[i,j] is true && minespole[i,j]!=10) _buttons[i,j].Image= Image.FromFile(filePath5); //false flag
-                        if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                        if (_buttons[i, j].Visible is true) click_button(_buttons[i, j]); // открываем только неоткрытые кнопки
                     }
                 flag_restart = true; // игра окончена
                 return;
@@ -797,30 +718,51 @@ namespace Password_Generator
                 flag_restart = true; // игра окончена
                 return;
             }
-            if (S != 0 && z == Z) //Проигрыш
-            {
-                flag_restart = true; // игра окончена
+            if (S != 0 && z == Z) //Выиграли, т.к. все пустые кнопки открыты, хотя флажки не все стоят
+            {   
                 timer1.Stop();
+                flag_restart = true; // игра окончена
+                //поставим недоставленные флаги
+                for (int i = 0; i < X; i++)
+                    for (int j = 0; j < Y; j++)
+                        if (buttonflags[i, j] is false && minespole[i, j] == 10) _buttons[i, j].Image = Image.FromFile(filePath4); //flag
+                
                 return;
             }
+            if (S==0) //проверка на тот случай, когда все мины совпадают с проставленными флажками, а кнопки открыты еще не все
+            {   //проверим совпадут ли мины c флажками
+                int counter = 0;
+                for (int i = 0; i < X; i++)
+                    for (int j = 0; j < Y; j++)
+                    {
+                        if (buttonflags[i, j] is true && minespole[i, j] == 10) counter++;
+                    }
+                if (counter == Z) // мины c флажками совпали
+                {
+                    timer1.Stop();
+                    flag_restart = true; // игра окончена
+                                         //откроем все неоткрытые кнопки
+                    for (int i = 0; i < X; i++)
+                        for (int j = 0; j < Y; j++)
+                            if (_buttons[i, j].Visible is true) click_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                }
+            }
         }
-        private void setflag(int x, int y, Boolean flag) // устанавливает/снимает флаг с кнопки
+        private void setflag(int x, int y) // устанавливает/снимает флаг с кнопки
         {
-            if (flag is true)
+            if (buttonflags[x, y] is false)
             {
                 if (S == 0) return;// нельзя ставить флажков больше, чем есть мин по счетчику
-                buttonflags[x, y] = flag; _buttons[x, y].Image = Image.FromFile(filePath4);
-                S--;;labelcont.Text = S.ToString("000");
+                buttonflags[x, y] = true; _buttons[x, y].Image = Image.FromFile(filePath4);
+                S--; labelcont.Text = S.ToString("000");
                 if (S == 0) {  GameOver_check();  return; } //проверим - не достигнут ли конец игры
-                
             }
             else 
             {  //убираем флаг, и прибавляем значение счетчика неотмеченных мин
                 S++; labelcont.Text = S.ToString("000");
                 _buttons[x, y].Image = null;
-                buttonflags[x, y] = flag;// массив с флагами на кнопках 
+                buttonflags[x, y] = false;// массив с флагами на кнопках 
             }
-          
         }
 
         private void button2_MouseDown(object sender, MouseEventArgs e) // обработка нажатий на лейблы
@@ -830,7 +772,6 @@ namespace Password_Generator
 
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
-
             if (flag_restart is true) { NewGameINI(); flag_restart = false; return; }
             int t,x,y;
             Button button = (Button)sender;
@@ -839,7 +780,6 @@ namespace Password_Generator
             y = t / X;
             if (e.Button==MouseButtons.Left) //нажата левая кнопка мыши
             {
-                //if (flag_detonation is true) { MessageBox.Show("GameOver_check"); }///////////// DEL ME
                 if(timer1.Enabled is false)timer1.Start(); //запускаем таймер,если еще этого не сделали
                 if (buttonflags[x, y] is true) return;  // на этой кнопке стоит флажек - не обрабатываем этот клик
                 if (minespole[x, y] == 10) //ой, наступили на мину!
@@ -847,17 +787,12 @@ namespace Password_Generator
                     timer1.Stop();//останавливаем таймер - взрыв
                     flag_detonation = true; //ставим флаг, что нажата кнопка с миной
                 }
-                dispose_button(_buttons[x, y]);
-                //if (S == 0) { GameOver_check(); return; }
+                click_button(_buttons[x, y]);
                 return;
             }
                     
             if (e.Button == MouseButtons.Right) //нажата правая кнопка мыши
-            { 
-                if (buttonflags[x, y] is false)setflag(x, y, true); // ставим или снимаем флажек с кнопки
-                else setflag(x, y, false);
-                return;
-            }
+                setflag(x, y);
         }
     }
     public class GifImage
@@ -878,7 +813,6 @@ namespace Password_Generator
             //gets the GUID
             frameCount = gifImage.GetFrameCount(dimension);//всего кадров в анимации
         }
-
         public bool ReverseAtEnd
         {
             //whether the gif should play backwards when it reaches the end
@@ -894,7 +828,6 @@ namespace Password_Generator
 
         public Image GetNextFrame()
         {
-
             currentFrame += step;
             //if (currentFrame > frameCount) return null;//типа нехочу начинать с начала
             //if the animation reaches a boundary...
@@ -911,7 +844,7 @@ namespace Password_Generator
                 {
                     if (repeat == false)
                     {
-                         return null;
+                      return null;
                     }
                     currentFrame = 0;//...or start over
                 }
@@ -928,7 +861,3 @@ namespace Password_Generator
         }
     }
 }
-
-        
-    
-
