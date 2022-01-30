@@ -583,8 +583,8 @@ namespace CrazyEights
         #region Message Handlers
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartFireworksThread();
-            //AskStartGame();
+            
+            AskStartGame();
         }
 
         private void AskStartGame()
