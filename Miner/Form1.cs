@@ -8,7 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Drawing.Text;
+using System.IO;
 
 namespace Password_Generator
 { 
@@ -295,20 +298,23 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-          
+        private Font OldFont;
+        Font myFont;
+        PrivateFontCollection private_fonts = new PrivateFontCollection();
+
         public GifImage gifImage = null;
         public GifImage gifMine = null;
 
-        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
+       /* public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\usr\source\repos\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
-        /*public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
+        public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";*/
+        public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";*/
+        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
@@ -343,7 +349,12 @@ namespace Password_Generator
         public Miner2(Miner1 owner)
         {
             miner1 = owner;
+            // Загружаем встроенный в ресурсы свой шрифт
+            LoadFont();
+            var labelFontDigi = new Font(private_fonts.Families[0], 20);
+            labelcont.UseCompatibleTextRendering = true;
             
+
             gifImage = new GifImage(filePath); //2
             gifImage.ReverseAtEnd = false; // 2 dont reverse at end
 
@@ -372,9 +383,10 @@ namespace Password_Generator
             labelcont.ForeColor = Color.Red; //цвет шрифта
             labelcont.BackColor = Color.Black; // цвет фона
             labelcont.TextAlign = ContentAlignment.MiddleCenter;
-            labelcont.Font = labelfont;
+            labelcont.Font = labelFontDigi;
             labelcont.Text = S.ToString("000");
             labelcont.Location = new Point(10, 5);
+            labelcont.UseCompatibleTextRendering = true;
             Controls.Add(labelcont);
             
             labeltime.Width = 70;
@@ -383,9 +395,10 @@ namespace Password_Generator
             labeltime.ForeColor = Color.Red; //цвет шрифта
             labeltime.BackColor = Color.Black; // цвет фона
             labeltime.TextAlign = ContentAlignment.MiddleCenter;
-            labeltime.Font = labelfont;
+            labeltime.Font = labelFontDigi;
             labeltime.Text = date1.ToString("mm:ss");
             labeltime.Location = new Point(this.Width-labeltime.Width-25,5);
+            labeltime.UseCompatibleTextRendering = true;
             Controls.Add(labeltime);
             
             
@@ -516,6 +529,29 @@ namespace Password_Generator
                     /////////
 
                 }
+
+        }
+        private void LoadFont()
+        {
+
+            using (MemoryStream fontStream = new MemoryStream(Minesweeper.Properties.Resources.DS_DIGI))
+            {
+                // create an unsafe memory block for the font data
+                System.IntPtr data = Marshal.AllocCoTaskMem((int)fontStream.Length);
+                // create a buffer to read in to
+                byte[] fontdata = new byte[fontStream.Length];
+                // read the font data from the resource
+                fontStream.Read(fontdata, 0, (int)fontStream.Length);
+                // copy the bytes to the unsafe memory block
+                Marshal.Copy(fontdata, 0, data, (int)fontStream.Length);
+                // pass the font to the font collection
+                private_fonts.AddMemoryFont(data, (int)fontStream.Length);
+                // close the resource stream
+                fontStream.Close();
+                // free the unsafe memory
+                Marshal.FreeCoTaskMem(data);
+
+            }
 
         }
         void Miner2_FormClosing(object sender, FormClosingEventArgs e)

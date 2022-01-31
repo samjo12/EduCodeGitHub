@@ -8,9 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireworks", "..\Cards\Fireworks\Fireworks.csproj", "{283B7792-85DB-4F21-B612-28369306E426}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{30760A62-4FB6-4765-81AD-22D40B3C1149}"
-	ProjectSection(SolutionItems) = preProject
-		7segments.cs = 7segments.cs
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

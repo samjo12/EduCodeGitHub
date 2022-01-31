@@ -59,5 +59,15 @@ namespace Minesweeper.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] DS_DIGI {
+            get {
+                object obj = ResourceManager.GetObject("DS_DIGI", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
