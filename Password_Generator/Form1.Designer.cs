@@ -30,14 +30,6 @@ namespace Password_Generator
         private void InitializeComponent()
         {
             this.tcPassGen = new System.Windows.Forms.TabControl();
-            this.tabMiner = new System.Windows.Forms.TabPage();
-            this.btnStartMiner = new System.Windows.Forms.Button();
-            this.nudComplicate = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.nudMinerY = new System.Windows.Forms.NumericUpDown();
-            this.nudMinerX = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
             this.tabPassword = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
             this.tbMyStr = new System.Windows.Forms.TextBox();
@@ -63,19 +55,24 @@ namespace Password_Generator
             this.btnConvert = new System.Windows.Forms.Button();
             this.cbConverterTo = new System.Windows.Forms.ComboBox();
             this.cbConverterFrom = new System.Windows.Forms.ComboBox();
+            this.btnStartMiner = new System.Windows.Forms.Button();
+            this.nudComplicate = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.nudMinerY = new System.Windows.Forms.NumericUpDown();
+            this.nudMinerX = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.tcPassGen.SuspendLayout();
-            this.tabMiner.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).BeginInit();
             this.tabPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).BeginInit();
             this.tabConverter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).BeginInit();
             this.SuspendLayout();
             // 
             // tcPassGen
             // 
-            this.tcPassGen.Controls.Add(this.tabMiner);
             this.tcPassGen.Controls.Add(this.tabPassword);
             this.tcPassGen.Controls.Add(this.tabConverter);
             this.tcPassGen.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -84,128 +81,6 @@ namespace Password_Generator
             this.tcPassGen.SelectedIndex = 0;
             this.tcPassGen.Size = new System.Drawing.Size(547, 409);
             this.tcPassGen.TabIndex = 0;
-            // 
-            // tabMiner
-            // 
-            this.tabMiner.BackColor = System.Drawing.Color.White;
-            this.tabMiner.Controls.Add(this.btnStartMiner);
-            this.tabMiner.Controls.Add(this.nudComplicate);
-            this.tabMiner.Controls.Add(this.label7);
-            this.tabMiner.Controls.Add(this.label6);
-            this.tabMiner.Controls.Add(this.nudMinerY);
-            this.tabMiner.Controls.Add(this.nudMinerX);
-            this.tabMiner.Controls.Add(this.label5);
-            this.tabMiner.Location = new System.Drawing.Point(4, 24);
-            this.tabMiner.Name = "tabMiner";
-            this.tabMiner.Size = new System.Drawing.Size(539, 381);
-            this.tabMiner.TabIndex = 2;
-            this.tabMiner.Text = "Минер";
-            this.tabMiner.Click += new System.EventHandler(this.tabMiner_Click);
-            // 
-            // btnStartMiner
-            // 
-            this.btnStartMiner.BackColor = System.Drawing.Color.White;
-            this.btnStartMiner.Location = new System.Drawing.Point(231, 91);
-            this.btnStartMiner.Name = "btnStartMiner";
-            this.btnStartMiner.Size = new System.Drawing.Size(75, 23);
-            this.btnStartMiner.TabIndex = 8;
-            this.btnStartMiner.Text = "Начать";
-            this.btnStartMiner.UseVisualStyleBackColor = false;
-            this.btnStartMiner.Click += new System.EventHandler(this.btnStartMiner_Click);
-            // 
-            // nudComplicate
-            // 
-            this.nudComplicate.Location = new System.Drawing.Point(422, 5);
-            this.nudComplicate.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.nudComplicate.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudComplicate.Name = "nudComplicate";
-            this.nudComplicate.Size = new System.Drawing.Size(39, 23);
-            this.nudComplicate.TabIndex = 7;
-            this.nudComplicate.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(343, 6);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(72, 15);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Сложность:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(258, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(12, 15);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "x";
-            // 
-            // nudMinerY
-            // 
-            this.nudMinerY.Location = new System.Drawing.Point(277, 3);
-            this.nudMinerY.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.nudMinerY.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.nudMinerY.Name = "nudMinerY";
-            this.nudMinerY.Size = new System.Drawing.Size(45, 23);
-            this.nudMinerY.TabIndex = 4;
-            this.nudMinerY.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // nudMinerX
-            // 
-            this.nudMinerX.Location = new System.Drawing.Point(210, 3);
-            this.nudMinerX.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.nudMinerX.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.nudMinerX.Name = "nudMinerX";
-            this.nudMinerX.Size = new System.Drawing.Size(42, 23);
-            this.nudMinerX.TabIndex = 3;
-            this.nudMinerX.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(196, 15);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "Размеры игрового поля в клетках:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabPassword
             // 
@@ -508,6 +383,107 @@ namespace Password_Generator
             this.cbConverterFrom.TabIndex = 0;
             this.cbConverterFrom.Text = "mm - millimeters";
             // 
+            // btnStartMiner
+            // 
+            this.btnStartMiner.Location = new System.Drawing.Point(0, 0);
+            this.btnStartMiner.Name = "btnStartMiner";
+            this.btnStartMiner.Size = new System.Drawing.Size(75, 23);
+            this.btnStartMiner.TabIndex = 0;
+            // 
+            // nudComplicate
+            // 
+            this.nudComplicate.Location = new System.Drawing.Point(422, 5);
+            this.nudComplicate.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.nudComplicate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudComplicate.Name = "nudComplicate";
+            this.nudComplicate.Size = new System.Drawing.Size(39, 23);
+            this.nudComplicate.TabIndex = 7;
+            this.nudComplicate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(343, 6);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(72, 15);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Сложность:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(258, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(12, 15);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "x";
+            // 
+            // nudMinerY
+            // 
+            this.nudMinerY.Location = new System.Drawing.Point(277, 3);
+            this.nudMinerY.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudMinerY.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudMinerY.Name = "nudMinerY";
+            this.nudMinerY.Size = new System.Drawing.Size(45, 23);
+            this.nudMinerY.TabIndex = 4;
+            this.nudMinerY.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // nudMinerX
+            // 
+            this.nudMinerX.Location = new System.Drawing.Point(210, 3);
+            this.nudMinerX.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudMinerX.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudMinerX.Name = "nudMinerX";
+            this.nudMinerX.Size = new System.Drawing.Size(42, 23);
+            this.nudMinerX.TabIndex = 3;
+            this.nudMinerX.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 5);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(196, 15);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Размеры игрового поля в клетках:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -517,16 +493,14 @@ namespace Password_Generator
             this.Name = "Form1";
             this.Text = "Мои утилиты";
             this.tcPassGen.ResumeLayout(false);
-            this.tabMiner.ResumeLayout(false);
-            this.tabMiner.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).EndInit();
             this.tabPassword.ResumeLayout(false);
             this.tabPassword.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPassLength)).EndInit();
             this.tabConverter.ResumeLayout(false);
             this.tabConverter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudComplicate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMinerX)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -559,7 +533,6 @@ namespace Password_Generator
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbMyStr;
-        private System.Windows.Forms.TabPage tabMiner;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown nudMinerY;
         private System.Windows.Forms.NumericUpDown nudMinerX;

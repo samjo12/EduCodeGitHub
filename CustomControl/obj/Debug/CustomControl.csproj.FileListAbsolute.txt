@@ -3,3 +3,9 @@ C:\Users\usr\source\repos\CustomControl\bin\Debug\CustomControl.dll
 C:\Users\usr\source\repos\CustomControl\bin\Debug\CustomControl.pdb
 C:\Users\usr\source\repos\CustomControl\obj\Debug\CustomControl.dll
 C:\Users\usr\source\repos\CustomControl\obj\Debug\CustomControl.pdb
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\bin\Debug\CustomControl.dll
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\bin\Debug\CustomControl.pdb
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\obj\Debug\CustomControl.csproj.AssemblyReference.cache
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\obj\Debug\CustomControl.csproj.CoreCompileInputs.cache
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\obj\Debug\CustomControl.dll
+C:\Users\amsad\source\EduCodeGitHub\CustomControl\obj\Debug\CustomControl.pdb
