@@ -12,6 +12,8 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using System.IO;
+using System.Windows;
+
 
 namespace Password_Generator
 { 
@@ -51,7 +53,7 @@ namespace Password_Generator
                 MenuGameLevelEasy.Checked = false;
                 MenuGameLevelHard.Checked = false;
                 MenuGameLevelNightmare.Checked = false;
-                nudComplicate = 19; //%мин
+                nudComplicate = 17; //%мин
             }
             else if (sender == MenuGameLevelHard)
             {
@@ -62,7 +64,7 @@ namespace Password_Generator
                 MenuGameLevelMedium.Checked = false;
                 MenuGameLevelNightmare.Checked = false;
                 // Set the color of the text in the TextBox control to Blue.
-                nudComplicate = 26; // %
+                nudComplicate = 22; // %
             }
             else //nightmare
             {
@@ -70,7 +72,7 @@ namespace Password_Generator
                 MenuGameLevelMedium.Checked = false;
                 MenuGameLevelHard.Checked = false;
                 MenuGameLevelNightmare.Checked = true;
-                nudComplicate = 34; // %
+                nudComplicate = 25; // %
             }
     }
 
@@ -305,16 +307,16 @@ namespace Password_Generator
         public GifImage gifImage = null;
         public GifImage gifMine = null;
 
-       /* public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
+        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\usr\source\repos\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";*/
-        public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
+        public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
+        /*public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
+        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";*/
 
         DateTime date1 = new DateTime(0, 0);
         Timer timer1 = new Timer();
@@ -350,6 +352,8 @@ namespace Password_Generator
         {
             miner1 = owner;
             // Загружаем встроенный в ресурсы свой шрифт
+            EnableDoubleBuffering();
+            
             LoadFont();
             var labelFontDigi = new Font(private_fonts.Families[0], 20);
             labelcont.UseCompatibleTextRendering = true;
@@ -374,7 +378,9 @@ namespace Password_Generator
             this.Width = Convert.ToInt32(BySide_padding * 2 + X*W + W/2 + 2); // 
             this.Height = Convert.ToInt32(Top_padding*2 + Y*H + H/2 + 2); // 
             this.CenterToScreen(); // выводим форму с окном по центру экрана
-            
+            //Формируем экранный буфер
+            //public BufferedGraphicsContext();
+
             // оформим кнопки управления и счетчики мин и времени
             var labelfont = new Font("Arial", 16, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
             labelcont.Width = 50;
@@ -436,9 +442,35 @@ namespace Password_Generator
                 } while (minespole[x, y]==10);
                 minespole[x, y] = 10; //мина
             }
+            var font14 = new Font("Arial", 14, FontStyle.Bold);  
+
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
-                {
+                {   // создание и вывод кнопок 
+                    var button = new Button();
+                    button.Width = W;
+                    button.Height = H;
+                    button.Location = new Point((button.Width) * i + 1 + BySide_padding, (button.Height) * j + 1 + 35); //20 и 35 - отступы слева и сверху
+                    button.Text = "";
+                    //button.FlatStyle = FlatStyle.Popup;
+                    button.BackColor = Color.AntiqueWhite;
+
+                    button.Font = font14;
+
+                    button.Tag = j * X + i;// НЕ заминировано, записываем только порядковый номер кнопки
+                    //button.Text = (j * X + i).ToString();
+                    //button.Tag = 0; 
+
+                    button.Visible = true;
+                    //button.BringToFront();
+
+                    _buttons[i, j] = button;
+                    this.Controls.Add(_buttons[i, j]); //выводим кнопку с заданными ранее параметрами
+                    this.DoubleBuffered = true;
+
+                    this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на кнопку  обработчик нажатий  кнопок мыши
+                                                                                                    // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+                    ///////// А теперь зададим то, что под кнопкой
                     int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
                     if (minespole[i, j] == 10) { around = 10; } //Ячейка с миной, окружение можно не просчитывать
                     else
@@ -454,7 +486,7 @@ namespace Password_Generator
                         minespole[i, j] = around; // указываем количество мин вокруг от 0 до 9
                     }
           
-                    var labelfont1 = new Font("Arial", 14, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
+                  
                     var labelbutton = new Label(); // счетчик мин
                                                    
                     labelbutton.Text = around.ToString();
@@ -481,7 +513,7 @@ namespace Password_Generator
 
                     }
                     // Создаем прототип лейбла с элементом минного поля
-
+                   
                     labelbutton.Width = W;
                     labelbutton.Height = H;
                     labelbutton.Visible = true;
@@ -492,45 +524,55 @@ namespace Password_Generator
                     labelbutton.Font = labelfont;
 
                     labelbutton.Location = new Point(W * i + BySide_padding, H * j + 35);
-                    labelbutton.Visible = false;
+                    labelbutton.Visible = true;
 
                     LButtons[i, j] = labelbutton;
                     this.Controls.Add(labelbutton);
+                    this.DoubleBuffered = true;
 
                     this.timer2.Interval = 1500;// настраиваем интервал таймера
                     this.timer2.Tick += new System.EventHandler(this.timer2_Tick); // 2 создаем таймер для gif - анимации
 
                     this.LButtons[i, j].MouseDown += new MouseEventHandler(this.button2_MouseDown); // вешаем на лейблы  обработчик нажатий  кнопок мыши
-                }
-            for (int i = 0; i < X; i++)
-                for (int j = 0; j < Y; j++)
-                {
-                    var button = new Button();
-
-                    button.Width = W;
-                    button.Height = H;
-                    button.Location = new Point((button.Width) * i + 1 + BySide_padding, (button.Height) * j + 1 + 35); //20 и 35 - отступы слева и сверху
-                    button.Text = "";
-                    //button.FlatStyle = FlatStyle.Popup;
-                    button.BackColor = Color.AntiqueWhite;
-                    var buttonfont = new Font("Arial", 14, FontStyle.Bold);
-                    button.Font = buttonfont;
-
-                    button.Tag = j * X + i;// НЕ заминировано, записываем только порядковый номер кнопки
-                    //button.Text = (j * X + i).ToString();
-                    //button.Tag = 0; 
-
-                    button.Visible = true;
-
-                    _buttons[i, j] = button;
-                    this.Controls.Add(_buttons[i, j]); //выводим кнопку с заданными ранее параметрами
-                    this._buttons[i, j].MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на наши кнопки  обработчик нажатий  кнопок мыши
-                                                                                                    // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
-                    /////////
 
                 }
-
         }
+        public void EnableDoubleBuffering()
+        {
+            // Set the value of the double-buffering style bits to true.
+            this.SetStyle(ControlStyles.DoubleBuffer |
+               ControlStyles.UserPaint |
+               ControlStyles.AllPaintingInWmPaint,
+               true);
+            this.UpdateStyles();
+        }
+        public sealed class BufferedGraphicsManager
+        {
+            private static BufferedGraphicsContext bufferedGraphicsContext;
+            public static BufferedGraphicsContext Current
+            {
+                get { return BufferedGraphicsManager.bufferedGraphicsContext; }
+            }
+
+            static BufferedGraphicsManager()
+            {
+                BufferedGraphicsManager.bufferedGraphicsContext = new BufferedGraphicsContext();
+
+                AppDomain.CurrentDomain.ProcessExit += new EventHandler(BufferedGraphicsManager.OnShutdown);
+                AppDomain.CurrentDomain.DomainUnload += new EventHandler(BufferedGraphicsManager.OnShutdown);
+            }
+            private static void OnShutdown(object sender, EventArgs e)
+            {
+                BufferedGraphicsManager.Current.Invalidate();
+            }
+        }
+       /* public BufferedGraphics Allocate(Graphics targetGraphics, Rectangle targetRectangle)
+        {
+            if (targetRectangle.Width * targetRectangle.Height > this.MaximumBuffer.Width * this.MaximumBuffer.Height)
+                return this.AllocBufferInTempManager(targetGraphics, IntPtr.Zero, targetRectangle);
+            else
+                return this.AllocBuffer(targetGraphics, IntPtr.Zero, targetRectangle);
+        }*/
         private void LoadFont()
         {
 
@@ -583,25 +625,14 @@ namespace Password_Generator
             date1 = new DateTime(0, 0); 
             labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
             labeltime.Text = "00:00";//date1.ToString("mm:ss");
-            var labelfont1 = new Font("Arial", 14, FontStyle.Bold);
+            var font14 = new Font("Arial", 14, FontStyle.Bold);
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                    //Если  кнопка включена , а надпись - нет
-                    _buttons[i, j].Visible = false;// на случай, если кнопка видна -выключаем
-                    LButtons[i, j].Visible = true; //иначе изменения в Лейбл не отработаются ;
-                   
-                   
-                    LButtons[i, j].Text = "";
-                    LButtons[i, j].Image = null;
-                    LButtons[i, j].BackColor = LabelBackColour;
-                    LButtons[i, j].Font = labelfont1;             
-                   
                     minespole[i, j] = 0; //инициализируем минное поле
-                    buttonflags[i, j] = false; // инициаализацция массива флагов на кнопках
+                    buttonflags[i, j] = false; // инициализация массива флагов на кнопках
                     buttonopened[i, j] = false;//ini массива нажатых кнопок
                 }
-
             for (int i = 0; i < S; i++) // минируем поле, где S - кол-во мин
             {
                 int x, y;
@@ -612,11 +643,18 @@ namespace Password_Generator
                 } while (minespole[x, y] == 10);
                 minespole[x, y] = 10; //мина
             }
-
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
-                    int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
+                    //Если  кнопка включена , а надпись - нет
+                    //_buttons[i, j].Visible = false;// на случай, если кнопка видна -выключаем
+                    LButtons[i, j].Visible = true; //иначе изменения в Лейбл не отработаются ;
+                   
+                    LButtons[i, j].Text = "";
+                    LButtons[i, j].Image = null;
+                    LButtons[i, j].BackColor = LabelBackColour;
+                    LButtons[i, j].Font = font14;             
+                   int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
                     if (minespole[i, j] == 10) 
                     {  around = 10; LButtons[i, j].Image = gifMine.GetFrame(0);} //Ячейка с миной, окружение можно не просчитывать
                     else
@@ -646,23 +684,25 @@ namespace Password_Generator
                            case 7: LButtons[i, j].ForeColor = Color.OrangeRed; break;
                            case 8: LButtons[i, j].ForeColor = Color.Indigo; break;
                            case 9: LButtons[i, j].ForeColor = Color.Yellow; break;
-                           case 10: break;
+                           //case 10: break;
                            default: break; //это очищенная пустая область
                         }
                     }
-                  
-                    // Создаем прототип лейбла с элементом минного поля
-                    LButtons[i, j].Visible = false;
 
-                   _buttons[i, j].Visible = true; //показать кнопки
-                    _buttons[i, j].Text = "";
+                    // Создаем прототип лейбла с элементом минного поля
+                    _buttons[i, j].BringToFront();
                     _buttons[i, j].Image = null;
+
+                    //_buttons[i, j].Visible = true; //показать кнопки
+                    //_buttons[i, j].Text = "";
+                    //_buttons[i, j].Image = null;
+                   
                 }
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            date1 = date1.AddSeconds(1);
-            labeltime.Text = date1.ToString("mm:ss");
+          date1 = date1.AddSeconds(1);
+          labeltime.Text = date1.ToString("mm:ss");
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -684,8 +724,8 @@ namespace Password_Generator
             if (buttonflags[x, y] is true) return; // На клетке стоит флаг, ничего отключать не нужно
             if (buttonopened[x, y] is true) return; //Эта кнопка уже открыта .... выходим
             else buttonopened[x, y] = true; // отметим, что эта кнопка была нажата
-            b.Visible=false; //прячем кнопку
-            LButtons[x, y].Visible = true; //показываем надпись под кнопкой
+            //b.Visible=false; //прячем кнопку
+            LButtons[x, y].BringToFront(); //показываем надпись под кнопкой
             switch (minespole[x, y])
             {
                 case 0:  // нажата пустая клетка -отключаем кнопку и
@@ -761,7 +801,8 @@ namespace Password_Generator
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
                     { if (buttonflags[i,j] is true && minespole[i,j]!=10) _buttons[i,j].Image= Image.FromFile(filePath5); //false flag
-                        if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                        //if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
+                        LButtons[i, j].BringToFront();
                     }
                 flag_restart = true; // игра окончена
                 return;
