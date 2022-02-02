@@ -9,21 +9,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace newClock
+namespace newClock //7-segments
 {
     public partial class Form1 : Form
-    {
+    {   
+        public static DateTime ct = new DateTime(0);
         public Form1()
         {
             InitializeComponent();
             Clock my = new Clock();
+            
             my.Bounds = new Rectangle(100, 100, 1000, 1000); // задаем область контрола с часами
             Controls.Add(my);
         }
+
+
     }
     public partial class Clock : UserControl
     {
         private Timer mTimer;
+        public DateTime currenttime=new DateTime(0,0);
+        // = new DateTime(0, 0);//DateTime.Now;
+        bool showSlasher = true;
         public Clock()
         {
             mTimer = new Timer();
@@ -33,7 +40,7 @@ namespace newClock
         }
         private void TimerTick(object sender, EventArgs e)
         {
-            Invalidate();
+          Invalidate();
         }
 
         public int DigitWidth
@@ -42,8 +49,9 @@ namespace newClock
             set { width = value - 2 * Thickness; }
         }
 
-        public int Thickness { get; set; } = 3;  // указываем высоту сегмента и толщину линий
-        int width = 12; //length or height of segment
+
+        public int Thickness { get; set; } = 15;  // указываем высоту сегмента и толщину линий
+        int width = 60; //length or height of segment
 
         Brush bkBrush = new SolidBrush(Color.White);
         Brush activeBrush = new SolidBrush(Color.Red);
@@ -158,6 +166,13 @@ namespace newClock
                 g.FillRectangle(brush, x+i, y+Th1+i, width-i*2, 1);
             }
         }
+        void DrawSlasher(bool activ, int x, int y, Graphics g)
+        {
+            Brush brush = (activ ? activeBrush : bkBrush);
+            g.FillRectangle(brush, x, y + width, Thickness, Thickness); // верхняя точка
+            g.FillRectangle(brush, x, y + width*2 + Thickness, Thickness, Thickness); // нижняя точка
+        }
+
 
         // a b c d e f g segments for digits from 0 to 9
         bool[] activeSegments = {
@@ -195,14 +210,18 @@ namespace newClock
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-            DateTime currenttime = DateTime.Now;
+            currenttime = currenttime.AddSeconds(1);//DateTime.Now;
 
+            
             int x = 0, y = 0;
 
             DrawDigit(currenttime.Minute / 10, x, y, g);
             x += DigitWidth + Thickness;
             DrawDigit(currenttime.Minute % 10, x, y, g);
-            x += DigitWidth + DigitWidth / 2;
+            x += DigitWidth + Thickness;
+            x += DigitWidth / 4;
+            DrawSlasher(showSlasher ? showSlasher=false:showSlasher=true, x, y, g); //мигающее двоеточие
+            x += DigitWidth / 2;
             DrawDigit(currenttime.Second / 10, x, y, g);
             x += DigitWidth + Thickness;
             DrawDigit(currenttime.Second % 10, x, y, g);
