@@ -8,3 +8,13 @@ C:\Users\usr\source\repos\7segments\obj\Debug\7segments.csproj.GenerateResource.
 C:\Users\usr\source\repos\7segments\obj\Debug\7segments.csproj.CoreCompileInputs.cache
 C:\Users\usr\source\repos\7segments\obj\Debug\7segmentsI.exe
 C:\Users\usr\source\repos\7segments\obj\Debug\7segmentsI.pdb
+C:\Users\amsad\source\EduCodeGitHub\7segments\bin\Debug\7segmentsI.exe.config
+C:\Users\amsad\source\EduCodeGitHub\7segments\bin\Debug\7segmentsI.exe
+C:\Users\amsad\source\EduCodeGitHub\7segments\bin\Debug\7segmentsI.pdb
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\7segments.csproj.AssemblyReference.cache
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\newClock.Form1.resources
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\_7segmentsI.Properties.Resources.resources
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\7segments.csproj.GenerateResource.cache
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\7segments.csproj.CoreCompileInputs.cache
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\7segmentsI.exe
+C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Debug\7segmentsI.pdb

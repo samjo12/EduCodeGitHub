@@ -11,9 +11,10 @@ using System.Windows.Forms;
 
 namespace newClock //7-segments
 {
+    
     public partial class Form1 : Form
     {   
-        public static DateTime ct = new DateTime(0);
+       // public static DateTime ct = new DateTime(0);
         public Form1()
         {
             InitializeComponent();
@@ -25,10 +26,14 @@ namespace newClock //7-segments
 
 
     }
+    public static class StaticData
+    {
+        public static DateTime currt= new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,10,10 );
+    } 
     public partial class Clock : UserControl
     {
         private Timer mTimer;
-        public DateTime currenttime=new DateTime(0,0);
+        public DateTime currenttime = StaticData.currt;//new DateTime(0,0);
         // = new DateTime(0, 0);//DateTime.Now;
         bool showSlasher = true;
         public Clock()
@@ -49,29 +54,12 @@ namespace newClock //7-segments
             set { width = value - 2 * Thickness; }
         }
 
+        public int Thickness { get; set; } = 1;  // указываем высоту сегмента и толщину линий
+        int width = 5; //length or height of segment
 
-        public int Thickness { get; set; } = 15;  // указываем высоту сегмента и толщину линий
-        int width = 60; //length or height of segment
+        Brush bkBrush = new SolidBrush(Color.FromArgb(35,30,31)); //White); 
+        Brush activeBrush = new SolidBrush(Color.FromArgb(2,226,232));//Color.Red);
 
-        Brush bkBrush = new SolidBrush(Color.White);
-        Brush activeBrush = new SolidBrush(Color.Red);
-
-    /*    void DrawVertical(int x, int y, bool active, Graphics g)
-        {
-            Brush brush = (active ? activeBrush : bkBrush);
-            int Th1 = Thickness / 2;
-            int Th2 =Th1;
-            if (Th1 * 2 < Thickness) Th1++;
-            for (int i = 0; i<Th1; i++)//делаем заоваленные края
-            {
-                g.FillRectangle(brush, x+i, y-i+Th1, 1, width -2*(Th1-i));
-            }
-            for (int i = 0; i < Th2; i++)
-            {
-                g.FillRectangle(brush, x+Th1 + i, y+i, 1, width - i*2);
-            }
-            //g.FillRectangle(brush, x, y, Thickness, width);
-        }*/
         void DrawVerticalUpLeft(int x, int y, bool active, Graphics g)
         {
             Brush brush = (active ? activeBrush : bkBrush);
@@ -80,11 +68,11 @@ namespace newClock //7-segments
             if (Th1 * 2 < Thickness) Th1++;
             for (int i = 0; i < Th1; i++)//делаем заоваленные края
             {
-                g.FillRectangle(brush, x + i, y + i - Th1, 1, width + (int)(Thickness/4) );
+                g.FillRectangle(brush, x + i, y + i - Th1 - (int)(Thickness / 4), 1, width + Th1 -(int)(Thickness / 4));
             }
             for (int i = 0; i < Th2; i++)
             {
-                g.FillRectangle(brush, x + Th1 + i, y + i, 1, width - 2*i+ (int)(Thickness / 4));
+                g.FillRectangle(brush, x + Th1 + i, y + i - (int)(Thickness / 4), 1, width - 2*i+ Th1 - (int)(Thickness / 4));
             }
         }
         void DrawVerticalUpRight(int x, int y, bool active, Graphics g)
@@ -95,11 +83,11 @@ namespace newClock //7-segments
             if (Th1 * 2 < Thickness) Th1++;
             for (int i = 0; i < Th1; i++)//делаем заоваленные края
             {
-                g.FillRectangle(brush, x + i, y - i + (int)(Thickness / 4), 1, width +2*i - Th1);
+                g.FillRectangle(brush, x + i, y - i + (int)(Thickness / 4), 1, width + 2 * i - Th1);
             }
             for (int i = 0; i < Th2; i++)
             {
-                g.FillRectangle(brush, x + Th1 + i, y - Th1+ (int)(Thickness / 4) - i, 1, width+Th1);
+                g.FillRectangle(brush, x + i + Th1, y - i -Th1 + (int)(Thickness / 4), 1, width + Th1 );
             }
         }
         void DrawVerticalDownLeft(int x, int y, bool active, Graphics g)
@@ -159,9 +147,9 @@ namespace newClock //7-segments
             if (Th1 * 2 < Thickness) Th1++;
             for (int i = 0; i < Th1; i++) //делаем заоваленные края
             {
-                g.FillRectangle(brush, x-i+Th1, y+i, width-Thickness+2*i, 1);
+                g.FillRectangle(brush, x-i+Th1 , y+i, width-Thickness+2*i, 1);
             }
-            for (int i = 0; i < Th1; i++)
+            for (int i = 0; i < Th2; i++)
             {
                 g.FillRectangle(brush, x+i, y+Th1+i, width-i*2, 1);
             }
@@ -211,7 +199,7 @@ namespace newClock //7-segments
             base.OnPaint(e);
             Graphics g = e.Graphics;
             currenttime = currenttime.AddSeconds(1);//DateTime.Now;
-
+            StaticData.currt = currenttime;
             
             int x = 0, y = 0;
 
