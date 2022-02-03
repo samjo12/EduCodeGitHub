@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using System.IO;
 using System.Windows;
-
+using System.Drawing.Drawing2D;
 
 namespace Password_Generator
 { 
@@ -44,6 +44,7 @@ namespace Password_Generator
                 MenuGameLevelNightmare.Checked = false;
                 // Set the color of the text in the TextBox control to Blue.
                 nudComplicate = 12; //% мин
+                StaticData.Form2text = "Take It Easy ...";
             }
             else if (sender == MenuGameLevelMedium)
             {
@@ -54,6 +55,7 @@ namespace Password_Generator
                 MenuGameLevelHard.Checked = false;
                 MenuGameLevelNightmare.Checked = false;
                 nudComplicate = 17; //%мин
+                StaticData.Form2text = "It Was Very Long Day ...";
             }
             else if (sender == MenuGameLevelHard)
             {
@@ -65,6 +67,7 @@ namespace Password_Generator
                 MenuGameLevelNightmare.Checked = false;
                 // Set the color of the text in the TextBox control to Blue.
                 nudComplicate = 22; // %
+                StaticData.Form2text = "Hard Time For You ...";
             }
             else //nightmare
             {
@@ -73,6 +76,7 @@ namespace Password_Generator
                 MenuGameLevelHard.Checked = false;
                 MenuGameLevelNightmare.Checked = true;
                 nudComplicate = 25; // %
+                StaticData.Form2text = "Time To Die !!!";
             }
     }
 
@@ -292,7 +296,18 @@ namespace Password_Generator
         //класс для обмена данными
         public static int X = 0;
         public static int Y = 0;
-        public static decimal S = 0;
+        public static decimal S = 0; 
+
+        public static string Form2text;
+        public static DateTime currt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
+        public static DateTime currt0 = currt;
+        public static bool stoptimer_flag = false;
+        public static bool NightColorMode = false;
+        //      public static Color colorschem1 = Color.FromArgb(35, 30, 31); // синий индикатор
+        //      public static Color colorschem2 = Color.FromArgb(2, 226, 232);// темно-серый неактивный индикатор
+        public static Color colorschem1 = Color.White; // синий индикатор
+        public static Color colorschem2 = Color.Red;// темно-серый неактивный индикатор
+        
     }
     public partial class Miner2 : Form // класс дочерней формы игрового поля
     {
@@ -300,8 +315,6 @@ namespace Password_Generator
         int X;
         int Y;
         int S;
-        private Font OldFont;
-        Font myFont;
         PrivateFontCollection private_fonts = new PrivateFontCollection();
 
         public GifImage gifImage = null;
@@ -322,17 +335,17 @@ namespace Password_Generator
         Timer timer1 = new Timer();
         Timer timer2 = new Timer();
 
-
+        public Clock gametime; // индикатор игрового таймера
+        public Clock gamecont; // индикатор количества мин
         public Color LabelBackColour =Color.Azure;
-        Label labelcont = new Label(); // счетчик мин
-        Label labeltime = new Label();
+   
         Label WIN = new Label();
         int W = 30; //размеры кнопок в пикселях -ширина
         int H = 30; //размеры кнопок в пикселях -высота
         int Z;      // исходное количество мин. изначально равно S
         Button[,] _buttons = new Button[30, 30];
-        Boolean[,] buttonflags = new Boolean[30, 30];
-        Boolean[,] buttonopened = new Boolean[30, 30];
+        bool[,] buttonflags = new Boolean[30, 30];
+        bool[,] buttonopened = new Boolean[30, 30];
 
         public Label[,] LButtons = new Label[30, 30];
         Boolean flag_detonation = false;
@@ -356,17 +369,15 @@ namespace Password_Generator
             
             LoadFont();
             var labelFontDigi = new Font(private_fonts.Families[0], 20);
-            labelcont.UseCompatibleTextRendering = true;
-            
 
             gifImage = new GifImage(filePath); //2
             gifImage.ReverseAtEnd = false; // 2 dont reverse at end
 
             gifMine = new GifImage(filePath2);
             this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
-            timer1.Interval = 1000;
-            timer1.Tick += new EventHandler(timer1_Tick); // создаем таймер
-            this.Text = "Take it Easy ...";
+
+            this.Text = StaticData.Form2text;// "Take it Easy ...";
+            //this.BackColor= Color.Black;
 
             X = StaticData.X;
             Y = StaticData.Y;
@@ -378,37 +389,53 @@ namespace Password_Generator
             this.Width = Convert.ToInt32(BySide_padding * 2 + X*W + W/2 + 2); // 
             this.Height = Convert.ToInt32(Top_padding*2 + Y*H + H/2 + 2); // 
             this.CenterToScreen(); // выводим форму с окном по центру экрана
-            //Формируем экранный буфер
-            //public BufferedGraphicsContext();
+                                   //Формируем экранный буфер
+                                   //public BufferedGraphicsContext();
 
-            // оформим кнопки управления и счетчики мин и времени
+
+            //Создаем кнопку переключения нажатий/режимы тык/флаг
+            var button_rst = new Button();
+            System.Drawing.Drawing2D.GraphicsPath myPath = new System.Drawing.Drawing2D.GraphicsPath();
+            myPath.AddEllipse(3*W, 5, W, W);
+            //Graphics g = CreateGraphics();
+
+            Region myRegion = new Region(myPath);
+            button_rst.Bounds = new Rectangle(3 * W, 5, W, W);
+            button_rst.Region = myRegion;
+            
+            // рисуем окантовоку для круглой кнопки 
+            /*g.DrawEllipse(new Pen(Color.Gray, 2),
+            button_rst.Left + 1,
+            button_rst.Top + 1,
+            button_rst.Width - 3,
+            button_rst.Height - 3);*/
+            button_rst.BackColor = Color.Blue;
+            //button_rst.Width = W;
+            //button_rst.Height = H;
+            //button_rst.Location = new Point(this.Width/2-W, 5); //20 и 35 - отступы слева и сверху
+            button_rst.Tag = 1000; // специальная кнопка
+            button_rst.Visible = true;
+            button_rst.BringToFront();
+
+            Restartbtn = button_rst;
+            this.Controls.Add(Restartbtn); //выводим кнопку с заданными ранее параметрами
+            this.Restartbtn.MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на кнопку  обработчик нажатий  кнопок мыши
+            this.Restartbtn.Focus();                                                                      // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+                                                                                                          ///////// А теперь зададим то, что под кнопкой
+
+
+
             var labelfont = new Font("Arial", 16, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
-            labelcont.Width = 50;
-            labelcont.Height = 25;
-            labelcont.Visible = true;
-            labelcont.ForeColor = Color.Red; //цвет шрифта
-            labelcont.BackColor = Color.Black; // цвет фона
-            labelcont.TextAlign = ContentAlignment.MiddleCenter;
-            labelcont.Font = labelFontDigi;
-            labelcont.Text = S.ToString("000");
-            labelcont.Location = new Point(10, 5);
-            labelcont.UseCompatibleTextRendering = true;
-            Controls.Add(labelcont);
-            
-            labeltime.Width = 70;
-            labeltime.Height = 25;
-            labeltime.Visible = true;
-            labeltime.ForeColor = Color.Red; //цвет шрифта
-            labeltime.BackColor = Color.Black; // цвет фона
-            labeltime.TextAlign = ContentAlignment.MiddleCenter;
-            labeltime.Font = labelFontDigi;
-            labeltime.Text = date1.ToString("mm:ss");
-            labeltime.Location = new Point(this.Width-labeltime.Width-25,5);
-            labeltime.UseCompatibleTextRendering = true;
-            Controls.Add(labeltime);
-            
-            
-            
+
+            gamecont = new Clock();
+            gamecont.bombcounter=Z;
+            gamecont.Bounds = new Rectangle(W+10, 5, 2*W, 25); // задаем область контрола с часами
+            Controls.Add(gamecont);
+
+            gametime = new Clock();
+            gametime.Bounds = new Rectangle(this.Width - 4*W, 5, 2*W+5, 25); // задаем область контрола с часами
+            Controls.Add(gametime);
+ 
             //надпись о победе/проигрыше
             WIN.Font = new Font("Arial", 16, FontStyle.Bold);
             WIN.ForeColor = Color.Red;
@@ -424,7 +451,10 @@ namespace Password_Generator
             Controls.Add(WIN);
             this.WIN.MouseDown += new MouseEventHandler(this.button2_MouseDown);
 
-            //Создаем кнопку переключения нажатий/режимы тык/флаг
+
+
+
+
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
                 {
@@ -508,7 +538,7 @@ namespace Password_Generator
                         case 10: //labelbutton.ForeColor = Color.Black; //рисуем мину
                                  labelbutton.Text = "";
                                  labelbutton.Image = gifMine.GetFrame(0); 
-                                break;
+                                 break;
                         default: break; //это очищенная пустая область
 
                     }
@@ -600,15 +630,10 @@ namespace Password_Generator
         {
             if (e.CloseReason == CloseReason.UserClosing)
                 e.Cancel = true;
-            if(timer1!=null)timer1.Dispose(); if (timer1 != null) timer1 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-            if (timer2 != null) timer2.Dispose(); if (timer2 != null) timer2 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
-           /* for (int i = 0; i < X; i++)
-                for (int j = 0; j<Y; j++)
-                {
-                    if (_buttons[i, j] != null) _buttons[i, j].Dispose();
-                    if (LButtons[i, j] != null) LButtons[i, j].Dispose();
-                }*/
-            //pct.Dispose(); // освобождаем память под анимацию
+            StaticData.currt = StaticData.currt0; //сбросим время
+            if (timer2 != null) timer2.Dispose(); 
+            if (timer2 != null) timer2 = null; //убиваем таймер, чтобы избежать артефактов при перезапуске
+
             miner1.Visible = Enabled;
             this.Hide();
         }
@@ -622,9 +647,10 @@ namespace Password_Generator
             explodeX = 0; explodeY = 0;
             if(WIN.Visible is true)WIN.Visible=false; //выключаем сообщение о победе
 
-            date1 = new DateTime(0, 0); 
-            labelcont.Text = S.ToString("000"); //выводим на счетчик кол-во неоткрытых мин
-            labeltime.Text = "00:00";//date1.ToString("mm:ss");
+            gametime.currenttime=StaticData.currt0;
+            gametime.Invalidate();
+            gamecont.bombcounter = S; //выводим на счетчик кол-во неоткрытых мин
+            gamecont.Invalidate();
             var font14 = new Font("Arial", 14, FontStyle.Bold);
             for (int i = 0; i < X; i++)
                 for (int j = 0; j < Y; j++)
@@ -638,8 +664,8 @@ namespace Password_Generator
                 int x, y;
                 do
                 {
-                    x = rnd.Next(0, X - 1);
-                    y = rnd.Next(0, Y - 1);
+                  x = rnd.Next(0, X - 1);
+                  y = rnd.Next(0, Y - 1);
                 } while (minespole[x, y] == 10);
                 minespole[x, y] = 10; //мина
             }
@@ -693,18 +719,13 @@ namespace Password_Generator
                     _buttons[i, j].BringToFront();
                     _buttons[i, j].Image = null;
 
-                    //_buttons[i, j].Visible = true; //показать кнопки
-                    //_buttons[i, j].Text = "";
-                    //_buttons[i, j].Image = null;
-                   
                 }
         }
-        private void timer1_Tick(object sender, EventArgs e)
+ /*       private void timer1_Tick(object sender, EventArgs e)
         {
           date1 = date1.AddSeconds(1);
-          labeltime.Text = date1.ToString("mm:ss");
         }
-
+ */
         private void timer2_Tick(object sender, EventArgs e)
         {
             LButtons[explodeX, explodeY].Image=(Bitmap)gifImage.GetNextFrame();
@@ -796,7 +817,7 @@ namespace Password_Generator
                     if (buttonopened[i, j] is true) z--;
             if(flag_detonation is true) //взорвалась мина
             {
-                timer1.Stop(); 
+                gametime.mTimer.Stop();
                 flag_detonation = false; // сбрасываем флаг взрыва
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
@@ -810,14 +831,14 @@ namespace Password_Generator
 
             if (S == 0 && z == Z) // стоит максимальное кол-во флажков и количесво неоткрытых кнопок соответствует числу мин
             {
-                timer1.Stop();
+                gametime.mTimer.Stop();
                 flag_restart = true; // игра окончена
                 WIN.Visible = true;
                 return;
             }
             if (S != 0 && z == Z) //Выиграли, т.к. все пустые кнопки открыты, хотя флажки не все стоят
-            {   
-                timer1.Stop();
+            {
+                gametime.mTimer.Stop();
                 flag_restart = true; // игра окончена
                 //поставим недоставленные флаги
                 for (int i = 0; i < X; i++)
@@ -836,7 +857,7 @@ namespace Password_Generator
                     }
                 if (counter == Z) // мины c флажками совпали
                 {
-                    timer1.Stop();
+                    gametime.mTimer.Stop();
                     flag_restart = true; // игра окончена
                                          //откроем все неоткрытые кнопки
                     for (int i = 0; i < X; i++)
@@ -856,12 +877,13 @@ namespace Password_Generator
             {
                 if (S == 0) return;// нельзя ставить флажков больше, чем есть мин по счетчику
                 buttonflags[x, y] = true; _buttons[x, y].Image = Image.FromFile(filePath4);
-                S--; labelcont.Text = S.ToString("000");
+                S--;
+                gamecont.bombcounter = S; gamecont.Invalidate();
                 if (S == 0) {  GameOver_check();  return; } //проверим - не достигнут ли конец игры
             }
             else 
             {  //убираем флаг, и прибавляем значение счетчика неотмеченных мин
-                S++; labelcont.Text = S.ToString("000");
+                S++; gamecont.bombcounter = S; gamecont.Invalidate();
                 _buttons[x, y].Image = null;
                 buttonflags[x, y] = false;// массив с флагами на кнопках 
             }
@@ -878,15 +900,24 @@ namespace Password_Generator
             int t,x,y;
             Button button = (Button)sender;
             t = (int)button.Tag;
+            if (t == 1000) 
+            {
+                if (gametime.mTimer.Enabled is true) gametime.mTimer.Stop(); flag_restart = true; NewGameINI(); return;
+            }
             x = t % X;
             y = t / X;
             if (e.Button==MouseButtons.Left) //нажата левая кнопка мыши
             {
-                if(timer1.Enabled is false)timer1.Start(); //запускаем таймер,если еще этого не сделали
+                if(gametime.mTimer.Enabled is false)//timer1.Start(); //запускаем таймер,если еще этого не сделали
+                {
+                    gametime.mTimer.Start();
+                }
                 if (buttonflags[x, y] is true) return;  // на этой кнопке стоит флажек - не обрабатываем этот клик
                 if (minespole[x, y] == 10) //ой, наступили на мину!
                 { /*Игра окончена*/
-                    timer1.Stop();//останавливаем таймер - взрыв
+                    //Controls.Remove(gametime);
+                    gametime.mTimer.Stop();
+                    //timer1.Stop();//останавливаем таймер - взрыв
                     flag_detonation = true; //ставим флаг, что нажата кнопка с миной
                 }
                 dispose_button(_buttons[x, y]);
@@ -960,6 +991,337 @@ namespace Password_Generator
             //find the frame
             return (Image)gifImage.Clone();
             //return a copy of it
+        }
+    }
+    public partial class Clock : UserControl ////////////////////////////////////////////////
+    {
+        public int bombcounter=1000; // Число бомб для индикатора/ Если=1000 -выводим таймер, иначе счетчик 
+        public Timer mTimer;
+        public DateTime currenttime = StaticData.currt; 
+ 
+        bool showSlasher = true;
+        public bool NightColorMode = StaticData.NightColorMode;
+        public Clock()
+        {
+             mTimer = new Timer();
+             mTimer.Interval = 1000;
+             mTimer.Tick += new EventHandler(TimerTick);
+             //mTimer.Start(); //Управляю таймером извне
+            
+        }
+        private void TimerTick(object sender, EventArgs e)
+        {
+            Invalidate();
+        }
+
+        public int DigitWidth
+        {
+            get { return (width + 2 * Thickness); }
+            set { width = value - 2 * Thickness; }
+        }
+
+        public int Thickness { get; set; } = 2;  // указываем  толщину сегмента
+        int width = 8;                          //указываем  длину/высоту сегмента 
+
+        Brush bkBrush = new SolidBrush(StaticData.colorschem1);     //цвет цифр
+        Brush activeBrush = new SolidBrush(StaticData.colorschem2);// цвет неактивных индикаторов
+
+        void DrawVerticalUpLeft(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+            int Th1 = Thickness / 2;
+            int Th2 = Th1;
+            if (Th1 * 2 < Thickness) Th1++;
+            for (int i = 0; i < Th1; i++)//делаем заоваленные края
+            {
+                g.FillRectangle(brush, x + i, y + i - Th1 - (int)(Thickness / 4), 1, width + Th1 - (int)(Thickness / 4));
+            }
+            for (int i = 0; i < Th2; i++)
+            {
+                g.FillRectangle(brush, x + Th1 + i, y + i - (int)(Thickness / 4), 1, width - 2 * i + Th1 - (int)(Thickness / 4));
+            }
+        }
+        void DrawVerticalUpRight(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+            int Th1 = Thickness / 2;
+            int Th2 = Th1;
+            if (Th1 * 2 < Thickness) Th1++;
+            for (int i = 0; i < Th1; i++)//делаем заоваленные края
+            {
+                g.FillRectangle(brush, x + i, y - i + (int)(Thickness / 4), 1, width + 2 * i - Th1);
+            }
+            for (int i = 0; i < Th2; i++)
+            {
+                g.FillRectangle(brush, x + i + Th1, y - i - Th1 + (int)(Thickness / 4), 1, width + Th1);
+            }
+        }
+        void DrawVerticalDownLeft(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+            int Th1 = Thickness / 2;
+            int Th2 = Th1;
+            if (Th1 * 2 < Thickness) Th1++;
+            for (int i = 0; i < Th1; i++)//делаем заоваленные края
+            {
+                g.FillRectangle(brush, x + i, y - i + Th1, 1, width + (int)(Thickness / 4));
+            }
+            for (int i = 0; i < Th2; i++)
+            {
+                g.FillRectangle(brush, x + i + Th1, y + i, 1, width - 2 * i + (int)(Thickness / 4));
+            }
+        }
+        void DrawVerticalDownRight(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+            int Th1 = Thickness / 2;
+            int Th2 = Th1;
+            if (Th1 * 2 < Thickness) Th1++;
+            for (int i = 0; i < Th1; i++)//делаем заоваленные края
+            {
+                g.FillRectangle(brush, x + i, y - i + Th1, 1, width - Th1 + 2 * i - (int)(Thickness / 4));
+            }
+            for (int i = 0; i < Th2; i++)
+            {
+                g.FillRectangle(brush, x + i + Th1, y + i, 1, width + Th1 - (int)(Thickness / 4));
+            }
+        }
+
+        void DrawHorizontalUp(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+
+            for (int i = 0; i < Thickness; i++) //делаем заоваленные края
+            {
+                g.FillRectangle(brush, x - (int)(Thickness / 2) + i, y + i, width + Thickness - 2 * i, 1);
+            }
+        }
+        void DrawHorizontalDown(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+
+            for (int i = 0; i < Thickness; i++) //делаем заоваленные края
+            {
+                g.FillRectangle(brush, x - i + (int)(Thickness / 2), y + i, width - Thickness + 2 * i, 1);
+            }
+        }
+        void DrawHorizontalMiddle(int x, int y, bool active, Graphics g)
+        {
+            Brush brush = (active ? activeBrush : bkBrush);
+            int Th1 = Thickness / 2;
+            int Th2 = Th1;
+            if (Th1 * 2 < Thickness) Th1++;
+            for (int i = 0; i < Th1; i++) //делаем заоваленные края
+            {
+                g.FillRectangle(brush, x - i + Th1, y + i, width - Thickness + 2 * i, 1);
+            }
+            for (int i = 0; i < Th2; i++)
+            {
+                g.FillRectangle(brush, x + i, y + Th1 + i, width - i * 2, 1);
+            }
+        }
+        void DrawSlasher(bool activ, int x, int y, Graphics g)
+        {
+            Brush brush = (activ ? activeBrush : bkBrush);
+            g.FillRectangle(brush, x, y + width, Thickness, Thickness); // верхняя точка
+            g.FillRectangle(brush, x, y + width * 2 + Thickness, Thickness, Thickness); // нижняя точка
+        }
+
+
+        // a b c d e f g segments for digits from 0 to 9
+        bool[] activeSegments = {
+            true, true, true, true, true, true, false,
+            false, true, true, false, false, false, false,
+            true, true, false, true, true, false, true,
+            true, true, true, true, false, false, true,
+            false, true, true, false, false, true, true, //4
+            true, false, true, true, false, true, true, //5
+            true, false, true, true, true, true, true,
+            true, true, true, false, false, false, false, //7
+            true, true, true, true, true, true, true,
+            true, true, true, false, false, true, true,
+        };
+
+        void DrawDigit(int digit, int x, int y, Graphics g)
+        {
+            //a -верхний горизонтальный                                                                         
+            DrawHorizontalUp(x + Thickness, y, activeSegments[7 * digit + 0], g);
+            //b - верхний правый вертикальный
+            DrawVerticalUpRight(x + Thickness + width, y + Thickness, activeSegments[7 * digit + 1], g);
+            //c - нижний правый вертикальный
+            DrawVerticalDownRight(x + Thickness + width, y + 2 * Thickness + width, activeSegments[7 * digit + 2], g);
+            //d - нижний горизонтальный
+            DrawHorizontalDown(x + Thickness, y + 2 * width + 2 * Thickness, activeSegments[7 * digit + 3], g);
+            //e -нижний левый вертикальный
+            DrawVerticalDownLeft(x, y + 2 * Thickness + width, activeSegments[7 * digit + 4], g);
+            //f -верхний левый вертикальный
+            DrawVerticalUpLeft(x, y + Thickness, activeSegments[7 * digit + 5], g);
+            //g - средний горизонтальный
+            DrawHorizontalMiddle(x + Thickness, y + Thickness + width, activeSegments[7 * digit + 6], g);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            Graphics g = e.Graphics;
+
+            int x = 0, y = 0;
+            if (bombcounter == 1000)// показываем время
+            {
+                DrawDigit(currenttime.Minute / 10, x, y, g);
+                x += DigitWidth + Thickness;
+                DrawDigit(currenttime.Minute % 10, x, y, g);
+                x += DigitWidth + Thickness;
+                x += DigitWidth / 4;
+                DrawSlasher(showSlasher ? showSlasher = false : showSlasher = true, x, y, g); //мигающее двоеточие
+                x += DigitWidth / 2;
+                DrawDigit(currenttime.Second / 10, x, y, g);
+                x += DigitWidth + Thickness;
+                DrawDigit(currenttime.Second % 10, x, y, g);
+                currenttime = currenttime.AddSeconds(1);//DateTime.Now;
+                StaticData.currt = currenttime;
+            }
+            else //Показываем счетчик бомб
+            {
+                int d1 = (int)(bombcounter / 100);
+                int d2 = (int)((bombcounter - d1*100) / 10);
+                int d3 = bombcounter-d1*100-d2*10;
+                DrawDigit(d1, x, y, g); // первый знак
+                x += DigitWidth + Thickness;
+                DrawDigit(d2, x, y, g); // второй знак
+                x += DigitWidth + Thickness;
+                DrawDigit(d3, x, y, g);
+            }
+        }
+    }
+
+    public class RoundButton : Control
+    {
+        public Color BackColor2 { get; set; }
+        public Color ButtonBorderColor { get; set; }
+        public int ButtonRoundRadius { get; set; }
+
+        public Color ButtonHighlightColor { get; set; }
+        public Color ButtonHighlightColor2 { get; set; }
+        public Color ButtonHighlightForeColor { get; set; }
+
+        public Color ButtonPressedColor { get; set; }
+        public Color ButtonPressedColor2 { get; set; }
+        public Color ButtonPressedForeColor { get; set; }
+
+        private bool IsHighlighted;
+        private bool IsPressed;
+
+        public RoundButton()
+        {
+            Size = new Size(100, 40);
+            ButtonRoundRadius = 30;
+            BackColor = Color.Gainsboro;
+            BackColor2 = Color.Silver;
+            ButtonBorderColor = Color.Black;
+            ButtonHighlightColor = Color.Orange;
+            ButtonHighlightColor2 = Color.OrangeRed;
+            ButtonHighlightForeColor = Color.Black;
+
+            ButtonPressedColor = Color.Red;
+            ButtonPressedColor2 = Color.Maroon;
+            ButtonPressedForeColor = Color.White;
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams createParams = base.CreateParams;
+                createParams.ExStyle |= 0x00000020; // WS_EX_TRANSPARENT
+                return createParams;
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            var foreColor = IsPressed ? ButtonPressedForeColor : IsHighlighted ? ButtonHighlightForeColor : ForeColor;
+            var backColor = IsPressed ? ButtonPressedColor : IsHighlighted ? ButtonHighlightColor : BackColor;
+            var backColor2 = IsPressed ? ButtonPressedColor2 : IsHighlighted ? ButtonHighlightColor2 : BackColor2;
+
+
+            using (var pen = new Pen(ButtonBorderColor, 1))
+                e.Graphics.DrawPath(pen, Path);
+
+            using (var brush = new LinearGradientBrush(ClientRectangle, backColor, backColor2, LinearGradientMode.Vertical))
+                e.Graphics.FillPath(brush, Path);
+
+            using (var brush = new SolidBrush(foreColor))
+            {
+                var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                var rect = ClientRectangle;
+                rect.Inflate(-4, -4);
+                e.Graphics.DrawString(Text, Font, brush, rect, sf);
+            }
+
+            base.OnPaint(e);
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            IsHighlighted = true;
+            Parent.Invalidate(Bounds, false);
+            Invalidate();
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            IsHighlighted = false;
+            IsPressed = false;
+            Parent.Invalidate(Bounds, false);
+            Invalidate();
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            Parent.Invalidate(Bounds, false);
+            Invalidate();
+            IsPressed = true;
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            Parent.Invalidate(Bounds, false);
+            Invalidate();
+            IsPressed = false;
+        }
+
+        protected GraphicsPath Path
+        {
+            get
+            {
+                var rect = ClientRectangle;
+                rect.Inflate(-1, -1);
+                return GetRoundedRectangle(rect, ButtonRoundRadius);
+            }
+        }
+
+        public static GraphicsPath GetRoundedRectangle(Rectangle rect, int d)
+        {
+            var gp = new GraphicsPath();
+
+            gp.AddArc(rect.X, rect.Y, d, d, 180, 90);
+            gp.AddArc(rect.X + rect.Width - d, rect.Y, d, d, 270, 90);
+            gp.AddArc(rect.X + rect.Width - d, rect.Y + rect.Height - d, d, d, 0, 90);
+            gp.AddArc(rect.X, rect.Y + rect.Height - d, d, d, 90, 90);
+            gp.CloseFigure();
+
+            return gp;
         }
     }
 }

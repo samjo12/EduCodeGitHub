@@ -1,36 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace newClock //7-segments
-{
-    
-    public partial class Form1 : Form
-    {   
-       // public static DateTime ct = new DateTime(0);
-        public Form1()
-        {
-            InitializeComponent();
+/*
             Clock my = new Clock();
             
             my.Bounds = new Rectangle(100, 100, 1000, 1000); // задаем область контрола с часами
             Controls.Add(my);
-        }
+ */
 
 
-    }
-    public static class StaticData
+    
+    /*public static class StaticData
     {
         public static DateTime currt= new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0 );
         public static bool stoptimer_flag = false;
-    } 
+    } */
     public partial class Clock : UserControl
     {
         private Timer mTimer;
@@ -217,4 +199,3 @@ namespace newClock //7-segments
             DrawDigit(currenttime.Second % 10, x, y, g);
         }
     }
-}
