@@ -65,8 +65,8 @@ namespace Password_Generator
             this.MenuStartGame.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MenuStartGame.ForeColor = System.Drawing.Color.Green;
             this.MenuStartGame.Name = "MenuStartGame";
-            this.MenuStartGame.Size = new System.Drawing.Size(95, 25);
-            this.MenuStartGame.Text = "StartGame";
+            this.MenuStartGame.Size = new System.Drawing.Size(55, 25);
+            this.MenuStartGame.Text = "Start";
             this.MenuStartGame.Click += new System.EventHandler(this.MenuStartGame_Click);
             // 
             // MenuGameLevel
@@ -78,8 +78,8 @@ namespace Password_Generator
             this.MenuGameLevelNightmare});
             this.MenuGameLevel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MenuGameLevel.Name = "MenuGameLevel";
-            this.MenuGameLevel.Size = new System.Drawing.Size(99, 25);
-            this.MenuGameLevel.Text = "GameLevel";
+            this.MenuGameLevel.Size = new System.Drawing.Size(58, 25);
+            this.MenuGameLevel.Text = "Level";
             // 
             // MenuGameLevelEasy
             // 
@@ -87,7 +87,7 @@ namespace Password_Generator
             this.MenuGameLevelEasy.CheckOnClick = true;
             this.MenuGameLevelEasy.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MenuGameLevelEasy.Name = "MenuGameLevelEasy";
-            this.MenuGameLevelEasy.Size = new System.Drawing.Size(155, 26);
+            this.MenuGameLevelEasy.Size = new System.Drawing.Size(180, 26);
             this.MenuGameLevelEasy.Tag = "1";
             this.MenuGameLevelEasy.Text = "Easy";
             this.MenuGameLevelEasy.Click += new System.EventHandler(this.GameLevelChanging);
@@ -96,7 +96,7 @@ namespace Password_Generator
             // 
             this.MenuGameLevelMedium.CheckOnClick = true;
             this.MenuGameLevelMedium.Name = "MenuGameLevelMedium";
-            this.MenuGameLevelMedium.Size = new System.Drawing.Size(155, 26);
+            this.MenuGameLevelMedium.Size = new System.Drawing.Size(180, 26);
             this.MenuGameLevelMedium.Tag = "2";
             this.MenuGameLevelMedium.Text = "Medium";
             this.MenuGameLevelMedium.Click += new System.EventHandler(this.GameLevelChanging);
@@ -105,7 +105,7 @@ namespace Password_Generator
             // 
             this.MenuGameLevelHard.CheckOnClick = true;
             this.MenuGameLevelHard.Name = "MenuGameLevelHard";
-            this.MenuGameLevelHard.Size = new System.Drawing.Size(155, 26);
+            this.MenuGameLevelHard.Size = new System.Drawing.Size(180, 26);
             this.MenuGameLevelHard.Tag = "3";
             this.MenuGameLevelHard.Text = "Hard";
             this.MenuGameLevelHard.Click += new System.EventHandler(this.GameLevelChanging);
@@ -114,7 +114,7 @@ namespace Password_Generator
             // 
             this.MenuGameLevelNightmare.CheckOnClick = true;
             this.MenuGameLevelNightmare.Name = "MenuGameLevelNightmare";
-            this.MenuGameLevelNightmare.Size = new System.Drawing.Size(155, 26);
+            this.MenuGameLevelNightmare.Size = new System.Drawing.Size(180, 26);
             this.MenuGameLevelNightmare.Tag = "4";
             this.MenuGameLevelNightmare.Text = "Nightmare";
             this.MenuGameLevelNightmare.Click += new System.EventHandler(this.GameLevelChanging);
@@ -128,8 +128,8 @@ namespace Password_Generator
             this.MenuSizePlayfieldCustom});
             this.MenuSizePlayfield.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MenuSizePlayfield.Name = "MenuSizePlayfield";
-            this.MenuSizePlayfield.Size = new System.Drawing.Size(109, 25);
-            this.MenuSizePlayfield.Text = "SizePlayfield";
+            this.MenuSizePlayfield.Size = new System.Drawing.Size(50, 25);
+            this.MenuSizePlayfield.Text = "Size";
             // 
             // MenuSizePlayfield10
             // 
@@ -137,7 +137,7 @@ namespace Password_Generator
             this.MenuSizePlayfield10.CheckOnClick = true;
             this.MenuSizePlayfield10.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MenuSizePlayfield10.Name = "MenuSizePlayfield10";
-            this.MenuSizePlayfield10.Size = new System.Drawing.Size(134, 26);
+            this.MenuSizePlayfield10.Size = new System.Drawing.Size(180, 26);
             this.MenuSizePlayfield10.Tag = "10";
             this.MenuSizePlayfield10.Text = "10 x 10";
             this.MenuSizePlayfield10.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -146,7 +146,7 @@ namespace Password_Generator
             // 
             this.MenuSizePlayfield20.CheckOnClick = true;
             this.MenuSizePlayfield20.Name = "MenuSizePlayfield20";
-            this.MenuSizePlayfield20.Size = new System.Drawing.Size(134, 26);
+            this.MenuSizePlayfield20.Size = new System.Drawing.Size(180, 26);
             this.MenuSizePlayfield20.Tag = "20";
             this.MenuSizePlayfield20.Text = "20 x 20";
             this.MenuSizePlayfield20.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -155,7 +155,7 @@ namespace Password_Generator
             // 
             this.MenuSizePlayfield30.CheckOnClick = true;
             this.MenuSizePlayfield30.Name = "MenuSizePlayfield30";
-            this.MenuSizePlayfield30.Size = new System.Drawing.Size(134, 26);
+            this.MenuSizePlayfield30.Size = new System.Drawing.Size(180, 26);
             this.MenuSizePlayfield30.Tag = "30";
             this.MenuSizePlayfield30.Text = "30 x 30";
             this.MenuSizePlayfield30.Click += new System.EventHandler(this.SizePlayfieldChanging);
@@ -168,7 +168,7 @@ namespace Password_Generator
             this.toolStripSeparator1,
             this.YSizePlayfield});
             this.MenuSizePlayfieldCustom.Name = "MenuSizePlayfieldCustom";
-            this.MenuSizePlayfieldCustom.Size = new System.Drawing.Size(134, 26);
+            this.MenuSizePlayfieldCustom.Size = new System.Drawing.Size(180, 26);
             this.MenuSizePlayfieldCustom.Text = "Custom";
             this.MenuSizePlayfieldCustom.Click += new System.EventHandler(this.SizePlayfieldChanging);
             // 
@@ -212,7 +212,7 @@ namespace Password_Generator
             this.ClientSize = new System.Drawing.Size(1025, 512);
             this.Controls.Add(this.menuStrip1);
             this.Name = "Miner1";
-            this.Text = "Minesweeper from Samjo v.1.0";
+            this.Text = "Minesweeper from Samjo v.1.1";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

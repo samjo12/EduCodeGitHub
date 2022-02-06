@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,13 @@ using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using System.IO;
 using System.Windows;
-using System.Drawing.Drawing2D;
+
 
 namespace Password_Generator
 { 
     public partial class Miner1 : Form
     {
-        Random rnd = new Random();
+    //    Random rnd = new Random();
           int nudMinerX = 10;
           int nudMinerY = 10;
           int nudComplicate = 12; //12% мин EASY mode
@@ -296,7 +297,8 @@ namespace Password_Generator
         //класс для обмена данными
         public static int X = 0;
         public static int Y = 0;
-        public static decimal S = 0; 
+        public static decimal S = 0;
+        public static int W = 30; //ширина кнопки
 
         public static string Form2text;
         public static DateTime currt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0);
@@ -325,14 +327,16 @@ namespace Password_Generator
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
         public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
+        public string filePath6 = @"C:\Users\usr\source\repos\Miner\Recycle30.gif";
         /*public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";*/
+        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
+        public string filePath6 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\Recycle30.gif";*/
 
-        DateTime date1 = new DateTime(0, 0);
-        Timer timer1 = new Timer();
+        //DateTime date1 = new DateTime(0, 0);
+        //Timer timer1 = new Timer();
         Timer timer2 = new Timer();
 
         public Clock gametime; // индикатор игрового таймера
@@ -340,8 +344,8 @@ namespace Password_Generator
         public Color LabelBackColour =Color.Azure;
    
         Label WIN = new Label();
-        int W = 30; //размеры кнопок в пикселях -ширина
-        int H = 30; //размеры кнопок в пикселях -высота
+        int W = StaticData.W; //размеры кнопок в пикселях -ширина
+        int H= StaticData.W;        //размеры кнопок в пикселях -высота
         int Z;      // исходное количество мин. изначально равно S
         Button[,] _buttons = new Button[30, 30];
         bool[,] buttonflags = new Boolean[30, 30];
@@ -353,10 +357,11 @@ namespace Password_Generator
         int[,] minespole = new int[30,30];
         int explodeX;
         int explodeY;
-        Button Startbtn = new Button(); //кнопка рестарт
-        Button Restartbtn = new Button();// После окончания игры создадим эту кнопку на все окно дря рестарта
+     //   Button Startbtn = new Button(); //кнопка рестарт
+        public Button Restartbtn = new Button();// После окончания игры создадим эту кнопку на все окно дря рестарта
+        public RoundButton Restart_btn = new RoundButton();
         Button FlagSWbtn = new Button();// кнопка смена режимов клавищ мыши, меняем местами левую и правую кнопки мыши
-        bool FlagSwitch = false; // по умолчанию, левая кнопка тыкает, а правая открывает ячейки
+   //     bool FlagSwitch = false; // по умолчанию, левая кнопка тыкает, а правая открывает ячейки
         public const int BySide_padding = 40;//45
         public const int Top_padding = 45; //90
         Random rnd = new Random();
@@ -366,14 +371,13 @@ namespace Password_Generator
             miner1 = owner;
             // Загружаем встроенный в ресурсы свой шрифт
             EnableDoubleBuffering();
-            
             LoadFont();
             var labelFontDigi = new Font(private_fonts.Families[0], 20);
 
             gifImage = new GifImage(filePath); //2
             gifImage.ReverseAtEnd = false; // 2 dont reverse at end
-
             gifMine = new GifImage(filePath2);
+           
             this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
 
             this.Text = StaticData.Form2text;// "Take it Easy ...";
@@ -392,39 +396,15 @@ namespace Password_Generator
                                    //Формируем экранный буфер
                                    //public BufferedGraphicsContext();
 
-
             //Создаем кнопку переключения нажатий/режимы тык/флаг
-            var button_rst = new Button();
-            System.Drawing.Drawing2D.GraphicsPath myPath = new System.Drawing.Drawing2D.GraphicsPath();
-            myPath.AddEllipse(3*W, 5, W, W);
-            //Graphics g = CreateGraphics();
-
-            Region myRegion = new Region(myPath);
-            button_rst.Bounds = new Rectangle(3 * W, 5, W, W);
-            button_rst.Region = myRegion;
-            
-            // рисуем окантовоку для круглой кнопки 
-            /*g.DrawEllipse(new Pen(Color.Gray, 2),
-            button_rst.Left + 1,
-            button_rst.Top + 1,
-            button_rst.Width - 3,
-            button_rst.Height - 3);*/
-            button_rst.BackColor = Color.Blue;
-            //button_rst.Width = W;
-            //button_rst.Height = H;
-            //button_rst.Location = new Point(this.Width/2-W, 5); //20 и 35 - отступы слева и сверху
-            button_rst.Tag = 1000; // специальная кнопка
-            button_rst.Visible = true;
-            button_rst.BringToFront();
-
-            Restartbtn = button_rst;
-            this.Controls.Add(Restartbtn); //выводим кнопку с заданными ранее параметрами
-            this.Restartbtn.MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на кнопку  обработчик нажатий  кнопок мыши
-            this.Restartbtn.Focus();                                                                      // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
+            Restart_btn.Location = new Point((this.Width-6*W)/2, 5); //20 и 35 - отступы слева и сверху
+            Restart_btn.Tag = 1000; // специальная кнопка рестарта игры
+            Restart_btn.Visible = true;
+            Restart_btn.BackgroundImage =Image.FromFile(filePath6);
+            this.Controls.Add(Restart_btn); //выводим кнопку с заданными ранее параметрами
+            this.Restart_btn.MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на кнопку  обработчик нажатий  кнопок мыши
+                                                                   // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
                                                                                                           ///////// А теперь зададим то, что под кнопкой
-
-
-
             var labelfont = new Font("Arial", 16, FontStyle.Bold); // задаем шрифт -красный текст на черном фоне с центровкой
 
             gamecont = new Clock();
@@ -433,7 +413,7 @@ namespace Password_Generator
             Controls.Add(gamecont);
 
             gametime = new Clock();
-            gametime.Bounds = new Rectangle(this.Width - 4*W, 5, 2*W+5, 25); // задаем область контрола с часами
+            gametime.Bounds = new Rectangle(this.Width - 4*W-10, 5, 3*W, 25); // задаем область контрола с часами
             Controls.Add(gametime);
  
             //надпись о победе/проигрыше
@@ -682,7 +662,7 @@ namespace Password_Generator
                     LButtons[i, j].Font = font14;             
                    int around = 0; //Посчитаем количество мин вокруг ячейки и создадим их лейблы
                     if (minespole[i, j] == 10) 
-                    {  around = 10; LButtons[i, j].Image = gifMine.GetFrame(0);} //Ячейка с миной, окружение можно не просчитывать
+                    {  /*around = 10; */LButtons[i, j].Image = gifMine.GetFrame(0);} //Ячейка с миной, окружение можно не просчитывать
                     else
                     {
                         if (i > 0 && minespole[i - 1, j] == 10) around++; //WEST
@@ -867,11 +847,8 @@ namespace Password_Generator
                 }
             }
         }
-        private void WIN_message() // включить/выключить сообщение  статуса
-        {
-            if (WIN.Visible is false) WIN.Visible = true; else WIN.Visible = false;
-        }
-        private void setflag(int x, int y) // устанавливает/снимает флаг с кнопки
+
+        private void Setflag(int x, int y) // устанавливает/снимает флаг с кнопки
         {
             if (buttonflags[x, y] is false)
             {
@@ -896,10 +873,11 @@ namespace Password_Generator
 
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
+            this.Restart_btn.Focus();
             if (flag_restart is true) { NewGameINI(); flag_restart = false; return; }
             int t,x,y;
-            Button button = (Button)sender;
-            t = (int)button.Tag;
+            try { Button button = (Button)sender; t = (int)button.Tag;} catch { RoundButton button = (RoundButton)sender; t = 1000; }
+            
             if (t == 1000) 
             {
                 if (gametime.mTimer.Enabled is true) gametime.mTimer.Stop(); flag_restart = true; NewGameINI(); return;
@@ -915,17 +893,14 @@ namespace Password_Generator
                 if (buttonflags[x, y] is true) return;  // на этой кнопке стоит флажек - не обрабатываем этот клик
                 if (minespole[x, y] == 10) //ой, наступили на мину!
                 { /*Игра окончена*/
-                    //Controls.Remove(gametime);
                     gametime.mTimer.Stop();
-                    //timer1.Stop();//останавливаем таймер - взрыв
                     flag_detonation = true; //ставим флаг, что нажата кнопка с миной
                 }
                 dispose_button(_buttons[x, y]);
                 return;
             }
                     
-            if (e.Button == MouseButtons.Right) //нажата правая кнопка мыши
-                setflag(x, y);
+            if (e.Button == MouseButtons.Right) Setflag(x, y);//нажата правая кнопка мыши
         }
     }
     public class GifImage
@@ -999,13 +974,12 @@ namespace Password_Generator
         public Timer mTimer;
         public DateTime currenttime = StaticData.currt; 
  
-        bool showSlasher = true;
+        bool showSlasher = false; // флаг мигающего разделителя минуты/секунды
         public bool NightColorMode = StaticData.NightColorMode;
         public Clock()
         {
-             mTimer = new Timer();
-             mTimer.Interval = 1000;
-             mTimer.Tick += new EventHandler(TimerTick);
+            mTimer = new Timer { Interval = 1000 };
+            mTimer.Tick += new EventHandler(TimerTick);
              //mTimer.Start(); //Управляю таймером извне
             
         }
@@ -1020,7 +994,7 @@ namespace Password_Generator
             set { width = value - 2 * Thickness; }
         }
 
-        public int Thickness { get; set; } = 2;  // указываем  толщину сегмента
+        public int Thickness { get; set; } = 3;  // указываем  толщину сегмента
         int width = 8;                          //указываем  длину/высоту сегмента 
 
         Brush bkBrush = new SolidBrush(StaticData.colorschem1);     //цвет цифр
@@ -1129,7 +1103,7 @@ namespace Password_Generator
 
 
         // a b c d e f g segments for digits from 0 to 9
-        bool[] activeSegments = {
+        static readonly bool[] activeSegments = {
             true, true, true, true, true, true, false,
             false, true, true, false, false, false, false,
             true, true, false, true, true, false, true,
@@ -1186,11 +1160,11 @@ namespace Password_Generator
                 int d1 = (int)(bombcounter / 100);
                 int d2 = (int)((bombcounter - d1*100) / 10);
                 int d3 = bombcounter-d1*100-d2*10;
-                DrawDigit(d1, x, y, g); // первый знак
+                DrawDigit(d1, x, y, g); // первый знак - сотни
                 x += DigitWidth + Thickness;
-                DrawDigit(d2, x, y, g); // второй знак
+                DrawDigit(d2, x, y, g); // второй знак -десятки
                 x += DigitWidth + Thickness;
-                DrawDigit(d3, x, y, g);
+                DrawDigit(d3, x, y, g); // третий знак -единицы
             }
         }
     }
@@ -1214,17 +1188,18 @@ namespace Password_Generator
 
         public RoundButton()
         {
-            Size = new Size(100, 40);
-            ButtonRoundRadius = 30;
-            BackColor = Color.Gainsboro;
-            BackColor2 = Color.Silver;
-            ButtonBorderColor = Color.Black;
-            ButtonHighlightColor = Color.Orange;
-            ButtonHighlightColor2 = Color.OrangeRed;
-            ButtonHighlightForeColor = Color.Black;
+            Size = new Size(StaticData.W-5, StaticData.W-5);
+            ButtonRoundRadius = 25;
 
-            ButtonPressedColor = Color.Red;
-            ButtonPressedColor2 = Color.Maroon;
+            BackColor = Color.Gainsboro;
+            BackColor2 = Color.White;// Color.Silver;
+            ButtonBorderColor = Color.Black;
+            ButtonHighlightColor = Color.FromArgb(204,254,203);// Orange;
+            ButtonHighlightColor2 = Color.FromArgb(204, 254, 203); //Color.OrangeRed;
+            //ButtonHighlightForeColor = Color.Black;
+
+            ButtonPressedColor = Color.FromArgb(204, 254, 203);// Red;
+            ButtonPressedColor2 = Color.Green;
             ButtonPressedForeColor = Color.White;
         }
 
@@ -1252,7 +1227,8 @@ namespace Password_Generator
 
             using (var brush = new LinearGradientBrush(ClientRectangle, backColor, backColor2, LinearGradientMode.Vertical))
                 e.Graphics.FillPath(brush, Path);
-
+            using (var brush = new LinearGradientBrush(ClientRectangle, backColor, backColor2, LinearGradientMode.Vertical))
+                e.Graphics.DrawImage(Image.FromFile(@"C:\Users\usr\source\repos\Miner\Recycle30.gif"), ClientRectangle);
             using (var brush = new SolidBrush(foreColor))
             {
                 var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
