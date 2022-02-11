@@ -70,18 +70,23 @@ namespace Rusik
 
 
             using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile, FileMode.OpenOrCreate)))
-            {
+            { 
                 FileInfo src = new FileInfo(SourceFile);
                 var l = src.Length;
-                
+                long onepercent=l/100, percent=l-onepercent;
+                ProgressBar1.Visible=true;
+                ProgressBar1.Value = 0;
                 while (l>0)
                 { // посимвольно читаем исходный файл
                     var b = reader.ReadByte();
                     ///if (EndOfStreamException.) break;
                     writer.Write(b);
+                    if (l == percent) { ProgressBar1.Value++; percent-=onepercent;  }
                     l--;
                 }
-
+                ProgressBar1.BringToFront();
+                //ProgressBar1.Visible = false;
+                //Fileopened_lb.BringToFront();
             }
             
 

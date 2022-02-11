@@ -48,6 +48,7 @@ namespace Rusik
             this.Source_tb = new System.Windows.Forms.TextBox();
             this.Translated_tb = new System.Windows.Forms.TextBox();
             this.Fileopened_lb = new System.Windows.Forms.Label();
+            this.ProgressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -91,7 +92,7 @@ namespace Rusik
             this.lbTranslated.AutoSize = true;
             this.lbTranslated.Location = new System.Drawing.Point(676, 27);
             this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(111, 15);
+            this.lbTranslated.Size = new System.Drawing.Size(109, 15);
             this.lbTranslated.TabIndex = 10;
             this.lbTranslated.Text = "Translated Message";
             // 
@@ -178,7 +179,7 @@ namespace Rusik
             // 
             // Source_tb
             // 
-            this.Source_tb.Location = new System.Drawing.Point(12, 48);
+            this.Source_tb.Location = new System.Drawing.Point(12, 49);
             this.Source_tb.Multiline = true;
             this.Source_tb.Name = "Source_tb";
             this.Source_tb.Size = new System.Drawing.Size(376, 360);
@@ -201,6 +202,14 @@ namespace Rusik
             this.Fileopened_lb.TabIndex = 18;
             this.Fileopened_lb.Text = "File: ";
             // 
+            // ProgressBar1
+            // 
+            this.ProgressBar1.Location = new System.Drawing.Point(143, 27);
+            this.ProgressBar1.Name = "ProgressBar1";
+            this.ProgressBar1.Size = new System.Drawing.Size(526, 16);
+            this.ProgressBar1.TabIndex = 19;
+            this.ProgressBar1.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -218,6 +227,7 @@ namespace Rusik
             this.Controls.Add(this.nudRecord);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.btnPrev);
+            this.Controls.Add(this.ProgressBar1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -252,6 +262,7 @@ namespace Rusik
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.TextBox Translated_tb;
         private System.Windows.Forms.Label Fileopened_lb;
+        private System.Windows.Forms.ProgressBar ProgressBar1;
     }
 }
 
