@@ -40,40 +40,55 @@ namespace Rusik
             this.SaveFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.Quit_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.About_tsmi = new System.Windows.Forms.ToolStripMenuItem();
-            this.FileOffset_tb = new System.Windows.Forms.TextBox();
+            this.Offset_tb = new System.Windows.Forms.TextBox();
             this.Offset_lb = new System.Windows.Forms.Label();
             this.Offset_hp = new System.Windows.Forms.HelpProvider();
             this.Records_ld = new System.Windows.Forms.Label();
             this.Translate_btn = new System.Windows.Forms.Button();
             this.Source_tb = new System.Windows.Forms.TextBox();
             this.Translated_tb = new System.Windows.Forms.TextBox();
-            this.Fileopened_lb = new System.Windows.Forms.Label();
+            this.SourceFile_lb = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.SearchTranslated_tb = new System.Windows.Forms.TextBox();
+            this.SearchTranslated_btn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.SearchSource_tb = new System.Windows.Forms.TextBox();
+            this.OutputFile_lb = new System.Windows.Forms.Label();
+            this.SourceFile_tb = new System.Windows.Forms.TextBox();
+            this.Signature_lb = new System.Windows.Forms.Label();
+            this.Signature_tb = new System.Windows.Forms.TextBox();
+            this.TranslatedFile_tb = new System.Windows.Forms.TextBox();
+            this.Start_btn = new System.Windows.Forms.Button();
+            this.progressBar1_lb = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnPrev
             // 
-            this.btnPrev.Location = new System.Drawing.Point(278, 414);
+            this.btnPrev.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnPrev.Location = new System.Drawing.Point(422, 631);
             this.btnPrev.Name = "btnPrev";
             this.btnPrev.Size = new System.Drawing.Size(75, 23);
             this.btnPrev.TabIndex = 3;
-            this.btnPrev.Text = "Prev";
-            this.btnPrev.UseVisualStyleBackColor = true;
+            this.btnPrev.Text = "Previous";
+            this.btnPrev.UseVisualStyleBackColor = false;
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(437, 414);
+            this.btnNext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnNext.Location = new System.Drawing.Point(511, 631);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 4;
             this.btnNext.Text = "Next";
-            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.UseVisualStyleBackColor = false;
             // 
             // nudRecord
             // 
-            this.nudRecord.Location = new System.Drawing.Point(368, 414);
+            this.nudRecord.Location = new System.Drawing.Point(592, 631);
             this.nudRecord.Name = "nudRecord";
+            this.nudRecord.ReadOnly = true;
             this.nudRecord.Size = new System.Drawing.Size(56, 23);
             this.nudRecord.TabIndex = 8;
             // 
@@ -89,7 +104,7 @@ namespace Rusik
             // lbTranslated
             // 
             this.lbTranslated.AutoSize = true;
-            this.lbTranslated.Location = new System.Drawing.Point(676, 27);
+            this.lbTranslated.Location = new System.Drawing.Point(511, 28);
             this.lbTranslated.Name = "lbTranslated";
             this.lbTranslated.Size = new System.Drawing.Size(111, 15);
             this.lbTranslated.TabIndex = 10;
@@ -102,7 +117,7 @@ namespace Rusik
             this.About_tsmi});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1008, 24);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -128,6 +143,7 @@ namespace Rusik
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
             this.SaveFile_tsmi.Size = new System.Drawing.Size(144, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
+            this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
@@ -142,26 +158,28 @@ namespace Rusik
             this.About_tsmi.Text = "About";
             this.About_tsmi.Click += new System.EventHandler(this.About_tsmi_Click);
             // 
-            // FileOffset_tb
+            // Offset_tb
             // 
-            this.FileOffset_tb.Location = new System.Drawing.Point(144, 415);
-            this.FileOffset_tb.Name = "FileOffset_tb";
-            this.FileOffset_tb.Size = new System.Drawing.Size(115, 23);
-            this.FileOffset_tb.TabIndex = 12;
+            this.Offset_tb.Location = new System.Drawing.Point(65, 662);
+            this.Offset_tb.Name = "Offset_tb";
+            this.Offset_tb.PlaceholderText = "HEX number";
+            this.Offset_tb.ReadOnly = true;
+            this.Offset_tb.Size = new System.Drawing.Size(115, 23);
+            this.Offset_tb.TabIndex = 12;
             // 
             // Offset_lb
             // 
             this.Offset_lb.AutoSize = true;
-            this.Offset_lb.Location = new System.Drawing.Point(13, 420);
+            this.Offset_lb.Location = new System.Drawing.Point(12, 667);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(128, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
-            this.Offset_lb.Text = "Offset from beginning:";
+            this.Offset_lb.Text = "Offset 0x";
             // 
             // Records_ld
             // 
             this.Records_ld.AutoSize = true;
-            this.Records_ld.Location = new System.Drawing.Point(624, 418);
+            this.Records_ld.Location = new System.Drawing.Point(651, 635);
             this.Records_ld.Name = "Records_ld";
             this.Records_ld.Size = new System.Drawing.Size(95, 15);
             this.Records_ld.TabIndex = 14;
@@ -169,50 +187,175 @@ namespace Rusik
             // 
             // Translate_btn
             // 
-            this.Translate_btn.Location = new System.Drawing.Point(526, 414);
+            this.Translate_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.Translate_btn.Location = new System.Drawing.Point(777, 631);
             this.Translate_btn.Name = "Translate_btn";
             this.Translate_btn.Size = new System.Drawing.Size(75, 23);
             this.Translate_btn.TabIndex = 15;
             this.Translate_btn.Text = "Translate";
-            this.Translate_btn.UseVisualStyleBackColor = true;
+            this.Translate_btn.UseVisualStyleBackColor = false;
             // 
             // Source_tb
             // 
             this.Source_tb.Location = new System.Drawing.Point(12, 48);
             this.Source_tb.Multiline = true;
             this.Source_tb.Name = "Source_tb";
-            this.Source_tb.Size = new System.Drawing.Size(376, 360);
+            this.Source_tb.ReadOnly = true;
+            this.Source_tb.Size = new System.Drawing.Size(485, 555);
             this.Source_tb.TabIndex = 16;
             // 
             // Translated_tb
             // 
-            this.Translated_tb.Location = new System.Drawing.Point(406, 48);
+            this.Translated_tb.Location = new System.Drawing.Point(511, 48);
             this.Translated_tb.Multiline = true;
             this.Translated_tb.Name = "Translated_tb";
-            this.Translated_tb.Size = new System.Drawing.Size(382, 360);
+            this.Translated_tb.ReadOnly = true;
+            this.Translated_tb.Size = new System.Drawing.Size(485, 555);
             this.Translated_tb.TabIndex = 17;
             // 
-            // Fileopened_lb
+            // SourceFile_lb
             // 
-            this.Fileopened_lb.AutoSize = true;
-            this.Fileopened_lb.Location = new System.Drawing.Point(144, 28);
-            this.Fileopened_lb.Name = "Fileopened_lb";
-            this.Fileopened_lb.Size = new System.Drawing.Size(31, 15);
-            this.Fileopened_lb.TabIndex = 18;
-            this.Fileopened_lb.Text = "File: ";
+            this.SourceFile_lb.AutoSize = true;
+            this.SourceFile_lb.Location = new System.Drawing.Point(129, 28);
+            this.SourceFile_lb.Name = "SourceFile_lb";
+            this.SourceFile_lb.Size = new System.Drawing.Size(31, 15);
+            this.SourceFile_lb.TabIndex = 18;
+            this.SourceFile_lb.Text = "File: ";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(602, 660);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(394, 26);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 19;
+            // 
+            // SearchTranslated_tb
+            // 
+            this.SearchTranslated_tb.Location = new System.Drawing.Point(511, 694);
+            this.SearchTranslated_tb.Name = "SearchTranslated_tb";
+            this.SearchTranslated_tb.PlaceholderText = "Some text to search ...";
+            this.SearchTranslated_tb.ReadOnly = true;
+            this.SearchTranslated_tb.Size = new System.Drawing.Size(430, 23);
+            this.SearchTranslated_tb.TabIndex = 20;
+            // 
+            // SearchTranslated_btn
+            // 
+            this.SearchTranslated_btn.Location = new System.Drawing.Point(939, 694);
+            this.SearchTranslated_btn.Name = "SearchTranslated_btn";
+            this.SearchTranslated_btn.Size = new System.Drawing.Size(57, 23);
+            this.SearchTranslated_btn.TabIndex = 21;
+            this.SearchTranslated_btn.Text = "Search";
+            this.SearchTranslated_btn.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(440, 694);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(57, 23);
+            this.button1.TabIndex = 23;
+            this.button1.Text = "Search";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // SearchSource_tb
+            // 
+            this.SearchSource_tb.Location = new System.Drawing.Point(12, 694);
+            this.SearchSource_tb.Name = "SearchSource_tb";
+            this.SearchSource_tb.PlaceholderText = "Some text to search ...";
+            this.SearchSource_tb.ReadOnly = true;
+            this.SearchSource_tb.Size = new System.Drawing.Size(430, 23);
+            this.SearchSource_tb.TabIndex = 22;
+            // 
+            // OutputFile_lb
+            // 
+            this.OutputFile_lb.AutoSize = true;
+            this.OutputFile_lb.Location = new System.Drawing.Point(630, 28);
+            this.OutputFile_lb.Name = "OutputFile_lb";
+            this.OutputFile_lb.Size = new System.Drawing.Size(31, 15);
+            this.OutputFile_lb.TabIndex = 24;
+            this.OutputFile_lb.Text = "File: ";
+            // 
+            // SourceFile_tb
+            // 
+            this.SourceFile_tb.Location = new System.Drawing.Point(158, 24);
+            this.SourceFile_tb.Name = "SourceFile_tb";
+            this.SourceFile_tb.ReadOnly = true;
+            this.SourceFile_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SourceFile_tb.Size = new System.Drawing.Size(339, 23);
+            this.SourceFile_tb.TabIndex = 25;
+            // 
+            // Signature_lb
+            // 
+            this.Signature_lb.AutoSize = true;
+            this.Signature_lb.Location = new System.Drawing.Point(187, 667);
+            this.Signature_lb.Name = "Signature_lb";
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.TabIndex = 26;
+            this.Signature_lb.Text = "Signature 0x";
+            // 
+            // Signature_tb
+            // 
+            this.Signature_tb.Location = new System.Drawing.Point(265, 662);
+            this.Signature_tb.Name = "Signature_tb";
+            this.Signature_tb.PlaceholderText = "HEX number";
+            this.Signature_tb.ReadOnly = true;
+            this.Signature_tb.Size = new System.Drawing.Size(137, 23);
+            this.Signature_tb.TabIndex = 27;
+            // 
+            // TranslatedFile_tb
+            // 
+            this.TranslatedFile_tb.Location = new System.Drawing.Point(660, 24);
+            this.TranslatedFile_tb.Name = "TranslatedFile_tb";
+            this.TranslatedFile_tb.ReadOnly = true;
+            this.TranslatedFile_tb.Size = new System.Drawing.Size(336, 23);
+            this.TranslatedFile_tb.TabIndex = 28;
+            // 
+            // Start_btn
+            // 
+            this.Start_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.Start_btn.Font = new System.Drawing.Font("Segoe UI Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Start_btn.Location = new System.Drawing.Point(422, 661);
+            this.Start_btn.Name = "Start_btn";
+            this.Start_btn.Size = new System.Drawing.Size(164, 23);
+            this.Start_btn.TabIndex = 29;
+            this.Start_btn.Text = "Start Searching";
+            this.Start_btn.UseVisualStyleBackColor = false;
+            this.Start_btn.Click += new System.EventHandler(this.Start_btn_Click);
+            // 
+            // progressBar1_lb
+            // 
+            this.progressBar1_lb.AutoSize = true;
+            this.progressBar1_lb.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.progressBar1_lb.Location = new System.Drawing.Point(777, 666);
+            this.progressBar1_lb.Name = "progressBar1_lb";
+            this.progressBar1_lb.Size = new System.Drawing.Size(27, 15);
+            this.progressBar1_lb.TabIndex = 30;
+            this.progressBar1_lb.Text = "0 %";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Fileopened_lb);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.progressBar1_lb);
+            this.Controls.Add(this.Start_btn);
+            this.Controls.Add(this.TranslatedFile_tb);
+            this.Controls.Add(this.Signature_tb);
+            this.Controls.Add(this.Signature_lb);
+            this.Controls.Add(this.SourceFile_tb);
+            this.Controls.Add(this.OutputFile_lb);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SearchSource_tb);
+            this.Controls.Add(this.SearchTranslated_btn);
+            this.Controls.Add(this.SearchTranslated_tb);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.SourceFile_lb);
             this.Controls.Add(this.Translated_tb);
             this.Controls.Add(this.Source_tb);
             this.Controls.Add(this.Translate_btn);
             this.Controls.Add(this.Records_ld);
             this.Controls.Add(this.Offset_lb);
-            this.Controls.Add(this.FileOffset_tb);
+            this.Controls.Add(this.Offset_tb);
             this.Controls.Add(this.lbTranslated);
             this.Controls.Add(this.lbSource);
             this.Controls.Add(this.nudRecord);
@@ -244,14 +387,26 @@ namespace Rusik
         private System.Windows.Forms.ToolStripMenuItem SaveFile_tsmi;
         private System.Windows.Forms.ToolStripMenuItem Quit_tsmi;
         private System.Windows.Forms.ToolStripMenuItem About_tsmi;
-        private System.Windows.Forms.TextBox FileOffset_tb;
+        private System.Windows.Forms.TextBox Offset_tb;
         private System.Windows.Forms.Label Offset_lb;
         private System.Windows.Forms.HelpProvider Offset_hp;
         private System.Windows.Forms.Label Records_ld;
         private System.Windows.Forms.Button Translate_btn;
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.TextBox Translated_tb;
-        private System.Windows.Forms.Label Fileopened_lb;
+        private System.Windows.Forms.Label SourceFile_lb;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.TextBox SearchTranslated_tb;
+        private System.Windows.Forms.Button SearchTranslated_btn;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox SearchSource_tb;
+        private System.Windows.Forms.Label OutputFile_lb;
+        private System.Windows.Forms.TextBox SourceFile_tb;
+        private System.Windows.Forms.Label Signature_lb;
+        private System.Windows.Forms.TextBox Signature_tb;
+        private System.Windows.Forms.TextBox TranslatedFile_tb;
+        private System.Windows.Forms.Button Start_btn;
+        private System.Windows.Forms.Label progressBar1_lb;
     }
 }
 
