@@ -141,6 +141,7 @@ foreach (var t in linkedList.BackEnumerator())
                 int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
                 long onepercent = l / 100 - 1, percent = onepercent;
                 progressBar1.Value = 0;
+                progressBar1_lb.Text = "0 %";
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл
                     var b = readerSF.ReadByte();
@@ -159,7 +160,6 @@ foreach (var t in linkedList.BackEnumerator())
                             for (int j = 0; j < lentxt; j++) { message+= (char)readerSF.ReadByte(); i++; }
                             // создаем элемент списка с новой записью
                             linkedListSF.Add(message); // создаем новый элемент списка
-                            
                         }
                     }
                     else { sign_pointer = 0; }// сигнатура не подтвердилась 
@@ -172,6 +172,11 @@ foreach (var t in linkedList.BackEnumerator())
                 }
                 progressBar1.Value = 100;
                 progressBar1_lb.Text = "100%";
+                if (progressBar1.Value == 0) 
+                { // После поиска по сигнатуре - ничего не найдено.
+                    progressBar1_lb.Text = ""; 
+                }
+                Records_lb.Text = "Found "+linkedListSF.Count+" records.";
             }
 
             // создаем объект BinaryReader для OutputFile
@@ -183,11 +188,29 @@ foreach (var t in linkedList.BackEnumerator())
             foreach (var item in linkedListSF)
             {
                 Source_tb.Text = (string) item;
-                Source_tb.Text = (string) item;
                 break;
             }
-            
+            using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile+".txt", FileMode.OpenOrCreate)))
+            {
+                foreach (var item in linkedListSF)
+                {
+                    Source_tb.Text = (string)item;
+                    writer.Write(item);
+                }
 
+            }
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {   // поиск по тексту из входящего файла
+            if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
+            foreach (var item in linkedListSF)
+            {
+                var str1 = (string)item;
+                if (str1 == SearchSource_tb.Text) { Source_tb.Text = (string)item; break; }
+            }
         }
     }
 

@@ -43,7 +43,7 @@ namespace Rusik
             this.Offset_tb = new System.Windows.Forms.TextBox();
             this.Offset_lb = new System.Windows.Forms.Label();
             this.Offset_hp = new System.Windows.Forms.HelpProvider();
-            this.Records_ld = new System.Windows.Forms.Label();
+            this.Records_lb = new System.Windows.Forms.Label();
             this.Translate_btn = new System.Windows.Forms.Button();
             this.Source_tb = new System.Windows.Forms.TextBox();
             this.Translated_tb = new System.Windows.Forms.TextBox();
@@ -106,7 +106,7 @@ namespace Rusik
             this.lbTranslated.AutoSize = true;
             this.lbTranslated.Location = new System.Drawing.Point(511, 28);
             this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(111, 15);
+            this.lbTranslated.Size = new System.Drawing.Size(109, 15);
             this.lbTranslated.TabIndex = 10;
             this.lbTranslated.Text = "Translated Message";
             // 
@@ -172,18 +172,18 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(12, 667);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
-            // Records_ld
+            // Records_lb
             // 
-            this.Records_ld.AutoSize = true;
-            this.Records_ld.Location = new System.Drawing.Point(651, 635);
-            this.Records_ld.Name = "Records_ld";
-            this.Records_ld.Size = new System.Drawing.Size(95, 15);
-            this.Records_ld.TabIndex = 14;
-            this.Records_ld.Text = "Found: 0 records";
+            this.Records_lb.AutoSize = true;
+            this.Records_lb.Location = new System.Drawing.Point(651, 635);
+            this.Records_lb.Name = "Records_lb";
+            this.Records_lb.Size = new System.Drawing.Size(95, 15);
+            this.Records_lb.TabIndex = 14;
+            this.Records_lb.Text = "Found: 0 records";
             // 
             // Translate_btn
             // 
@@ -256,6 +256,7 @@ namespace Rusik
             this.button1.TabIndex = 23;
             this.button1.Text = "Search";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // SearchSource_tb
             // 
@@ -289,7 +290,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(187, 667);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -328,9 +329,8 @@ namespace Rusik
             this.progressBar1_lb.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.progressBar1_lb.Location = new System.Drawing.Point(777, 666);
             this.progressBar1_lb.Name = "progressBar1_lb";
-            this.progressBar1_lb.Size = new System.Drawing.Size(27, 15);
+            this.progressBar1_lb.Size = new System.Drawing.Size(0, 15);
             this.progressBar1_lb.TabIndex = 30;
-            this.progressBar1_lb.Text = "0 %";
             // 
             // Form1
             // 
@@ -353,7 +353,7 @@ namespace Rusik
             this.Controls.Add(this.Translated_tb);
             this.Controls.Add(this.Source_tb);
             this.Controls.Add(this.Translate_btn);
-            this.Controls.Add(this.Records_ld);
+            this.Controls.Add(this.Records_lb);
             this.Controls.Add(this.Offset_lb);
             this.Controls.Add(this.Offset_tb);
             this.Controls.Add(this.lbTranslated);
@@ -390,7 +390,7 @@ namespace Rusik
         private System.Windows.Forms.TextBox Offset_tb;
         private System.Windows.Forms.Label Offset_lb;
         private System.Windows.Forms.HelpProvider Offset_hp;
-        private System.Windows.Forms.Label Records_ld;
+        private System.Windows.Forms.Label Records_lb;
         private System.Windows.Forms.Button Translate_btn;
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.TextBox Translated_tb;
