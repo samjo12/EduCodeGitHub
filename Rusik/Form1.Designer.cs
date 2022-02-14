@@ -83,6 +83,7 @@ namespace Rusik
             this.btnNext.TabIndex = 4;
             this.btnNext.Text = "Next";
             this.btnNext.UseVisualStyleBackColor = false;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // nudRecord
             // 
@@ -106,7 +107,7 @@ namespace Rusik
             this.lbTranslated.AutoSize = true;
             this.lbTranslated.Location = new System.Drawing.Point(511, 28);
             this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(109, 15);
+            this.lbTranslated.Size = new System.Drawing.Size(111, 15);
             this.lbTranslated.TabIndex = 10;
             this.lbTranslated.Text = "Translated Message";
             // 
@@ -172,7 +173,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(12, 667);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -290,7 +291,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(187, 667);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 

@@ -15,6 +15,7 @@ namespace Rusik
 {
     public partial class Form1 : Form
     {
+        static int MaxBytesMessage = 2200;
         public string SourceFile;
         public string OutputFile;
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
@@ -24,7 +25,7 @@ namespace Rusik
            public string str;
            public long pos;
         }
-        public byte [] Signature= {0x00,0x06,0x00 };  // Сигнатура из байт
+        public byte [] Signature= {0x04,0x00,0x06,0x00 };  // Сигнатура из байт
         public Form1()
         {
             InitializeComponent();
@@ -134,75 +135,88 @@ foreach (var t in linkedList.BackEnumerator())
             // начиная со смещения Offset начнем по байтам искать сигнатуру Signature.
             // Если найдем, то будем добавлять текст в список DoubleNode. Строим списки параллельно у обоих файлов.
             // создаем объект BinaryReader
-            using (BinaryReader readerSF = new BinaryReader(File.Open(SourceFile, FileMode.Open)))
-            { // откроем файл Source на чтение
-                FileInfo src = new FileInfo(SourceFile);
-                long l = src.Length;
-                int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
-                long onepercent = l / 100 - 1, percent = onepercent;
-                progressBar1.Value = 0;
-                progressBar1_lb.Text = "0 %";
-                for (long i = 0; i < l; i++)
-                { // посимвольно читаем исходный файл
-                    var b = readerSF.ReadByte();
-                    if (Signature[sign_pointer] == b) //найден символ из сигнатуры
-                    {
-                        sign_pointer++;
-                        if (Signature.Length == sign_pointer)
-                        { // Сигнатура найдена. Сбросим указатель сигнатуры
-                            sign_pointer = 0;
-                            if (i + 4 >= l) break; // конец файла достигнут - сигнатура ошибочна
-                            Int32 lentxt = readerSF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
-                            i += 4;
-                            // читаем текст длиной lentxt
-                            string message = "";
-                            if (i + lentxt >= l) break; // конец файла достигнут - сигнатура ошибочна
-                            for (int j = 0; j < lentxt; j++) { message+= (char)readerSF.ReadByte(); i++; }
-                            // создаем элемент списка с новой записью
-                            linkedListSF.Add(message); // создаем новый элемент списка
+            using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile + ".txt", FileMode.OpenOrCreate)))
+            {
+                using (BinaryReader readerSF = new BinaryReader(File.Open(SourceFile, FileMode.Open)))
+                { // откроем файл Source на чтение
+                    FileInfo src = new FileInfo(SourceFile);
+                    byte[] buf = new byte[MaxBytesMessage]; //Буффер для чтения из файла строки текста
+                    long l = src.Length; //размер исходного файла в байтах
+                    int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
+                    long onepercent = l / 100 - 1, percent = onepercent;
+                    progressBar1.Value = 0; 
+                    progressBar1_lb.Text = "0 %";
+                    for (long i = 0; i < l; i++)
+                    { // посимвольно читаем исходный файл
+                        var b = readerSF.ReadByte();
+                        if (Signature[sign_pointer] == b) //найден символ из сигнатуры
+                        {
+                            sign_pointer++; //счетчик найденных символов из сигнатуры
+                            if (Signature.Length == sign_pointer) //Сигнатура найдена. Сбросим указатель сигнатуры
+                            { 
+                                sign_pointer = 0; 
+                                if ((i + 4) >= l) break; // конец файла достигнут - сигнатура ошибочна
+                                Int32 lentxt = readerSF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
+                                i += 4;
+                                if (lentxt > MaxBytesMessage || lentxt<4) continue; // не может быть такое длинное предложение
+                                
+                                // читаем текст длиной lentxt
+                                string message = "";
+                                if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
+                                // создаем элемент списка с новой записью
+                                linkedListSF.Add(message,i+1); // создаем новый элемент списка, с файловым указателем на начало строки
+                                for (int j = 0; j < lentxt; j++) { buf[j] = readerSF.ReadByte(); message += (char)buf[j]; i++; }
+                                buf[lentxt+1] = 0xd; buf[lentxt+2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
+                                writer.Write(buf,0,lentxt+2); // записываем строку текста в выходной файл
+                            }
+                        }
+                        else { sign_pointer = 0; }// сигнатура не подтвердилась 
+                                                  // ищем сигнатуру
+
+                        if (i >= percent)
+                        {
+                            if (progressBar1.Value < 100) { progressBar1.Value++; }
+                            percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString();
                         }
                     }
-                    else { sign_pointer = 0; }// сигнатура не подтвердилась 
-                    // ищем сигнатуру
-
-                    if (i >= percent) 
-                    { if (progressBar1.Value < 100) { progressBar1.Value++; }
-                      percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString();
+                    progressBar1.Value = 100;
+                    progressBar1_lb.Text = "100%";
+                    if (progressBar1.Value == 0)
+                    { // После поиска по сигнатуре - ничего не найдено.
+                        progressBar1_lb.Text = "";
                     }
+                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                    Translated_tb.ReadOnly = false;
                 }
-                progressBar1.Value = 100;
-                progressBar1_lb.Text = "100%";
-                if (progressBar1.Value == 0) 
-                { // После поиска по сигнатуре - ничего не найдено.
-                    progressBar1_lb.Text = ""; 
-                }
-                Records_lb.Text = "Found "+linkedListSF.Count+" records.";
-            }
 
-            // создаем объект BinaryReader для OutputFile
-           /* using (BinaryReader readerOF = new BinaryReader(File.Open(OutputFile, FileMode.Open)))
-            { // откроем файл .tmp$$ на Чтение
+                // создаем объект BinaryReader для OutputFile
+                /* using (BinaryReader readerOF = new BinaryReader(File.Open(OutputFile, FileMode.Open)))
+                 { // откроем файл .tmp$$ на Чтение
 
-            }*/
-            //Выведем в SourceFile_tb первый элемент списка
-            foreach (var item in linkedListSF)
-            {
-                Source_tb.Text = (string) item;
-                break;
-            }
-            using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile+".txt", FileMode.OpenOrCreate)))
-            {
+                 }*/
+                //Выведем в SourceFile_tb первый элемент списка
+                
                 foreach (var item in linkedListSF)
                 {
                     Source_tb.Text = (string)item;
+                    break;
+                }
+            }/*
+            using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile+".txt", FileMode.OpenOrCreate)))
+            {
+                foreach (var item in linkedListSF)
+                {                  
                     writer.Write(item);
                 }
 
-            }
+            }*/
 
 
         }
-
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            linkedListSF.Previous();
+        }
         private void button1_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
             if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
@@ -212,6 +226,8 @@ foreach (var t in linkedList.BackEnumerator())
                 if (str1 == SearchSource_tb.Text) { Source_tb.Text = (string)item; break; }
             }
         }
+
+
     }
 
     public class DoublyNode <T>
@@ -221,6 +237,7 @@ foreach (var t in linkedList.BackEnumerator())
             Data = data;    //Для хранения данных предназначено свойство Data.
         }
         public T Data { get; set; }
+        public long Fileposition { get; set; } 
         public DoublyNode<T> Previous { get; set; } // предыдущий узел
         public DoublyNode<T> Next { get; set; }     // следующий узел
     }
@@ -231,7 +248,7 @@ foreach (var t in linkedList.BackEnumerator())
         int count;  // количество элементов в списке
 
         // добавление элемента
-        public void Add(T data)
+        public void Add(T data, long Fileposition)
         {
             DoublyNode<T> node = new DoublyNode<T>(data);
 
@@ -244,8 +261,9 @@ foreach (var t in linkedList.BackEnumerator())
             }
             tail = node;
             count++;
+            node.Fileposition = Fileposition;
         }
-        public void AddFirst(T data)
+        public void AddFirst(T data, long Fileposition)
         {
             DoublyNode<T> node = new DoublyNode<T>(data);
             DoublyNode<T> temp = head;
@@ -256,6 +274,7 @@ foreach (var t in linkedList.BackEnumerator())
             else
                 temp.Previous = node;
             count++;
+            node.Fileposition = Fileposition;
         }
         // удаление
         public bool Remove(T data)
@@ -304,6 +323,7 @@ foreach (var t in linkedList.BackEnumerator())
         public long FilePosition { get { return FilePosition; } }
 
         public bool IsEmpty { get { return count == 0; } }
+        public DoublyNode<T> Previous { get { return this.Previous; } }
 
         public void Clear()
         {
