@@ -29,8 +29,8 @@ namespace Rusik
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnPrev = new System.Windows.Forms.Button();
-            this.btnNext = new System.Windows.Forms.Button();
+            this.Prev_btn = new System.Windows.Forms.Button();
+            this.Next_btn = new System.Windows.Forms.Button();
             this.nudRecord = new System.Windows.Forms.NumericUpDown();
             this.lbSource = new System.Windows.Forms.Label();
             this.lbTranslated = new System.Windows.Forms.Label();
@@ -51,7 +51,7 @@ namespace Rusik
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SearchTranslated_tb = new System.Windows.Forms.TextBox();
             this.SearchTranslated_btn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.SearchSource_btn = new System.Windows.Forms.Button();
             this.SearchSource_tb = new System.Windows.Forms.TextBox();
             this.OutputFile_lb = new System.Windows.Forms.Label();
             this.SourceFile_tb = new System.Windows.Forms.TextBox();
@@ -64,26 +64,27 @@ namespace Rusik
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnPrev
+            // Prev_btn
             // 
-            this.btnPrev.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnPrev.Location = new System.Drawing.Point(422, 631);
-            this.btnPrev.Name = "btnPrev";
-            this.btnPrev.Size = new System.Drawing.Size(75, 23);
-            this.btnPrev.TabIndex = 3;
-            this.btnPrev.Text = "Previous";
-            this.btnPrev.UseVisualStyleBackColor = false;
+            this.Prev_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.Prev_btn.Location = new System.Drawing.Point(422, 631);
+            this.Prev_btn.Name = "Prev_btn";
+            this.Prev_btn.Size = new System.Drawing.Size(75, 23);
+            this.Prev_btn.TabIndex = 3;
+            this.Prev_btn.Text = "Previous";
+            this.Prev_btn.UseVisualStyleBackColor = false;
+            this.Prev_btn.Click += new System.EventHandler(this.Prev_btn_Click);
             // 
-            // btnNext
+            // Next_btn
             // 
-            this.btnNext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnNext.Location = new System.Drawing.Point(511, 631);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(75, 23);
-            this.btnNext.TabIndex = 4;
-            this.btnNext.Text = "Next";
-            this.btnNext.UseVisualStyleBackColor = false;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.Next_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.Next_btn.Location = new System.Drawing.Point(511, 631);
+            this.Next_btn.Name = "Next_btn";
+            this.Next_btn.Size = new System.Drawing.Size(75, 23);
+            this.Next_btn.TabIndex = 4;
+            this.Next_btn.Text = "Next";
+            this.Next_btn.UseVisualStyleBackColor = false;
+            this.Next_btn.Click += new System.EventHandler(this.Next_btn_Click);
             // 
             // nudRecord
             // 
@@ -107,7 +108,7 @@ namespace Rusik
             this.lbTranslated.AutoSize = true;
             this.lbTranslated.Location = new System.Drawing.Point(511, 28);
             this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(111, 15);
+            this.lbTranslated.Size = new System.Drawing.Size(109, 15);
             this.lbTranslated.TabIndex = 10;
             this.lbTranslated.Text = "Translated Message";
             // 
@@ -161,7 +162,7 @@ namespace Rusik
             // 
             // Offset_tb
             // 
-            this.Offset_tb.Location = new System.Drawing.Point(65, 662);
+            this.Offset_tb.Location = new System.Drawing.Point(66, 662);
             this.Offset_tb.Name = "Offset_tb";
             this.Offset_tb.PlaceholderText = "HEX number";
             this.Offset_tb.ReadOnly = true;
@@ -173,7 +174,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(12, 667);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -248,16 +249,17 @@ namespace Rusik
             this.SearchTranslated_btn.TabIndex = 21;
             this.SearchTranslated_btn.Text = "Search";
             this.SearchTranslated_btn.UseVisualStyleBackColor = true;
+            this.SearchTranslated_btn.Click += new System.EventHandler(this.SearchTranslated_btn_Click);
             // 
-            // button1
+            // SearchSource_btn
             // 
-            this.button1.Location = new System.Drawing.Point(440, 694);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(57, 23);
-            this.button1.TabIndex = 23;
-            this.button1.Text = "Search";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.SearchSource_btn.Location = new System.Drawing.Point(440, 694);
+            this.SearchSource_btn.Name = "SearchSource_btn";
+            this.SearchSource_btn.Size = new System.Drawing.Size(57, 23);
+            this.SearchSource_btn.TabIndex = 23;
+            this.SearchSource_btn.Text = "Search";
+            this.SearchSource_btn.UseVisualStyleBackColor = true;
+            this.SearchSource_btn.Click += new System.EventHandler(this.SearchSource_Click);
             // 
             // SearchSource_tb
             // 
@@ -291,13 +293,13 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(187, 667);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
             // Signature_tb
             // 
-            this.Signature_tb.Location = new System.Drawing.Point(265, 662);
+            this.Signature_tb.Location = new System.Drawing.Point(261, 662);
             this.Signature_tb.Name = "Signature_tb";
             this.Signature_tb.PlaceholderText = "HEX number";
             this.Signature_tb.ReadOnly = true;
@@ -345,7 +347,7 @@ namespace Rusik
             this.Controls.Add(this.Signature_lb);
             this.Controls.Add(this.SourceFile_tb);
             this.Controls.Add(this.OutputFile_lb);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SearchSource_btn);
             this.Controls.Add(this.SearchSource_tb);
             this.Controls.Add(this.SearchTranslated_btn);
             this.Controls.Add(this.SearchTranslated_tb);
@@ -360,8 +362,8 @@ namespace Rusik
             this.Controls.Add(this.lbTranslated);
             this.Controls.Add(this.lbSource);
             this.Controls.Add(this.nudRecord);
-            this.Controls.Add(this.btnNext);
-            this.Controls.Add(this.btnPrev);
+            this.Controls.Add(this.Next_btn);
+            this.Controls.Add(this.Prev_btn);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -376,8 +378,8 @@ namespace Rusik
         }
 
         #endregion
-        private System.Windows.Forms.Button btnPrev;
-        private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.Button Prev_btn;
+        private System.Windows.Forms.Button Next_btn;
         private System.Windows.Forms.NumericUpDown nudRecord;
         private System.Windows.Forms.Label lbSource;
         private System.Windows.Forms.Label lbTranslated;
@@ -399,7 +401,7 @@ namespace Rusik
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TextBox SearchTranslated_tb;
         private System.Windows.Forms.Button SearchTranslated_btn;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SearchSource_btn;
         private System.Windows.Forms.TextBox SearchSource_tb;
         private System.Windows.Forms.Label OutputFile_lb;
         private System.Windows.Forms.TextBox SourceFile_tb;

@@ -15,7 +15,8 @@ namespace Rusik
 {
     public partial class Form1 : Form
     {
-        static int MaxBytesMessage = 2200;
+        static readonly int MaxBytesMessage = 2200;
+        public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
         public string SourceFile;
         public string OutputFile;
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
@@ -189,13 +190,7 @@ foreach (var t in linkedList.BackEnumerator())
                     Translated_tb.ReadOnly = false;
                 }
 
-                // создаем объект BinaryReader для OutputFile
-                /* using (BinaryReader readerOF = new BinaryReader(File.Open(OutputFile, FileMode.Open)))
-                 { // откроем файл .tmp$$ на Чтение
-
-                 }*/
                 //Выведем в SourceFile_tb первый элемент списка
-                
                 foreach (var item in linkedListSF)
                 {
                     Source_tb.Text = (string)item;
@@ -208,16 +203,27 @@ foreach (var t in linkedList.BackEnumerator())
                 {                  
                     writer.Write(item);
                 }
-
             }*/
 
+        }
+        private void Next_btn_Click(object sender, EventArgs e)
+        { 
+            long counter=SourceNodeCounter+1; // Next = Current+1
+            if (counter > linkedListSF.Count) { counter = 0; SourceNodeCounter = 0; } // Проверяем на конец списка
+            //long fp= linkedListSF.FilePosition;
+            foreach (var item in linkedListSF)
+            {
+                if (counter > 0) { counter--; continue; }
+                Source_tb.Text = (string)item;
+                SourceNodeCounter++;
+            }
+            //Source_tb.Text = (string)linkedListSF.NextNode();
+        }
+        private void Prev_btn_Click(object sender, EventArgs e)
+        {
 
         }
-        private void btnNext_Click(object sender, EventArgs e)
-        {
-            linkedListSF.Previous();
-        }
-        private void button1_Click(object sender, EventArgs e)
+        private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
             if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
             foreach (var item in linkedListSF)
@@ -225,6 +231,11 @@ foreach (var t in linkedList.BackEnumerator())
                 var str1 = (string)item;
                 if (str1 == SearchSource_tb.Text) { Source_tb.Text = (string)item; break; }
             }
+        }
+
+        private void SearchTranslated_btn_Click(object sender, EventArgs e)
+        {
+
         }
 
 
@@ -246,6 +257,7 @@ foreach (var t in linkedList.BackEnumerator())
         DoublyNode<T> head; // головной/первый элемент
         DoublyNode<T> tail; // последний/хвостовой элемент
         int count;  // количество элементов в списке
+ //       DoublyNode<T> curr; // текущий элемент
 
         // добавление элемента
         public void Add(T data, long Fileposition)
@@ -323,7 +335,6 @@ foreach (var t in linkedList.BackEnumerator())
         public long FilePosition { get { return FilePosition; } }
 
         public bool IsEmpty { get { return count == 0; } }
-        public DoublyNode<T> Previous { get { return this.Previous; } }
 
         public void Clear()
         {
@@ -353,19 +364,27 @@ foreach (var t in linkedList.BackEnumerator())
         {
             DoublyNode<T> current = head;
             while (current != null)
-            {
+            {   
                 yield return current.Data;
-                current = current.Next;
+               
             }
         }
+
         public IEnumerable<T> BackEnumerator()
         {
             DoublyNode<T> current = tail;
             while (current != null)
             {
                 yield return current.Data;
-                current = current.Previous;
             }
         }
+
+      /*  public object NextNode()
+        {
+            DoublyNode<T> current;
+            if (curr == null) { current = head; }
+            else { current = curr.Next; }
+            return current.Data;
+        }*/
     }
 }
