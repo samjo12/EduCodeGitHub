@@ -37,6 +37,7 @@ namespace Rusik
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.File_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenTranslatedFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.Quit_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.About_tsmi = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,7 +46,6 @@ namespace Rusik
             this.Offset_hp = new System.Windows.Forms.HelpProvider();
             this.Records_lb = new System.Windows.Forms.Label();
             this.Translate_btn = new System.Windows.Forms.Button();
-            this.Source_tb = new System.Windows.Forms.TextBox();
             this.Translated_tb = new System.Windows.Forms.TextBox();
             this.SourceFile_lb = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -60,8 +60,13 @@ namespace Rusik
             this.TranslatedFile_tb = new System.Windows.Forms.TextBox();
             this.Start_btn = new System.Windows.Forms.Button();
             this.progressBar1_lb = new System.Windows.Forms.Label();
+            this.Source_tc = new System.Windows.Forms.TabControl();
+            this.Source_tab = new System.Windows.Forms.TabPage();
+            this.Source_tb = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.Source_tc.SuspendLayout();
+            this.Source_tab.SuspendLayout();
             this.SuspendLayout();
             // 
             // Prev_btn
@@ -89,10 +94,21 @@ namespace Rusik
             // nudRecord
             // 
             this.nudRecord.Location = new System.Drawing.Point(592, 631);
+            this.nudRecord.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.nudRecord.Name = "nudRecord";
             this.nudRecord.ReadOnly = true;
             this.nudRecord.Size = new System.Drawing.Size(56, 23);
             this.nudRecord.TabIndex = 8;
+            this.nudRecord.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRecord.ValueChanged += new System.EventHandler(this.nudRecord_ValueChanged);
             // 
             // lbSource
             // 
@@ -108,7 +124,7 @@ namespace Rusik
             this.lbTranslated.AutoSize = true;
             this.lbTranslated.Location = new System.Drawing.Point(511, 28);
             this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(109, 15);
+            this.lbTranslated.Size = new System.Drawing.Size(111, 15);
             this.lbTranslated.TabIndex = 10;
             this.lbTranslated.Text = "Translated Message";
             // 
@@ -127,6 +143,7 @@ namespace Rusik
             // 
             this.File_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenFile_tsmi,
+            this.OpenTranslatedFile_tsmi,
             this.SaveFile_tsmi,
             this.Quit_tsmi});
             this.File_tsmi.Name = "File_tsmi";
@@ -136,21 +153,28 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(144, 22);
-            this.OpenFile_tsmi.Text = "Open File";
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenFile_tsmi.Text = "Open binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
+            // 
+            // OpenTranslatedFile_tsmi
+            // 
+            this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
+            this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(144, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(144, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
             this.Quit_tsmi.Text = "Quit";
             // 
             // About_tsmi
@@ -174,7 +198,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(12, 667);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -197,22 +221,13 @@ namespace Rusik
             this.Translate_btn.Text = "Translate";
             this.Translate_btn.UseVisualStyleBackColor = false;
             // 
-            // Source_tb
-            // 
-            this.Source_tb.Location = new System.Drawing.Point(12, 48);
-            this.Source_tb.Multiline = true;
-            this.Source_tb.Name = "Source_tb";
-            this.Source_tb.ReadOnly = true;
-            this.Source_tb.Size = new System.Drawing.Size(485, 555);
-            this.Source_tb.TabIndex = 16;
-            // 
             // Translated_tb
             // 
-            this.Translated_tb.Location = new System.Drawing.Point(511, 48);
+            this.Translated_tb.Location = new System.Drawing.Point(495, 0);
             this.Translated_tb.Multiline = true;
             this.Translated_tb.Name = "Translated_tb";
             this.Translated_tb.ReadOnly = true;
-            this.Translated_tb.Size = new System.Drawing.Size(485, 555);
+            this.Translated_tb.Size = new System.Drawing.Size(481, 522);
             this.Translated_tb.TabIndex = 17;
             // 
             // SourceFile_lb
@@ -269,6 +284,7 @@ namespace Rusik
             this.SearchSource_tb.ReadOnly = true;
             this.SearchSource_tb.Size = new System.Drawing.Size(430, 23);
             this.SearchSource_tb.TabIndex = 22;
+            this.SearchSource_tb.TextChanged += new System.EventHandler(this.SearchSource_Click);
             // 
             // OutputFile_lb
             // 
@@ -293,7 +309,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(187, 667);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -335,11 +351,42 @@ namespace Rusik
             this.progressBar1_lb.Size = new System.Drawing.Size(0, 15);
             this.progressBar1_lb.TabIndex = 30;
             // 
+            // Source_tc
+            // 
+            this.Source_tc.Controls.Add(this.Source_tab);
+            this.Source_tc.Location = new System.Drawing.Point(12, 53);
+            this.Source_tc.Name = "Source_tc";
+            this.Source_tc.SelectedIndex = 0;
+            this.Source_tc.Size = new System.Drawing.Size(984, 550);
+            this.Source_tc.TabIndex = 31;
+            // 
+            // Source_tab
+            // 
+            this.Source_tab.Controls.Add(this.Source_tb);
+            this.Source_tab.Controls.Add(this.Translated_tb);
+            this.Source_tab.Location = new System.Drawing.Point(4, 24);
+            this.Source_tab.Name = "Source_tab";
+            this.Source_tab.Padding = new System.Windows.Forms.Padding(3);
+            this.Source_tab.Size = new System.Drawing.Size(976, 522);
+            this.Source_tab.TabIndex = 0;
+            this.Source_tab.Text = "All";
+            this.Source_tab.UseVisualStyleBackColor = true;
+            // 
+            // Source_tb
+            // 
+            this.Source_tb.Location = new System.Drawing.Point(-3, 0);
+            this.Source_tb.Multiline = true;
+            this.Source_tb.Name = "Source_tb";
+            this.Source_tb.ReadOnly = true;
+            this.Source_tb.Size = new System.Drawing.Size(484, 522);
+            this.Source_tb.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.Source_tc);
             this.Controls.Add(this.progressBar1_lb);
             this.Controls.Add(this.Start_btn);
             this.Controls.Add(this.TranslatedFile_tb);
@@ -353,8 +400,6 @@ namespace Rusik
             this.Controls.Add(this.SearchTranslated_tb);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.SourceFile_lb);
-            this.Controls.Add(this.Translated_tb);
-            this.Controls.Add(this.Source_tb);
             this.Controls.Add(this.Translate_btn);
             this.Controls.Add(this.Records_lb);
             this.Controls.Add(this.Offset_lb);
@@ -372,6 +417,9 @@ namespace Rusik
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.Source_tc.ResumeLayout(false);
+            this.Source_tab.ResumeLayout(false);
+            this.Source_tab.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -383,7 +431,7 @@ namespace Rusik
         private System.Windows.Forms.NumericUpDown nudRecord;
         private System.Windows.Forms.Label lbSource;
         private System.Windows.Forms.Label lbTranslated;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+       /// private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem File_tsmi;
         private System.Windows.Forms.ToolStripMenuItem OpenFile_tsmi;
@@ -395,7 +443,6 @@ namespace Rusik
         private System.Windows.Forms.HelpProvider Offset_hp;
         private System.Windows.Forms.Label Records_lb;
         private System.Windows.Forms.Button Translate_btn;
-        private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.TextBox Translated_tb;
         private System.Windows.Forms.Label SourceFile_lb;
         private System.Windows.Forms.ProgressBar progressBar1;
@@ -410,6 +457,10 @@ namespace Rusik
         private System.Windows.Forms.TextBox TranslatedFile_tb;
         private System.Windows.Forms.Button Start_btn;
         private System.Windows.Forms.Label progressBar1_lb;
+        private System.Windows.Forms.TabControl Source_tc;
+        private System.Windows.Forms.TabPage Source_tab;
+        private System.Windows.Forms.TextBox Source_tb;
+        private System.Windows.Forms.ToolStripMenuItem OpenTranslatedFile_tsmi;
     }
 }
 

@@ -17,8 +17,9 @@ namespace Rusik
     {
         static readonly int MaxBytesMessage = 2200;
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
-        public string SourceFile;
-        public string OutputFile;
+        public string SourceFile; // бинарный файл
+        public string TranslatedFile; //Текстовый файл частично переведенный ранее со знаком разделителем "="
+        public string OutputFile; // Выходной текстовый файл с текущим рабочим переводом
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new DoublyLinkedList<string>(); // связный список для выходного файла
         public struct DataNode 
@@ -59,8 +60,10 @@ namespace Rusik
           OpenFileDialog openFileDialog1 = new();
           openFileDialog1.ShowDialog();
           SourceFile = openFileDialog1.FileName;
+          if (SourceFile == null || SourceFile=="") return; //без имени файла дальше нечего делать
           OutputFile = SourceFile + ".tmp$$";
-          //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
+          if (File.Exists(SourceFile +".txt")) TranslatedFile= SourceFile + ".txt"; // определяем вспомогательный файл с переводом по-умолчанию
+            //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
             // создаем объект BinaryWriter
             if (!File.Exists(OutputFile))
             {   // Если выходной файл еще не существует, копируем выбранный файл во временный
@@ -120,7 +123,75 @@ foreach (var t in linkedList.BackEnumerator())
              */
 
         }
+        private void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new();
+            openFileDialog1.ShowDialog();
+            TranslatedFile = openFileDialog1.FileName;
+            if (TranslatedFile == null || TranslatedFile == "") return; //без имени файла дальше нечего делать
 
+            //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
+            // создаем объект BinaryWriter
+            
+        }
+
+        private void OpenTranslatedFile()
+        {       
+            if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
+                using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
+                { // откроем файл Translated Text File на чтение
+                    FileInfo src = new FileInfo(TranslatedFile);
+                    byte[] buf = new byte[MaxBytesMessage*3]; //Буффер для чтения из файла строки текста
+                    long l = src.Length; //размер исходного файла в байтах
+                    int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
+                    long onepercent = l / 100 - 1, percent = onepercent;
+                    progressBar1.Value = 0;
+                    progressBar1_lb.Text = "0 %";
+                    for (long i = 0; i < l; i++)
+                    { // посимвольно читаем исходный файл
+                        var b = readerTF.ReadByte();
+                        if (b==0x3d) //найден символ =
+                        {
+                            sign_pointer++; //счетчик найденных символов из сигнатуры
+                            if (Signature.Length == sign_pointer) //Сигнатура найдена. Сбросим указатель сигнатуры
+                            {
+                                sign_pointer = 0;
+                                if ((i + 4) >= l) break; // конец файла достигнут - сигнатура ошибочна
+                                Int32 lentxt = readerTF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
+                                i += 4;
+                                if (lentxt > MaxBytesMessage || lentxt < 4) continue; // не может быть такое длинное предложение
+
+                                // читаем текст длиной lentxt
+                                string message = "";
+                                if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
+                                for (int j = 0; j < lentxt; j++) { buf[j] = readerTF.ReadByte(); message += (char)buf[j]; i++; }
+                                // создаем элемент списка с новой записью
+                                linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
+                                buf[lentxt + 1] = 0xd; buf[lentxt + 2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
+                            }
+                        }
+                        else { sign_pointer = 0; }// сигнатура не подтвердилась 
+                                                  // ищем сигнатуру
+
+                        if (i >= percent)
+                        {
+                            if (progressBar1.Value < 100) { progressBar1.Value++; }
+                            percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString();
+                        }
+                    }
+                    progressBar1.Value = 100;
+                    progressBar1_lb.Text = "100%";
+                    if (progressBar1.Value == 0)
+                    { // После поиска по сигнатуре - ничего не найдено.
+                        progressBar1_lb.Text = "";
+                    }
+                    nudRecord.Maximum = linkedListSF.Count;
+                    nudRecord.Minimum = 1;
+
+                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                    Translated_tb.ReadOnly = false;
+                }
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
            // LoadFile();
@@ -136,6 +207,7 @@ foreach (var t in linkedList.BackEnumerator())
             // начиная со смещения Offset начнем по байтам искать сигнатуру Signature.
             // Если найдем, то будем добавлять текст в список DoubleNode. Строим списки параллельно у обоих файлов.
             // создаем объект BinaryReader
+            if (SourceFile == null) return; // файл еще не открыт
             using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile + ".txt", FileMode.OpenOrCreate)))
             {
                 using (BinaryReader readerSF = new BinaryReader(File.Open(SourceFile, FileMode.Open)))
@@ -164,9 +236,9 @@ foreach (var t in linkedList.BackEnumerator())
                                 // читаем текст длиной lentxt
                                 string message = "";
                                 if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
-                                // создаем элемент списка с новой записью
-                                linkedListSF.Add(message,i+1); // создаем новый элемент списка, с файловым указателем на начало строки
                                 for (int j = 0; j < lentxt; j++) { buf[j] = readerSF.ReadByte(); message += (char)buf[j]; i++; }
+                                // создаем элемент списка с новой записью
+                                linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
                                 buf[lentxt+1] = 0xd; buf[lentxt+2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
                                 writer.Write(buf,0,lentxt+2); // записываем строку текста в выходной файл
                             }
@@ -186,17 +258,25 @@ foreach (var t in linkedList.BackEnumerator())
                     { // После поиска по сигнатуре - ничего не найдено.
                         progressBar1_lb.Text = "";
                     }
+                    nudRecord.Maximum = linkedListSF.Count;
+                    nudRecord.Minimum = 1;
+
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Translated_tb.ReadOnly = false;
+                    
                 }
 
                 //Выведем в SourceFile_tb первый элемент списка
                 foreach (var item in linkedListSF)
                 {
-                    Source_tb.Text = (string)item;
+                    Source_tb.Text = item;
                     break;
                 }
-            }/*
+                nudRecord.Value = 1;
+                nudRecord.ReadOnly = false;
+            }
+            OpenTranslatedFile();
+            /*
             using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile+".txt", FileMode.OpenOrCreate)))
             {
                 foreach (var item in linkedListSF)
@@ -207,21 +287,28 @@ foreach (var t in linkedList.BackEnumerator())
 
         }
         private void Next_btn_Click(object sender, EventArgs e)
-        { 
-            long counter=SourceNodeCounter+1; // Next = Current+1
-            if (counter > linkedListSF.Count) { counter = 0; SourceNodeCounter = 0; } // Проверяем на конец списка
-            //long fp= linkedListSF.FilePosition;
-            foreach (var item in linkedListSF)
-            {
-                if (counter > 0) { counter--; continue; }
-                Source_tb.Text = (string)item;
-                SourceNodeCounter++;
-            }
-            //Source_tb.Text = (string)linkedListSF.NextNode();
+        {
+            nudRecord.ReadOnly = true;
+            if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++;}
+            Source_tb.Text = (string)linkedListSF.NextNode();
+            nudRecord.ReadOnly = false;
         }
         private void Prev_btn_Click(object sender, EventArgs e)
         {
-
+            nudRecord.ReadOnly = true;
+            if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else {nudRecord.Value--; }
+            Source_tb.Text = (string)linkedListSF.PrevNode();
+            nudRecord.ReadOnly = false;
+        }
+        private void nudRecord_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudRecord.ReadOnly==true) return; // это пришел афтершок из функций Next_btn_Click И Prev_btn_click
+            long counter = (long)nudRecord.Value;
+            foreach (var item in linkedListSF)
+            {
+                counter--;
+                if (counter == 0) { Source_tb.Text = (string)item; break; }
+            }
         }
         private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
@@ -254,6 +341,7 @@ foreach (var t in linkedList.BackEnumerator())
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
     {
+        DoublyNode<T> curr; //текущий элемент
         DoublyNode<T> head; // головной/первый элемент
         DoublyNode<T> tail; // последний/хвостовой элемент
         int count;  // количество элементов в списке
@@ -332,7 +420,7 @@ foreach (var t in linkedList.BackEnumerator())
         }
 
         public int Count { get { return count; } }
-        public long FilePosition { get { return FilePosition; } }
+        public long FilePosition { get { return curr.Fileposition; } }
 
         public bool IsEmpty { get { return count == 0; } }
 
@@ -351,6 +439,7 @@ foreach (var t in linkedList.BackEnumerator())
                 if (current.Data.Equals(data))
                     return true;
                 current = current.Next;
+                curr = current;
             }
             return false;
         }
@@ -366,7 +455,8 @@ foreach (var t in linkedList.BackEnumerator())
             while (current != null)
             {   
                 yield return current.Data;
-               
+                current = current.Next;
+                curr = current;
             }
         }
 
@@ -376,15 +466,32 @@ foreach (var t in linkedList.BackEnumerator())
             while (current != null)
             {
                 yield return current.Data;
+                current = current.Previous;
+                curr = current;
             }
         }
 
-      /*  public object NextNode()
+        public object NextNode()
         {
             DoublyNode<T> current;
-            if (curr == null) { current = head; }
-            else { current = curr.Next; }
+            if (count == 0) return "Text records were not found !"; // список пуст
+            if (curr == null) curr = head;
+            current = curr;
+            if (current.Next == null) { current = head; }
+            else { current = current.Next; }
+            curr = current;
             return current.Data;
-        }*/
+        }
+        public object PrevNode()
+        {
+            DoublyNode<T> current;
+            if (count==0) return "Text records were not found !"; // список пуст
+            if (curr == null) curr = head;
+            current = curr;
+            if (current.Previous == null) { current = tail; }
+            else { current = current.Previous; }
+            curr = current;
+            return current.Data;
+        }
     }
 }
