@@ -141,38 +141,39 @@ foreach (var t in linkedList.BackEnumerator())
                 using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
                 { // откроем файл Translated Text File на чтение
                     FileInfo src = new FileInfo(TranslatedFile);
-                    byte[] buf = new byte[MaxBytesMessage*3]; //Буффер для чтения из файла строки текста
+                    byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
+                    byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
                     long l = src.Length; //размер исходного файла в байтах
-                    int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
                     long onepercent = l / 100 - 1, percent = onepercent;
-                    progressBar1.Value = 0;
+                    byte b;
+                    bool sourcePart = true;
+                    int bufcounter = 0;
+                    progressBar1.Value = 0; 
                     progressBar1_lb.Text = "0 %";
                     for (long i = 0; i < l; i++)
-                    { // посимвольно читаем исходный файл
-                        var b = readerTF.ReadByte();
-                        if (b==0x3d) //найден символ =
-                        {
-                            sign_pointer++; //счетчик найденных символов из сигнатуры
-                            if (Signature.Length == sign_pointer) //Сигнатура найдена. Сбросим указатель сигнатуры
-                            {
-                                sign_pointer = 0;
-                                if ((i + 4) >= l) break; // конец файла достигнут - сигнатура ошибочна
-                                Int32 lentxt = readerTF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
-                                i += 4;
-                                if (lentxt > MaxBytesMessage || lentxt < 4) continue; // не может быть такое длинное предложение
-
-                                // читаем текст длиной lentxt
-                                string message = "";
-                                if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
-                                for (int j = 0; j < lentxt; j++) { buf[j] = readerTF.ReadByte(); message += (char)buf[j]; i++; }
-                                // создаем элемент списка с новой записью
-                                linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
-                                buf[lentxt + 1] = 0xd; buf[lentxt + 2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
-                            }
+                    { // посимвольно читаем исходный файл в буффер
+                        b = readerTF.ReadByte(); bufcounter++;
+                        if (b==0x3d && sourcePart == true) //найден символ =
+                        { //теперь строку из буфера нужно проверить на соответствие строке из списка linkedListSF
+                            bufcounter--;
+                            if (sourcePart is true) { CompareStrings(buf1, bufcounter, linkedListSF); sourcePart = false; }
+                            bufcounter = 0; continue;
                         }
-                        else { sign_pointer = 0; }// сигнатура не подтвердилась 
-                                                  // ищем сигнатуру
+                        // Если встретили в оригинальной части фразы, то просто пропускаем
+                        if (sourcePart == true && (b == 0xa || b == 0xd )) { bufcounter--; continue; }
+                        // если втретили в переводе, то будем ожидать новой фразы пеервода
+                        if (sourcePart == false && (b == 0xa || b == 0xd)) 
+                        {   
+                            CompareStrings(buf2, bufcounter, linkedListOF); //вносим перевод или заменяем имеющийся
+                            bufcounter=0; 
+                            sourcePart = true; 
+                            continue; 
+                        } 
+                        if (bufcounter > MaxBytesMessage){ bufcounter = 0; continue; }// размер сообщения превышен - урезаем его
+                        
+                        if (sourcePart == true) buf1[bufcounter - 1] = b; else buf2[bufcounter] = b;
 
+                        // играем с прогрессбаром
                         if (i >= percent)
                         {
                             if (progressBar1.Value < 100) { progressBar1.Value++; }
@@ -185,13 +186,29 @@ foreach (var t in linkedList.BackEnumerator())
                     { // После поиска по сигнатуре - ничего не найдено.
                         progressBar1_lb.Text = "";
                     }
-                    nudRecord.Maximum = linkedListSF.Count;
-                    nudRecord.Minimum = 1;
 
-                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";
-                    Translated_tb.ReadOnly = false;
                 }
         }
+        private int CompareStrings( byte [] buffer, long length, DoublyLinkedList<string> linkedList)
+        { //возвращает 0 если найдена такая же запись как в списке, либо число расхождений
+          // Если число расхождений больше 20% создаем новую запись в списке
+            int uneq=0; //число несовпадений
+            string str1="";
+            byte []buf1=new byte[length];
+            for(int i=0;i<length;i++)
+            {
+                buf1[i] = buffer[i];
+                str1 += (char)buf1[i];
+            }
+
+            foreach (var item in linkedList)
+            {
+                Source_tb.Text = item;
+                
+            }
+            return uneq;
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
            // LoadFile();
@@ -217,11 +234,12 @@ foreach (var t in linkedList.BackEnumerator())
                     long l = src.Length; //размер исходного файла в байтах
                     int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
                     long onepercent = l / 100 - 1, percent = onepercent;
+                    byte b;
                     progressBar1.Value = 0; 
                     progressBar1_lb.Text = "0 %";
                     for (long i = 0; i < l; i++)
                     { // посимвольно читаем исходный файл
-                        var b = readerSF.ReadByte();
+                        b = readerSF.ReadByte();
                         if (Signature[sign_pointer] == b) //найден символ из сигнатуры
                         {
                             sign_pointer++; //счетчик найденных символов из сигнатуры
