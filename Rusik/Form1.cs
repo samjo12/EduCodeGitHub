@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace Rusik
@@ -143,6 +144,7 @@ foreach (var t in linkedList.BackEnumerator())
                     FileInfo src = new FileInfo(TranslatedFile);
                     byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
                     byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
+                    string str1 = "", str2 = "";
                     long l = src.Length; //размер исходного файла в байтах
                     long onepercent = l / 100 - 1, percent = onepercent;
                     byte b;
@@ -156,22 +158,25 @@ foreach (var t in linkedList.BackEnumerator())
                         if (b==0x3d && sourcePart == true) //найден символ =
                         { //теперь строку из буфера нужно проверить на соответствие строке из списка linkedListSF
                             bufcounter--;
-                            if (sourcePart is true) { CompareStrings(buf1, bufcounter, linkedListSF); sourcePart = false; }
-                            bufcounter = 0; continue;
+                            CompareStrings(str1, linkedListSF); sourcePart = false; 
+                            bufcounter = 0;
+                            str1 = "";
+                            continue;
                         }
                         // Если встретили в оригинальной части фразы, то просто пропускаем
                         if (sourcePart == true && (b == 0xa || b == 0xd )) { bufcounter--; continue; }
                         // если втретили в переводе, то будем ожидать новой фразы пеервода
                         if (sourcePart == false && (b == 0xa || b == 0xd)) 
                         {   
-                            CompareStrings(buf2, bufcounter, linkedListOF); //вносим перевод или заменяем имеющийся
+                            CompareStrings(str2, linkedListOF); //вносим перевод или заменяем имеющийся
                             bufcounter=0; 
-                            sourcePart = true; 
+                            sourcePart = true;
+                            str2 = "";
                             continue; 
                         } 
-                        if (bufcounter > MaxBytesMessage){ bufcounter = 0; continue; }// размер сообщения превышен - урезаем его
-                        
-                        if (sourcePart == true) buf1[bufcounter - 1] = b; else buf2[bufcounter] = b;
+                        if (bufcounter > MaxBytesMessage){ bufcounter = 0; str1 = ""; continue; }// размер сообщения превышен - урезаем его
+
+                    if (sourcePart == true) { buf1[bufcounter - 1] = b; str1 += b; } else { buf2[bufcounter] = b; str2 += b; }
 
                         // играем с прогрессбаром
                         if (i >= percent)
@@ -189,26 +194,57 @@ foreach (var t in linkedList.BackEnumerator())
 
                 }
         }
-        private int CompareStrings( byte [] buffer, long length, DoublyLinkedList<string> linkedList)
+        private int CompareStrings( string str1, DoublyLinkedList<string> linkedList)
         { //возвращает 0 если найдена такая же запись как в списке, либо число расхождений
-          // Если число расхождений больше 20% создаем новую запись в списке
+          // Если число расхождений больше 3% создаем новую запись в списке
             int uneq=0; //число несовпадений
-            string str1="";
-            byte []buf1=new byte[length];
-            for(int i=0;i<length;i++)
-            {
-                buf1[i] = buffer[i];
-                str1 += (char)buf1[i];
-            }
+            float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
+            long nodeCounter=0;
+            long kMaxfilePosition=0;
 
-            foreach (var item in linkedList)
+            foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
             {
-                Source_tb.Text = item;
-                
+                nodeCounter++;
+                if (str1 == item)// Исходные фразы в linkedlistSF и доп.файле с переводом - совпали
+                { // в таком случае заменим перевод
+                    return uneq;
+                }
+            }
+            foreach (var item in linkedList) // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
+            {
+               // Найдем строку в списке максимально схожую (по алгоритму Танимото) с входной строкой
+               kTanimoto_tmp = Tanimoto(str1,item);
+               if (kTanimoto < kTanimoto_tmp) { kTanimoto = kTanimoto_tmp; kMaxfilePosition = linkedList.FilePosition; }
+            }
+            if (kTanimoto <= 0.9) // Вероятно, что входная строка на встречается в списке. Проигнорим ее 
+            {
+                MessageBox.Show(str1, "Found New Source String. It will be ignoring!", MessageBoxButtons.OK); return 1;
+            }
+            foreach (var item in linkedList) //Найдем запись из списка с макс.коэфф.Танимото и заменим в нем перевод
+            {
+
+                if (linkedList.FilePosition== kMaxfilePosition)
+                {; }
             }
             return uneq;
+        }// MessageBox.Show(str1,"Обнаружены непечатные символы в строке:", MessageBoxButtons.OK); 
+        private float Tanimoto(string str1,string str2)
+        { //Коэффициент Танимото – описывает степень схожести двух множеств. 
+          // при использовании строк с русскими буквами, их лучше подавать сюда в Unicode
+            float kTanimoto = 0;
+            //str1.ToLower(); str2.ToLower(); //переводим обе строки в нижний регистр - в этой проге, точнее так не делать
+            string str1out = Regex.Replace(str1, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
+            string str2out= Regex.Replace(str2, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
+            int a = str1out.Length; // кол-во элементов в 1ом множестве
+            int b = str2out.Length; //кол-во элементов во 2ом множестве
+            int c = 0; //кол-во общих элементов  в двух множествах
+            for(var i=0; i<(a > b ? a : b); i++)
+            { 
+               if((a > b ? str1 : str2)[i] == (a > b ? str2 : str1)[i]) c++;
+            }
+            kTanimoto =c/(a+b-c);
+            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно
         }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
            // LoadFile();
@@ -249,21 +285,23 @@ foreach (var t in linkedList.BackEnumerator())
                                 if ((i + 4) >= l) break; // конец файла достигнут - сигнатура ошибочна
                                 Int32 lentxt = readerSF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
                                 i += 4;
-                                if (lentxt > MaxBytesMessage || lentxt<4) continue; // не может быть такое длинное предложение
+                                if ((lentxt > MaxBytesMessage) || lentxt<3) continue; // не может быть такое длинное/короткое предложение
                                 
                                 // читаем текст длиной lentxt
                                 string message = "";
                                 if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
-                                for (int j = 0; j < lentxt; j++) { buf[j] = readerSF.ReadByte(); message += (char)buf[j]; i++; }
+                                for (int j = 0; j < lentxt; j++) 
+                                { buf[j] = readerSF.ReadByte(); message += (char)buf[j]; i++; }
+                                if(buf)
                                 // создаем элемент списка с новой записью
                                 linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
+                                linkedListOF.Add("", i + 1); //одновременно создаем список с переводом
                                 buf[lentxt+1] = 0xd; buf[lentxt+2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
                                 writer.Write(buf,0,lentxt+2); // записываем строку текста в выходной файл
                             }
                         }
                         else { sign_pointer = 0; }// сигнатура не подтвердилась 
                                                   // ищем сигнатуру
-
                         if (i >= percent)
                         {
                             if (progressBar1.Value < 100) { progressBar1.Value++; }
@@ -359,14 +397,12 @@ foreach (var t in linkedList.BackEnumerator())
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
     {
-        DoublyNode<T> curr; //текущий элемент
+        public DoublyNode<T> curr; //текущий элемент
         DoublyNode<T> head; // головной/первый элемент
         DoublyNode<T> tail; // последний/хвостовой элемент
         int count;  // количество элементов в списке
- //       DoublyNode<T> curr; // текущий элемент
-
-        // добавление элемента
-        public void Add(T data, long Fileposition)
+        
+        public void Add(T data, long Fileposition)// добавление элемента
         {
             DoublyNode<T> node = new DoublyNode<T>(data);
 
@@ -441,6 +477,7 @@ foreach (var t in linkedList.BackEnumerator())
         public long FilePosition { get { return curr.Fileposition; } }
 
         public bool IsEmpty { get { return count == 0; } }
+        public DoublyNode<T> Current { get { return curr; } }
 
         public void Clear()
         {
