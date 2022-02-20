@@ -38,6 +38,7 @@ namespace Rusik
             this.File_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenTranslatedFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeFilesClearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.Quit_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.About_tsmi = new System.Windows.Forms.ToolStripMenuItem();
@@ -144,6 +145,7 @@ namespace Rusik
             this.File_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenFile_tsmi,
             this.OpenTranslatedFile_tsmi,
+            this.closeFilesClearToolStripMenuItem,
             this.SaveFile_tsmi,
             this.Quit_tsmi});
             this.File_tsmi.Name = "File_tsmi";
@@ -163,6 +165,13 @@ namespace Rusik
             this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
+            // 
+            // closeFilesClearToolStripMenuItem
+            // 
+            this.closeFilesClearToolStripMenuItem.Name = "closeFilesClearToolStripMenuItem";
+            this.closeFilesClearToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.closeFilesClearToolStripMenuItem.Text = "Close Files/Clear";
+            this.closeFilesClearToolStripMenuItem.Click += new System.EventHandler(this.closeFilesClearToolStripMenuItem_Click);
             // 
             // SaveFile_tsmi
             // 
@@ -223,6 +232,7 @@ namespace Rusik
             // 
             // Translated_tb
             // 
+            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Translated_tb.Location = new System.Drawing.Point(495, 0);
             this.Translated_tb.Multiline = true;
             this.Translated_tb.Name = "Translated_tb";
@@ -241,9 +251,9 @@ namespace Rusik
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(602, 660);
+            this.progressBar1.Location = new System.Drawing.Point(651, 660);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(394, 26);
+            this.progressBar1.Size = new System.Drawing.Size(345, 26);
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 19;
             // 
@@ -346,7 +356,7 @@ namespace Rusik
             // 
             this.progressBar1_lb.AutoSize = true;
             this.progressBar1_lb.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.progressBar1_lb.Location = new System.Drawing.Point(777, 666);
+            this.progressBar1_lb.Location = new System.Drawing.Point(605, 666);
             this.progressBar1_lb.Name = "progressBar1_lb";
             this.progressBar1_lb.Size = new System.Drawing.Size(0, 15);
             this.progressBar1_lb.TabIndex = 30;
@@ -374,6 +384,7 @@ namespace Rusik
             // 
             // Source_tb
             // 
+            this.Source_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Source_tb.Location = new System.Drawing.Point(-3, 0);
             this.Source_tb.Multiline = true;
             this.Source_tb.Name = "Source_tb";
@@ -461,6 +472,7 @@ namespace Rusik
         private System.Windows.Forms.TabPage Source_tab;
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.ToolStripMenuItem OpenTranslatedFile_tsmi;
+        private System.Windows.Forms.ToolStripMenuItem closeFilesClearToolStripMenuItem;
     }
 }
 

@@ -23,11 +23,11 @@ namespace Rusik
         public string OutputFile; // Выходной текстовый файл с текущим рабочим переводом
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new DoublyLinkedList<string>(); // связный список для выходного файла
-        public struct DataNode 
+        /*public struct DataNode 
         {
            public string str;
            public long pos;
-        }
+        }*/
         public byte [] Signature= {0x04,0x00,0x06,0x00 };  // Сигнатура из байт
         public Form1()
         {
@@ -53,205 +53,202 @@ namespace Rusik
             {
                 src.MoveTo(OutputFile);
             }
-            else { MessageBox.Show("Error writing to file: " + OutputFile); }
+            else { MessageBox.Show("Error writing to file:",OutputFile, MessageBoxButtons.OK); }
         }
 
         private void OpenFile_tsmi_Click(object sender, EventArgs e)
         {
           OpenFileDialog openFileDialog1 = new();
           openFileDialog1.ShowDialog();
-          SourceFile = openFileDialog1.FileName;
+          string tmpSourceFile = openFileDialog1.FileName;
+            if (tmpSourceFile == "") return; // 
+            else SourceFile = tmpSourceFile;
           if (SourceFile == null || SourceFile=="") return; //без имени файла дальше нечего делать
           OutputFile = SourceFile + ".tmp$$";
           if (File.Exists(SourceFile +".txt")) TranslatedFile= SourceFile + ".txt"; // определяем вспомогательный файл с переводом по-умолчанию
-            //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
-            // создаем объект BinaryWriter
-            if (!File.Exists(OutputFile))
-            {   // Если выходной файл еще не существует, копируем выбранный файл во временный
-                FileInfo srcF = new FileInfo(SourceFile);
-                srcF.CopyTo(OutputFile);
-                FileInfo outF = new FileInfo(SourceFile); // ставим атрибуты на копию hidden
-                outF.Attributes |= FileAttributes.Hidden;
-                //outF.Attributes |= FileAttributes.ReadOnly;
-            }
-            // разблокируем поля SourceFile_tb TranslatedFile_tb
-            SourceFile_tb.Text = SourceFile;
-            TranslatedFile_tb.Text = OutputFile;
+          //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
+          // создаем объект BinaryWriter
+          if (!File.Exists(OutputFile))
+          {   // Если выходной файл еще не существует, копируем выбранный файл во временный
+              FileInfo srcF = new FileInfo(SourceFile);
+              srcF.CopyTo(OutputFile);
+              FileInfo outF = new FileInfo(OutputFile); // ставим атрибуты на копию hidden
+              outF.Attributes |= FileAttributes.Hidden;
+              //outF.Attributes |= FileAttributes.ReadOnly;
+          }
+          // разблокируем поля SourceFile_tb TranslatedFile_tb
+          SourceFile_tb.Text = SourceFile;
+          TranslatedFile_tb.Text = OutputFile;
 
-
-            //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
-            Offset_tb.ReadOnly = false; // textbox Offset
-            Signature_tb.ReadOnly = false; // texbox Signature
-            SearchSource_tb.ReadOnly = false;
-            SearchTranslated_tb.ReadOnly = false;
-            /*
-             *  using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile, FileMode.OpenOrCreate)))
-                {
-                    FileInfo src = new FileInfo(SourceFile);
-                    var l = src.Length;
-                    long onepercent = l / 100-1, percent = onepercent;
-                    progressBar1.Value=0;
-                    for (int i=0; i<l; i++)
-                    { // посимвольно читаем исходный файл
-                        var b = reader.ReadByte();
-                        //if (EndOfStreamException.) break;
-                        writer.Write(b);
-                        if (i == percent) { progressBar1.Value++; percent += onepercent; }
-                    }
-                    progressBar1.Value=100;
-                }
-              */
-
-            /* //Работа со списком
-            DoublyLinkedList<string> linkedList = new DoublyLinkedList<string>();
-// добавление элементов
-linkedList.Add("Bob");
-linkedList.Add("Bill");
-linkedList.Add("Tom");
-linkedList.AddFirst("Kate");
-foreach (var item in linkedList)
-{
-    Console.WriteLine(item);
-}
-// удаление
-linkedList.Remove("Bill");
- 
-// перебор с последнего элемента
-foreach (var t in linkedList.BackEnumerator())
-{
-    Console.WriteLine(t);
-} 
-             */
-
+          //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
+          Offset_tb.ReadOnly = false; // textbox Offset
+          Signature_tb.ReadOnly = false; // texbox Signature
+          SearchSource_tb.ReadOnly = false;
+          SearchTranslated_tb.ReadOnly = false;
         }
+
         private void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new();
             openFileDialog1.ShowDialog();
             TranslatedFile = openFileDialog1.FileName;
             if (TranslatedFile == null || TranslatedFile == "") return; //без имени файла дальше нечего делать
-
-            //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
-            // создаем объект BinaryWriter
-            
+            if(SourceFile=="" || SourceFile==null)OpenTranslatedFile();
         }
 
         private void OpenTranslatedFile()
         {       
             if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
-                using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
-                { // откроем файл Translated Text File на чтение
-                    FileInfo src = new FileInfo(TranslatedFile);
-                    byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
-                    byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
-                    string str1 = "", str2 = "";
-                    long l = src.Length; //размер исходного файла в байтах
-                    long onepercent = l / 100 - 1, percent = onepercent;
-                    byte b;
-                    bool sourcePart = true;
-                    int bufcounter = 0;
-                    progressBar1.Value = 0; 
-                    progressBar1_lb.Text = "0 %";
-                    for (long i = 0; i < l; i++)
-                    { // посимвольно читаем исходный файл в буффер
-                        b = readerTF.ReadByte(); bufcounter++;
-                        if (b==0x3d && sourcePart == true) //найден символ =
-                        { //теперь строку из буфера нужно проверить на соответствие строке из списка linkedListSF
-                            bufcounter--;
-                            CompareStrings(str1, linkedListSF); sourcePart = false; 
-                            bufcounter = 0;
-                            str1 = "";
-                            continue;
+            using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
+            { // откроем файл Translated Text File на чтение
+                FileInfo src = new FileInfo(TranslatedFile);
+                byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
+                byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
+                string str1 = "", str2 = "";
+                long l = src.Length; //размер исходного файла в байтах
+                long onepercent = l / 100 - 1, percent = onepercent;
+                byte b;
+                bool sourcePart = true;
+                bool skipTranslateFlag = false;
+                int bufcounter = 0;
+
+                for (long i = 0; i < l; i++) ////////////!!!!!!
+                { // посимвольно читаем исходный файл в буффер
+                    b = readerTF.ReadByte(); bufcounter++;
+                    if (b==0x3d && sourcePart == true) //найден символ =  
+                    { //теперь строку из буфера нужно проверить на наличие в списке linkedListSF оригинальных строк
+                        bufcounter--;
+                        byte[] tmp_bytes1 = new byte[bufcounter];
+                        for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
+                        str1 = Encoding.UTF8.GetString(tmp_bytes1);
+                        var maxK=FindSameString(str1, linkedListSF); // curr указывает куда и unq
+                        if (maxK < 0.95) // строка из доп файла не похожа ни на одну строку из бинарного файла,
+                        {               // либо бинарный файл не был открыт
+                            linkedListSF.Add(str1, 0); // создаем новый элемент списка, с файловым указателем на начало строки
                         }
-                        // Если встретили в оригинальной части фразы, то просто пропускаем
-                        if (sourcePart == true && (b == 0xa || b == 0xd )) { bufcounter--; continue; }
-                        // если втретили в переводе, то будем ожидать новой фразы пеервода
-                        if (sourcePart == false && (b == 0xa || b == 0xd)) 
-                        {   
-                            CompareStrings(str2, linkedListOF); //вносим перевод или заменяем имеющийся
-                            bufcounter=0; 
-                            sourcePart = true;
-                            str2 = "";
-                            continue; 
-                        } 
-                        if (bufcounter > MaxBytesMessage){ bufcounter = 0; str1 = ""; continue; }// размер сообщения превышен - урезаем его
-
-                    if (sourcePart == true) { buf1[bufcounter - 1] = b; str1 += b; } else { buf2[bufcounter] = b; str2 += b; }
-
-                        // играем с прогрессбаром
-                        if (i >= percent)
+                        else skipTranslateFlag = true; //такая строка отсутствует в оригинальном списке
+                        sourcePart = false; 
+                        bufcounter = 0;
+                        continue;
+                    }
+                    // Если встретили символы в оригинальной части фразы, то просто пропускаем
+                    // if (sourcePart == true && (b == 0xa || b == 0xd )) { bufcounter--; continue; }
+                    // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы пеервода
+                    if (sourcePart == false && b == 0xa && (buf2[bufcounter-2] == 0xd))
+                    {
+                        bufcounter--; //удаляем последниe символы 0d и 0a
+                        byte[] tmp_bytes2=new byte[bufcounter];
+                        for (int j = 0; j < bufcounter; j++) tmp_bytes2[j] = buf2[j];
+                        str2= Encoding.UTF8.GetString(tmp_bytes2);
+                        bufcounter =0; 
+                        sourcePart = true;
+                        if (skipTranslateFlag != true) //вносим перевод или заменяем имеющийся
                         {
-                            if (progressBar1.Value < 100) { progressBar1.Value++; }
-                            percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString();
+                            if (linkedListSF.curr.Twin == null)
+                            {
+                                linkedListOF.Add(str2, 0); // создаем запись в списке с переводом
+                                linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
+                                linkedListOF.SetTwin(linkedListSF.curr);
+                            }
+                            else
+                            {
+                                linkedListOF.SetCurrent(linkedListSF.Twin);
+                                if (linkedListOF.curr != null) linkedListOF.ReplaceData(str2); else MessageBox.Show("Shit happen. Err Replacing!");
+                            }
                         }
-                    }
-                    progressBar1.Value = 100;
-                    progressBar1_lb.Text = "100%";
-                    if (progressBar1.Value == 0)
-                    { // После поиска по сигнатуре - ничего не найдено.
-                        progressBar1_lb.Text = "";
-                    }
+                        else skipTranslateFlag = false;
+                        continue; 
+                    } 
+                    if (bufcounter > MaxBytesMessage){ bufcounter = 0; continue; }// размер сообщения превышен - урезаем его
 
+                    if (sourcePart == true){ buf1[bufcounter - 1] = b; } 
+                    else { buf2[bufcounter-1] = b; }
+
+                    // играем с прогрессбаром
+                    if (i >= percent)
+                    {
+                        if (progressBar1.Value < 100) { progressBar1.Value++; }
+                        percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString()+" %";
+                    }
                 }
+                //progressBar1.Value = 0;
+                //progressBar1_lb.Text = "";
+                nudRecord.Maximum = linkedListSF.Count;
+                nudRecord.Minimum = 1;
+
+                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                Translated_tb.ReadOnly = false;
+                //Выведем в SourceFile_tb первый элемент списка
+                foreach (var item in linkedListSF)
+                {
+                    Source_tb.Text = item;
+                    break;
+                }
+                nudRecord.Value = 1;
+                nudRecord.ReadOnly = false;
+            }
         }
-        private int CompareStrings( string str1, DoublyLinkedList<string> linkedList)
-        { //возвращает 0 если найдена такая же запись как в списке, либо число расхождений
+
+        private float FindSameString( string str1, DoublyLinkedList<string> linkedList)
+        { //возвращает 0 если найдена такая же запись как в заданном списке, либо число расхождений
           // Если число расхождений больше 3% создаем новую запись в списке
-            int uneq=0; //число несовпадений
             float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
-            long nodeCounter=0;
             long kMaxfilePosition=0;
 
             foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
+                if (str1 == item)// фразы в linkedlistSF и доп.файле с переводом - совпали
+                  return 1;  // строка есть в списке
+            
+            // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
+
+            foreach (var item in linkedList) 
             {
-                nodeCounter++;
-                if (str1 == item)// Исходные фразы в linkedlistSF и доп.файле с переводом - совпали
-                { // в таком случае заменим перевод
-                    return uneq;
-                }
-            }
-            foreach (var item in linkedList) // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
-            {
-               // Найдем строку в списке максимально схожую (по алгоритму Танимото) с входной строкой
+               // Найдем строку в списке linkedlist максимально схожую (по алгоритму Танимото) с входной строкой
                kTanimoto_tmp = Tanimoto(str1,item);
                if (kTanimoto < kTanimoto_tmp) { kTanimoto = kTanimoto_tmp; kMaxfilePosition = linkedList.FilePosition; }
             }
-            if (kTanimoto <= 0.9) // Вероятно, что входная строка на встречается в списке. Проигнорим ее 
-            {
-                MessageBox.Show(str1, "Found New Source String. It will be ignoring!", MessageBoxButtons.OK); return 1;
-            }
+
             foreach (var item in linkedList) //Найдем запись из списка с макс.коэфф.Танимото и заменим в нем перевод
             {
-
-                if (linkedList.FilePosition== kMaxfilePosition)
-                {; }
+                if (linkedList.FilePosition== kMaxfilePosition){  break; }
             }
-            return uneq;
+            return kTanimoto;
         }// MessageBox.Show(str1,"Обнаружены непечатные символы в строке:", MessageBoxButtons.OK); 
-        private float Tanimoto(string str1,string str2)
+
+        private float Tanimoto(string str1, string str2)
         { //Коэффициент Танимото – описывает степень схожести двух множеств. 
           // при использовании строк с русскими буквами, их лучше подавать сюда в Unicode
             float kTanimoto = 0;
             //str1.ToLower(); str2.ToLower(); //переводим обе строки в нижний регистр - в этой проге, точнее так не делать
             string str1out = Regex.Replace(str1, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
-            string str2out= Regex.Replace(str2, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
-            int a = str1out.Length; // кол-во элементов в 1ом множестве
-            int b = str2out.Length; //кол-во элементов во 2ом множестве
+            string str2out = Regex.Replace(str2, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
+            int a = 0; // кол-во элементов в 1-ом множестве
+            int b = 0; //кол-во элементов во 2-ом множестве
             int c = 0; //кол-во общих элементов  в двух множествах
-            for(var i=0; i<(a > b ? a : b); i++)
-            { 
-               if((a > b ? str1 : str2)[i] == (a > b ? str2 : str1)[i]) c++;
-            }
-            kTanimoto =c/(a+b-c);
+            if (Math.Abs(str1out.Length - str2out.Length) != 0) return 0; // отличие в длине вычищенных строк -строки точно не совпадают
+            if (str1out == str2out) return 1; // строки идентичны
+            Dictionary<char, int> dictionarys1 = str1out.GroupBy(x => x)
+                .ToDictionary(x => x.Key, x => x.Count());
+            Dictionary<char, int> dictionarys2 = str2out.GroupBy(x => x)
+                .ToDictionary(x => x.Key, x => x.Count());
+            a = dictionarys1.Count;
+            b = dictionarys2.Count;
+            // пересечение последовательностей
+            var result = dictionarys1.Intersect(dictionarys2);
+            c = result.Count();
+
+            kTanimoto =(float)c / (a + b - c);
             return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно
         }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
            // LoadFile();
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This program may be useful for translation text in some binary files.");
+            string str1="This program may be useful for translation text in some binary files.";
+            MessageBox.Show(str1, "About program ...", MessageBoxButtons.OK);
         }
 
         private void Start_btn_Click(object sender, EventArgs e)
@@ -260,7 +257,8 @@ foreach (var t in linkedList.BackEnumerator())
             // начиная со смещения Offset начнем по байтам искать сигнатуру Signature.
             // Если найдем, то будем добавлять текст в список DoubleNode. Строим списки параллельно у обоих файлов.
             // создаем объект BinaryReader
-            if (SourceFile == null) return; // файл еще не открыт
+            if (SourceFile == "" || SourceFile==null) return; // файл еще не открыт
+            Start_btn.Visible = false;
             using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile + ".txt", FileMode.OpenOrCreate)))
             {
                 using (BinaryReader readerSF = new BinaryReader(File.Open(SourceFile, FileMode.Open)))
@@ -271,8 +269,7 @@ foreach (var t in linkedList.BackEnumerator())
                     int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
                     long onepercent = l / 100 - 1, percent = onepercent;
                     byte b;
-                    progressBar1.Value = 0; 
-                    progressBar1_lb.Text = "0 %";
+
                     for (long i = 0; i < l; i++)
                     { // посимвольно читаем исходный файл
                         b = readerSF.ReadByte();
@@ -280,80 +277,104 @@ foreach (var t in linkedList.BackEnumerator())
                         {
                             sign_pointer++; //счетчик найденных символов из сигнатуры
                             if (Signature.Length == sign_pointer) //Сигнатура найдена. Сбросим указатель сигнатуры
-                            { 
-                                sign_pointer = 0; 
+                            {
+                                sign_pointer = 0;
                                 if ((i + 4) >= l) break; // конец файла достигнут - сигнатура ошибочна
                                 Int32 lentxt = readerSF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
                                 i += 4;
-                                if ((lentxt > MaxBytesMessage) || lentxt<3) continue; // не может быть такое длинное/короткое предложение
-                                
-                                // читаем текст длиной lentxt
-                                string message = "";
+                                if ((lentxt > MaxBytesMessage) || lentxt < 3) continue; // не может быть такое длинное/короткое предложение
                                 if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
-                                for (int j = 0; j < lentxt; j++) 
-                                { buf[j] = readerSF.ReadByte(); message += (char)buf[j]; i++; }
-                                if(buf)
-                                // создаем элемент списка с новой записью
+
+                                for (int j = 0; j < lentxt; j++) //читаем lentxt байт сообщения
+                                {
+                                    buf[j] = readerSF.ReadByte(); i++;
+                                    if (j > 2 && buf[j] == 0xa6)//заменяем символ UTF-8 E280A6 на три точки 2E2E2E .
+                                        if (buf[j - 1] == 0x80)
+                                          if (buf[j - 2] == 0xe2) { buf[j] = 0x2e; buf[j - 1] = 0x2e; buf[j - 2] = 0x2e;}
+
+                                    if (j > 2 && buf[j] == 0x90)//заменяем символ UTF-8 E38090 на скобку 0x5b [
+                                        if (buf[j - 1] == 0x80)
+                                            if (buf[j - 2] == 0xe3) { buf[j - 2] = 0x5b; j -= 2; lentxt -= 2; }
+
+                                    if (j > 2 && buf[j] == 0x91)//заменяем символ UTF-8 E38090 на скобку 0x5b [
+                                        if (buf[j - 1] == 0x80)
+                                            if (buf[j - 2] == 0xe3) { buf[j - 2] = 0x5d; j -= 2; lentxt -= 2; }
+
+                                    if (j > 3 && buf[j] == 0x3e) //3c, 62||42, 52||72, 3E // <br> или <BR> заменяем на \n  0x5c,0x6e
+                                        if (buf[j-1]==0x72 || buf[j-1]==0x52)
+                                            if (buf[j - 2] == 0x62 || buf[j - 2] == 0x42)
+                                                if(buf[j - 3]== 0x3c) { buf[j - 3]=0x5c; buf[j - 2] =0x6e; lentxt -= 2; j -= 2; }
+                                    // 2e 3d 0d e3 80 90  на space+[ ; e3 80 91 3d 0d
+                                }
+                                string message = "";  // преобразованиЕ массива byte в строку string
+                                for (int j = 0; j < lentxt; j++) message += (char)buf[j];
+                                if (message == "..." || message=="") continue; // пустые строки не переводим
+                                // создаем элемент списка с новой записью                                                           
                                 linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
                                 linkedListOF.Add("", i + 1); //одновременно создаем список с переводом
-                                buf[lentxt+1] = 0xd; buf[lentxt+2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
-                                writer.Write(buf,0,lentxt+2); // записываем строку текста в выходной файл
+                                linkedListSF.SetTwin(linkedListOF.curr); //связываю ссылками исходную строку со строкой перевода
+                                linkedListOF.SetTwin(linkedListSF.curr);
+                                buf[lentxt + 1] = 0xd; buf[lentxt + 2] = 0xa; buf[lentxt] = 0x3d; // добавляем к концу строки "=0xd0xa"
+                                writer.Write(buf, 0, lentxt + 2); // записываем строку текста в выходной файл
                             }
                         }
-                        else { sign_pointer = 0; }// сигнатура не подтвердилась 
-                                                  // ищем сигнатуру
-                        if (i >= percent)
+                        else { sign_pointer = 0; }// сигнатура не подтвердилась
+                        if (i >= percent) // проверяем нужно ли двигать прогресс бар на 1%
                         {
                             if (progressBar1.Value < 100) { progressBar1.Value++; }
-                            percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString();
+                            percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+" %";
                         }
                     }
-                    progressBar1.Value = 100;
-                    progressBar1_lb.Text = "100%";
-                    if (progressBar1.Value == 0)
-                    { // После поиска по сигнатуре - ничего не найдено.
-                        progressBar1_lb.Text = "";
-                    }
+                    progressBar1.Value = 0;
+                    progressBar1_lb.Text = "";
                     nudRecord.Maximum = linkedListSF.Count;
                     nudRecord.Minimum = 1;
 
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Translated_tb.ReadOnly = false;
-                    
+                    //Выведем в SourceFile_tb первый элемент списка
+                    foreach (var item in linkedListSF)
+                    {
+                        Source_tb.Text = item;
+                        break;
+                    }
+                    nudRecord.Value = 1;
+                    nudRecord.ReadOnly = false;
                 }
-
-                //Выведем в SourceFile_tb первый элемент списка
-                foreach (var item in linkedListSF)
-                {
-                    Source_tb.Text = item;
-                    break;
-                }
-                nudRecord.Value = 1;
-                nudRecord.ReadOnly = false;
+                OpenTranslatedFile();
             }
-            OpenTranslatedFile();
-            /*
-            using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile+".txt", FileMode.OpenOrCreate)))
-            {
-                foreach (var item in linkedListSF)
-                {                  
-                    writer.Write(item);
-                }
-            }*/
-
         }
+
         private void Next_btn_Click(object sender, EventArgs e)
         {
             nudRecord.ReadOnly = true;
+            if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
             if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++;}
-            Source_tb.Text = (string)linkedListSF.NextNode();
+            //проверим, если TextBox изменился - сохраним его
+            linkedListOF.SetCurrent(linkedListSF.Twin);
+            if ((string)linkedListOF.Current != Translated_tb.Text) 
+                if(linkedListSF.Twin==linkedListOF.curr)linkedListOF.ReplaceData(Translated_tb.Text);
+
+            byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
+            Source_tb.Text = Encoding.UTF8.GetString(bytes);
+            bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
+            Translated_tb.Text = Encoding.UTF8.GetString(bytes);
             nudRecord.ReadOnly = false;
         }
         private void Prev_btn_Click(object sender, EventArgs e)
         {
             nudRecord.ReadOnly = true;
+            if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
             if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else {nudRecord.Value--; }
-            Source_tb.Text = (string)linkedListSF.PrevNode();
+            //проверим, если TextBox изменился - сохраним его
+            linkedListOF.SetCurrent(linkedListSF.Twin);
+            if ((string)linkedListOF.Current != Translated_tb.Text)
+                if (linkedListSF.Twin == linkedListOF.curr) linkedListOF.ReplaceData(Translated_tb.Text);
+
+            byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
+            Source_tb.Text = Encoding.UTF8.GetString(bytes);
+            bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
+            Translated_tb.Text = Encoding.UTF8.GetString(bytes);
             nudRecord.ReadOnly = false;
         }
         private void nudRecord_ValueChanged(object sender, EventArgs e)
@@ -363,16 +384,32 @@ foreach (var t in linkedList.BackEnumerator())
             foreach (var item in linkedListSF)
             {
                 counter--;
-                if (counter == 0) { Source_tb.Text = (string)item; break; }
+                if (counter == 0) 
+                { 
+                    byte[] bytes = Encoding.Default.GetBytes(item);
+                    Source_tb.Text = Encoding.UTF8.GetString(bytes);
+                    linkedListOF.curr = linkedListSF.Twin;
+                    bytes = Encoding.Default.GetBytes(linkedListOF.curr.Data);
+                    Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+                    break; 
+                }
             }
         }
         private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
             if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
+            //нужно открыть новую вкладку, и создать новый список со всеми включениями подстроки
             foreach (var item in linkedListSF)
-            {
+            { 
                 var str1 = (string)item;
-                if (str1 == SearchSource_tb.Text) { Source_tb.Text = (string)item; break; }
+                if (str1 == SearchSource_tb.Text) 
+                {
+                    byte[] bytes = Encoding.Default.GetBytes(item);
+                    Source_tb.Text = Encoding.UTF8.GetString(bytes);
+                    bytes = Encoding.Default.GetBytes(linkedListSF.Twin.Data);
+                    Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+                    break; 
+                }
             }
         }
 
@@ -381,7 +418,10 @@ foreach (var t in linkedList.BackEnumerator())
 
         }
 
-
+        private void closeFilesClearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // сохранение файлов/очистка списков
+        }
     }
 
     public class DoublyNode <T>
@@ -394,6 +434,7 @@ foreach (var t in linkedList.BackEnumerator())
         public long Fileposition { get; set; } 
         public DoublyNode<T> Previous { get; set; } // предыдущий узел
         public DoublyNode<T> Next { get; set; }     // следующий узел
+        public DoublyNode<T> Twin { get; set; }     // ссылка на связанный элемент из оригинального/переведенного списка
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
     {
@@ -405,7 +446,7 @@ foreach (var t in linkedList.BackEnumerator())
         public void Add(T data, long Fileposition)// добавление элемента
         {
             DoublyNode<T> node = new DoublyNode<T>(data);
-
+            curr = node;    // добавляемый элемент становится текущим
             if (head == null)
                 head = node;
             else
@@ -421,6 +462,7 @@ foreach (var t in linkedList.BackEnumerator())
         {
             DoublyNode<T> node = new DoublyNode<T>(data);
             DoublyNode<T> temp = head;
+            curr = node; // добавляемый элемент становится текущим
             node.Next = temp;
             head = node;
             if (count == 0)
@@ -474,10 +516,25 @@ foreach (var t in linkedList.BackEnumerator())
         }
 
         public int Count { get { return count; } }
-        public long FilePosition { get { return curr.Fileposition; } }
+        public long FilePosition { get { if (curr != null) return curr.Fileposition;  else return -1; } }
+        public DoublyNode<T> Twin { get { return curr.Twin; } }
 
         public bool IsEmpty { get { return count == 0; } }
-        public DoublyNode<T> Current { get { return curr; } }
+        public object Current { get { return curr.Data; } }
+        
+        public void ReplaceData(T data)
+        {
+            if (curr == null) return;
+            curr.Data = data;
+        }
+        public void SetTwin(DoublyNode<T> twin)
+        {
+            curr.Twin = twin;
+        }
+        public void SetCurrent(DoublyNode<T> current)
+        {
+            curr=current;
+        }
 
         public void Clear()
         {
@@ -525,12 +582,11 @@ foreach (var t in linkedList.BackEnumerator())
                 curr = current;
             }
         }
-
         public object NextNode()
         {
             DoublyNode<T> current;
             if (count == 0) return "Text records were not found !"; // список пуст
-            if (curr == null) curr = head;
+            if (curr == null) { curr = head; if(head==null) return "Text records were not found !"; }
             current = curr;
             if (current.Next == null) { current = head; }
             else { current = current.Next; }
@@ -541,7 +597,7 @@ foreach (var t in linkedList.BackEnumerator())
         {
             DoublyNode<T> current;
             if (count==0) return "Text records were not found !"; // список пуст
-            if (curr == null) curr = head;
+            if (curr == null) { curr = head; if (head == null) return "Text records were not found !"; }
             current = curr;
             if (current.Previous == null) { current = tail; }
             else { current = current.Previous; }
