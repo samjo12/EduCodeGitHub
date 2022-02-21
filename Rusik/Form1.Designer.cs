@@ -185,6 +185,7 @@ namespace Rusik
             this.Quit_tsmi.Name = "Quit_tsmi";
             this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
             this.Quit_tsmi.Text = "Quit";
+            this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
             // About_tsmi
             // 
@@ -278,9 +279,9 @@ namespace Rusik
             // 
             // SearchSource_btn
             // 
-            this.SearchSource_btn.Location = new System.Drawing.Point(440, 694);
+            this.SearchSource_btn.Location = new System.Drawing.Point(422, 694);
             this.SearchSource_btn.Name = "SearchSource_btn";
-            this.SearchSource_btn.Size = new System.Drawing.Size(57, 23);
+            this.SearchSource_btn.Size = new System.Drawing.Size(75, 23);
             this.SearchSource_btn.TabIndex = 23;
             this.SearchSource_btn.Text = "Search";
             this.SearchSource_btn.UseVisualStyleBackColor = true;
@@ -292,7 +293,7 @@ namespace Rusik
             this.SearchSource_tb.Name = "SearchSource_tb";
             this.SearchSource_tb.PlaceholderText = "Some text to search ...";
             this.SearchSource_tb.ReadOnly = true;
-            this.SearchSource_tb.Size = new System.Drawing.Size(430, 23);
+            this.SearchSource_tb.Size = new System.Drawing.Size(411, 23);
             this.SearchSource_tb.TabIndex = 22;
             this.SearchSource_tb.TextChanged += new System.EventHandler(this.SearchSource_Click);
             // 
@@ -329,7 +330,7 @@ namespace Rusik
             this.Signature_tb.Name = "Signature_tb";
             this.Signature_tb.PlaceholderText = "HEX number";
             this.Signature_tb.ReadOnly = true;
-            this.Signature_tb.Size = new System.Drawing.Size(137, 23);
+            this.Signature_tb.Size = new System.Drawing.Size(162, 23);
             this.Signature_tb.TabIndex = 27;
             // 
             // TranslatedFile_tb
@@ -344,11 +345,11 @@ namespace Rusik
             // 
             this.Start_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.Start_btn.Font = new System.Drawing.Font("Segoe UI Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.Start_btn.Location = new System.Drawing.Point(422, 661);
+            this.Start_btn.Location = new System.Drawing.Point(422, 662);
             this.Start_btn.Name = "Start_btn";
             this.Start_btn.Size = new System.Drawing.Size(164, 23);
             this.Start_btn.TabIndex = 29;
-            this.Start_btn.Text = "Start Searching";
+            this.Start_btn.Text = "Search Binary";
             this.Start_btn.UseVisualStyleBackColor = false;
             this.Start_btn.Click += new System.EventHandler(this.Start_btn_Click);
             // 
@@ -425,6 +426,7 @@ namespace Rusik
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Binary Files Text Translator";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

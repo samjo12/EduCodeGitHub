@@ -23,58 +23,64 @@ namespace Rusik
         public string OutputFile; // Выходной текстовый файл с текущим рабочим переводом
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new DoublyLinkedList<string>(); // связный список для выходного файла
-        /*public struct DataNode 
-        {
-           public string str;
-           public long pos;
-        }*/
+
         public byte [] Signature= {0x04,0x00,0x06,0x00 };  // Сигнатура из байт
         public Form1()
         {
             InitializeComponent();
+            this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);// обработчик закрытия окна по крестику
         }
-
-        private void Quit_tsmi_Click(object sender, EventArgs e)
+        void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Quit_tsmi_Click(sender, e);
+        }
+ 
+        private void Quit_tsmi_Click(object sender, EventArgs e) // МЕНЮ Quit
         {
             // если исходный файл открыт, то предлагаем сохранить выходной файл
-            this.Close();
-        }
-
-        private void SaveFile(string filename)
-        {
-            /* FileInfo src = new FileInfo(filename);
-             if (src.Exists)
-             {
-                 src.MoveTo(OutputFile);
-             }
-             else { MessageBox.Show("Error writing to file:",OutputFile, MessageBoxButtons.OK); }*/
-            using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.OpenOrCreate)))
+            if (linkedListOF.Curr != null) // если в памяти есть список - то предлагаем сохраниться
             {
-                // записываем в файл значение каждого свойства объекта
-                foreach (var item in linkedListSF)
-                {
-                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(item+"=");
-                    writer.Write(bytes);
+               do {
+                    DialogResult result = MessageBox.Show(
+                    "Do yo want to Save \rthe result of your work?",
+                    "Message",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information,
+                    MessageBoxDefaultButton.Button1,
+                    MessageBoxOptions.DefaultDesktopOnly);
 
-                    writer.Write(System.Text.Encoding.UTF8.GetBytes(linkedListSF.Twin.Data+"\n"));
-
-                    string tmp = linkedListSF.Twin.Data;
-                  //  writer.Write(System.Text.Encoding.UTF8.GetBytes("\n"));                   
-
-                }
-            }
+                    if (result == DialogResult.No) return; // пользователь отказался от сохранения
+                  } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
+            } // конец программе
         }
-        private void SaveFile_tsmi_Click(object sender, EventArgs e)
-        {
+
+        private bool SaveFile() // сохраняем список из памяти в файл с разделителем =
+        {   
             SaveFileDialog saveFileDialog1 = new();
             saveFileDialog1.OverwritePrompt = true; //предупреждение о перезаписи
             saveFileDialog1.ShowDialog();
             string tmpOutputFile = saveFileDialog1.FileName;
-            if (tmpOutputFile == null || tmpOutputFile == "") return;
-            SaveFile(tmpOutputFile);
+            if (tmpOutputFile == null || tmpOutputFile == "") return false;
+            using (BinaryWriter writer = new BinaryWriter(File.Open(tmpOutputFile, FileMode.OpenOrCreate)))
+            {
+                // записываем в файл содержимое списков с данными
+                foreach (var item in linkedListSF)
+                {
+                    if (item == null) break;
+                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(item+"=");
+                    writer.Write(bytes);
+                    writer.Write(System.Text.Encoding.UTF8.GetBytes(linkedListSF.Twin.Data+"\n"));
+                }
+            }
+            return true;
+        }
+        private void SaveFile_tsmi_Click(object sender, EventArgs e) // Меню Save File As
+        {
+            SaveFile();
+            return;
         }
 
-        private void OpenFile_tsmi_Click(object sender, EventArgs e)
+        private void OpenFile_tsmi_Click(object sender, EventArgs e) //Open Binary File
         {
           OpenFileDialog openFileDialog1 = new();
           openFileDialog1.ShowDialog();
@@ -140,16 +146,16 @@ namespace Rusik
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         
                         str1 = Encoding.UTF8.GetString(tmp_bytes1);
-                        if (str1 == "Accomplishing side missions can result in achievements or the discovery of rare files.") 
-                        {
-                            bufcounter = 0;
-                        }
                         var maxK=FindSameString(str1, linkedListSF); // curr указывает куда и unq
+
                         if (maxK < 0.95) // строка из доп файла не похожа ни на одну строку из бинарного файла,
                         {               // либо бинарный файл не был открыт
                             linkedListSF.Add(str1, 0); // создаем новый элемент списка, с файловым указателем на начало строки
                         }
-                        else skipTranslateFlag = true; //такая строка отсутствует в оригинальном списке
+                        else
+                        {
+                            skipTranslateFlag = true; //такая строка уже есть в списке спрашиваем о замене содержимого?
+                        }
                         sourcePart = false; 
                         bufcounter = 0;
                         continue;
@@ -215,9 +221,13 @@ namespace Rusik
             float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
             long kMaxfilePosition=0;
 
+            //Сохраним текущее значения указателя linkedList.curr
+            var curr_tmp = linkedList.Curr;
+
+
             foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
                 if (str1 == item)// фразы в linkedlistSF и доп.файле с переводом - совпали
-                  return 1;  // строка есть в списке
+                { linkedList.SetCurrent((DoublyNode<string>)curr_tmp); return 1; }  // строка есть в списке
             
             // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
 
@@ -232,6 +242,7 @@ namespace Rusik
             {
                 if (linkedList.FilePosition== kMaxfilePosition){  break; }
             }
+            linkedList.SetCurrent((DoublyNode<string>)curr_tmp); //восстанавливаем curr
             return kTanimoto;
         }// MessageBox.Show(str1,"Обнаружены непечатные символы в строке:", MessageBoxButtons.OK); 
 
@@ -267,7 +278,7 @@ namespace Rusik
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
-            string str1="This program may be useful for translation text in some binary files.";
+            string str1="This program may be useful for translation text \n in some binary or text files.";
             MessageBox.Show(str1, "About program ...", MessageBoxButtons.OK);
         }
 
@@ -277,7 +288,7 @@ namespace Rusik
             // начиная со смещения Offset начнем по байтам искать сигнатуру Signature.
             // Если найдем, то будем добавлять текст в список DoubleNode. Строим списки параллельно у обоих файлов.
             // создаем объект BinaryReader
-            if (SourceFile == "" || SourceFile==null) return; // файл еще не открыт
+            if (SourceFile == "" || SourceFile==null) return; // Binary файл еще не открыт
             Start_btn.Visible = false;
             using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile + ".txt", FileMode.OpenOrCreate)))
             {
@@ -368,7 +379,7 @@ namespace Rusik
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
             if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++;}
             //проверим, если TextBox изменился - сохраним его
-            linkedListOF.SetCurrent(linkedListSF.Twin);
+            //linkedListOF.SetCurrent(linkedListSF.Twin);
             if ((string)linkedListOF.Current != Translated_tb.Text) 
                 if(linkedListSF.Twin==linkedListOF.curr)linkedListOF.ReplaceData(Translated_tb.Text);
 
@@ -380,17 +391,17 @@ namespace Rusik
         }
         private void Prev_btn_Click(object sender, EventArgs e)
         {
-            nudRecord.ReadOnly = true;
             if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
+            nudRecord.ReadOnly = true;
             if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else {nudRecord.Value--; }
             //проверим, если TextBox изменился - сохраним его
-            linkedListOF.SetCurrent(linkedListSF.Twin);
+            //linkedListOF.SetCurrent(linkedListSF.Twin);
             if ((string)linkedListOF.Current != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) linkedListOF.ReplaceData(Translated_tb.Text);
 
             byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
             Source_tb.Text = Encoding.UTF8.GetString(bytes);
-            bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
+            bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
             Translated_tb.Text = Encoding.UTF8.GetString(bytes);
             nudRecord.ReadOnly = false;
         }
@@ -438,6 +449,11 @@ namespace Rusik
         private void closeFilesClearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // сохранение файлов/очистка списков
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 
@@ -539,7 +555,8 @@ namespace Rusik
 
         public bool IsEmpty { get { return count == 0; } }
         public object Current { get { return curr.Data; } }
-        
+        public object Curr { get { return curr; } }
+
         public void ReplaceData(T data)
         {
             if (curr == null) return;
