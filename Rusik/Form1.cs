@@ -40,20 +40,38 @@ namespace Rusik
             this.Close();
         }
 
+        private void SaveFile(string filename)
+        {
+            /* FileInfo src = new FileInfo(filename);
+             if (src.Exists)
+             {
+                 src.MoveTo(OutputFile);
+             }
+             else { MessageBox.Show("Error writing to file:",OutputFile, MessageBoxButtons.OK); }*/
+            using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.OpenOrCreate)))
+            {
+                // записываем в файл значение каждого свойства объекта
+                foreach (var item in linkedListSF)
+                {
+                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(item+"=");
+                    writer.Write(bytes);
+
+                    writer.Write(System.Text.Encoding.UTF8.GetBytes(linkedListSF.Twin.Data+"\n"));
+
+                    string tmp = linkedListSF.Twin.Data;
+                  //  writer.Write(System.Text.Encoding.UTF8.GetBytes("\n"));                   
+
+                }
+            }
+        }
         private void SaveFile_tsmi_Click(object sender, EventArgs e)
         {
-            //SaveFile();
             SaveFileDialog saveFileDialog1 = new();
             saveFileDialog1.OverwritePrompt = true; //предупреждение о перезаписи
             saveFileDialog1.ShowDialog();
-            FileInfo src = new FileInfo(OutputFile);
-            OutputFile = saveFileDialog1.FileName;
-
-            if (src.Exists)
-            {
-                src.MoveTo(OutputFile);
-            }
-            else { MessageBox.Show("Error writing to file:",OutputFile, MessageBoxButtons.OK); }
+            string tmpOutputFile = saveFileDialog1.FileName;
+            if (tmpOutputFile == null || tmpOutputFile == "") return;
+            SaveFile(tmpOutputFile);
         }
 
         private void OpenFile_tsmi_Click(object sender, EventArgs e)
@@ -120,7 +138,12 @@ namespace Rusik
                         bufcounter--;
                         byte[] tmp_bytes1 = new byte[bufcounter];
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
+                        
                         str1 = Encoding.UTF8.GetString(tmp_bytes1);
+                        if (str1 == "Accomplishing side missions can result in achievements or the discovery of rare files.") 
+                        {
+                            bufcounter = 0;
+                        }
                         var maxK=FindSameString(str1, linkedListSF); // curr указывает куда и unq
                         if (maxK < 0.95) // строка из доп файла не похожа ни на одну строку из бинарного файла,
                         {               // либо бинарный файл не был открыт
@@ -134,7 +157,7 @@ namespace Rusik
                     // Если встретили символы в оригинальной части фразы, то просто пропускаем
                     // if (sourcePart == true && (b == 0xa || b == 0xd )) { bufcounter--; continue; }
                     // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы пеервода
-                    if (sourcePart == false && b == 0xa && (buf2[bufcounter-2] == 0xd))
+                    if (sourcePart == false && (b == 0xa && (buf2[bufcounter-2] == 0xd)||(i>=l-1)))
                     {
                         bufcounter--; //удаляем последниe символы 0d и 0a
                         byte[] tmp_bytes2=new byte[bufcounter];
@@ -179,11 +202,8 @@ namespace Rusik
                 Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                 Translated_tb.ReadOnly = false;
                 //Выведем в SourceFile_tb первый элемент списка
-                foreach (var item in linkedListSF)
-                {
-                    Source_tb.Text = item;
-                    break;
-                }
+                foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
+                foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
                 nudRecord.Value = 1;
                 nudRecord.ReadOnly = false;
             }
@@ -333,11 +353,8 @@ namespace Rusik
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Translated_tb.ReadOnly = false;
                     //Выведем в SourceFile_tb первый элемент списка
-                    foreach (var item in linkedListSF)
-                    {
-                        Source_tb.Text = item;
-                        break;
-                    }
+                    foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
+                    foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
                     nudRecord.Value = 1;
                     nudRecord.ReadOnly = false;
                 }
@@ -486,6 +503,7 @@ namespace Rusik
                 }
                 current = current.Next;
             }
+            curr = current; // элемент становится текущим
             if (current != null)
             {
                 // если узел не последний
@@ -529,17 +547,20 @@ namespace Rusik
         }
         public void SetTwin(DoublyNode<T> twin)
         {
+            if (curr == null) return;
             curr.Twin = twin;
         }
         public void SetCurrent(DoublyNode<T> current)
         {
-            curr=current;
+            if (curr == null) return;
+            curr =current;
         }
 
         public void Clear()
         {
             head = null;
             tail = null;
+            curr = null;
             count = 0;
         }
 
@@ -548,11 +569,10 @@ namespace Rusik
             DoublyNode<T> current = head;
             while (current != null)
             {
-                if (current.Data.Equals(data))
-                    return true;
+                if (current.Data.Equals(data)) { curr = current; return true; }
                 current = current.Next;
-                curr = current;
             }
+            curr = current;
             return false;
         }
 
@@ -566,6 +586,7 @@ namespace Rusik
             DoublyNode<T> current = head;
             while (current != null)
             {   
+                curr = current;
                 yield return current.Data;
                 current = current.Next;
                 curr = current;
@@ -577,6 +598,7 @@ namespace Rusik
             DoublyNode<T> current = tail;
             while (current != null)
             {
+                curr = current;
                 yield return current.Data;
                 current = current.Previous;
                 curr = current;
@@ -585,8 +607,8 @@ namespace Rusik
         public object NextNode()
         {
             DoublyNode<T> current;
-            if (count == 0) return "Text records were not found !"; // список пуст
-            if (curr == null) { curr = head; if(head==null) return "Text records were not found !"; }
+            if (count == 0) return null; // список пуст
+            if (curr == null) { if (head == null) return null; curr = head; }
             current = curr;
             if (current.Next == null) { current = head; }
             else { current = current.Next; }
@@ -596,8 +618,8 @@ namespace Rusik
         public object PrevNode()
         {
             DoublyNode<T> current;
-            if (count==0) return "Text records were not found !"; // список пуст
-            if (curr == null) { curr = head; if (head == null) return "Text records were not found !"; }
+            if (count == 0) return null; // список пуст
+            if (curr == null) { if (head == null) return null; curr = head; }
             current = curr;
             if (current.Previous == null) { current = tail; }
             else { current = current.Previous; }
