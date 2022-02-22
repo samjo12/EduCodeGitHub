@@ -146,16 +146,28 @@ namespace Rusik
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         
                         str1 = Encoding.UTF8.GetString(tmp_bytes1);
-                        var maxK=FindSameString(str1, linkedListSF); // curr указывает куда и unq
+                        object maxK_Curr=null;
+                        var maxK=FindSameString(str1, linkedListSF, maxK_Curr); // curr указывает куда и unq
+                       
+                        if (maxK < 0.95 && maxK>0.75) // строка из доп файла не похожа ни на одну строку из бинарного файла,
+                        {                             // либо бинарный файл не был открыт
+                            DialogResult result = MessageBox.Show(
+                            "There were detected couple seemless strings! Is it the same? Tanimoto k="+Convert.ToString(maxK),
+                            "Please attention !",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning,
+                            MessageBoxDefaultButton.Button1,
+                            MessageBoxOptions.DefaultDesktopOnly);
 
-                        if (maxK < 0.95) // строка из доп файла не похожа ни на одну строку из бинарного файла,
-                        {               // либо бинарный файл не был открыт
+                            if (result == DialogResult.No) return; // пользователь отказался от сохранения
                             linkedListSF.Add(str1, 0); // создаем новый элемент списка, с файловым указателем на начало строки
                         }
-                        else
+                        else // maxK >0.95 можно не спрашивать
                         {
+
                             skipTranslateFlag = true; //такая строка уже есть в списке спрашиваем о замене содержимого?
                         }
+                        // if (maxK==1)//заменяем пеервод
                         sourcePart = false; 
                         bufcounter = 0;
                         continue;
@@ -215,15 +227,13 @@ namespace Rusik
             }
         }
 
-        private float FindSameString( string str1, DoublyLinkedList<string> linkedList)
+        private float FindSameString( string str1, DoublyLinkedList<string> linkedList, object current_kMax=null, int len=0)
         { //возвращает 0 если найдена такая же запись как в заданном списке, либо число расхождений
           // Если число расхождений больше 3% создаем новую запись в списке
             float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
-            long kMaxfilePosition=0;
 
             //Сохраним текущее значения указателя linkedList.curr
             var curr_tmp = linkedList.Curr;
-
 
             foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
                 if (str1 == item)// фразы в linkedlistSF и доп.файле с переводом - совпали
@@ -235,13 +245,10 @@ namespace Rusik
             {
                // Найдем строку в списке linkedlist максимально схожую (по алгоритму Танимото) с входной строкой
                kTanimoto_tmp = Tanimoto(str1,item);
-               if (kTanimoto < kTanimoto_tmp) { kTanimoto = kTanimoto_tmp; kMaxfilePosition = linkedList.FilePosition; }
+               if (kTanimoto < kTanimoto_tmp) 
+                { kTanimoto = kTanimoto_tmp; current_kMax = linkedList.Curr; } //ссылка на запись с максимальным коэфф. Танимото
             }
 
-            foreach (var item in linkedList) //Найдем запись из списка с макс.коэфф.Танимото и заменим в нем перевод
-            {
-                if (linkedList.FilePosition== kMaxfilePosition){  break; }
-            }
             linkedList.SetCurrent((DoublyNode<string>)curr_tmp); //восстанавливаем curr
             return kTanimoto;
         }// MessageBox.Show(str1,"Обнаружены непечатные символы в строке:", MessageBoxButtons.OK); 
@@ -256,7 +263,7 @@ namespace Rusik
             int a = 0; // кол-во элементов в 1-ом множестве
             int b = 0; //кол-во элементов во 2-ом множестве
             int c = 0; //кол-во общих элементов  в двух множествах
-            if (Math.Abs(str1out.Length - str2out.Length) != 0) return 0; // отличие в длине вычищенных строк -строки точно не совпадают
+            //if (Math.Abs(str1out.Length - str2out.Length) != 0) return 0; // отличие в длине вычищенных строк -строки точно не совпадают
             if (str1out == str2out) return 1; // строки идентичны
             Dictionary<char, int> dictionarys1 = str1out.GroupBy(x => x)
                 .ToDictionary(x => x.Key, x => x.Count());
@@ -278,8 +285,13 @@ namespace Rusik
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
-            string str1="This program may be useful for translation text \n in some binary or text files.";
-            MessageBox.Show(str1, "About program ...", MessageBoxButtons.OK);
+            string str1 = "This program may be useful for translating text" + 
+                          " in some binary or text files.\n" +
+                          "You can search & catch strings of text in binary files using HEX-coded or symbols signature.\n" +
+                          "Supports Google or Yandex translating services.\n" +
+                          "Program can operate with text files that consist of two parts:\n"+
+                          "original sentence and translation sentense compared with symbol =";
+            MessageBox.Show(str1, "About program ...", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void Start_btn_Click(object sender, EventArgs e)
@@ -337,8 +349,11 @@ namespace Rusik
                                                 if(buf[j - 3]== 0x3c) { buf[j - 3]=0x5c; buf[j - 2] =0x6e; lentxt -= 2; j -= 2; }
                                     // 2e 3d 0d e3 80 90  на space+[ ; e3 80 91 3d 0d
                                 }
-                                string message = "";  // преобразованиЕ массива byte в строку string
-                                for (int j = 0; j < lentxt; j++) message += (char)buf[j];
+                                string message;  // преобразованиЕ массива byte в строку string
+                                byte[] tmp_bytes = new byte[lentxt];
+                                for (int j = 0; j < lentxt; j++) tmp_bytes[j] = buf[j];
+                                message = Encoding.UTF8.GetString(tmp_bytes);
+
                                 if (message == "..." || message=="") continue; // пустые строки не переводим
                                 // создаем элемент списка с новой записью                                                           
                                 linkedListSF.Add(message, i + 1); // создаем новый элемент списка, с файловым указателем на начало строки
