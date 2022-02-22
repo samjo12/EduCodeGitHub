@@ -238,6 +238,7 @@ namespace Rusik
             this.Translated_tb.Multiline = true;
             this.Translated_tb.Name = "Translated_tb";
             this.Translated_tb.ReadOnly = true;
+            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.Translated_tb.Size = new System.Drawing.Size(481, 522);
             this.Translated_tb.TabIndex = 17;
             // 
@@ -390,6 +391,7 @@ namespace Rusik
             this.Source_tb.Multiline = true;
             this.Source_tb.Name = "Source_tb";
             this.Source_tb.ReadOnly = true;
+            this.Source_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.Source_tb.Size = new System.Drawing.Size(484, 522);
             this.Source_tb.TabIndex = 18;
             // 
