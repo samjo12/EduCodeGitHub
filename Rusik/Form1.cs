@@ -70,11 +70,14 @@ namespace Rusik
                     if (item == null) break;
                     byte[] bytes = System.Text.Encoding.UTF8.GetBytes(item+"=");
                     writer.Write(bytes);
-                    var item2 = linkedListSF.Twin.Data + "\n";
+                    var item2 = linkedListSF.Twin.Data;
+                    if (item2 == null) item2 = String.Empty;
+                    item2+= "\n";
                     bytes = System.Text.Encoding.UTF8.GetBytes(item2);
                     writer.Write(bytes);
                 }
             }
+            NotSavedYet = false; // актуальная версия сохранена
             return true;
         }
         private void SaveFile_tsmi_Click(object sender, EventArgs e) // Меню Save File As
@@ -83,7 +86,7 @@ namespace Rusik
             return;
         }
 
-        private void OpenFile_tsmi_Click(object sender, EventArgs e) //Open Binary File
+        private void OpenFile_tsmi_Click(object sender, EventArgs e) //MENU Open Binary File
         {
           OpenFileDialog openFileDialog1 = new();
           openFileDialog1.ShowDialog();
@@ -93,8 +96,7 @@ namespace Rusik
           if (SourceFile == null || SourceFile=="") return; //без имени файла дальше нечего делать
           OutputFile = SourceFile + ".tmp$$";
           if (File.Exists(SourceFile +".txt")) TranslatedFile= SourceFile + ".txt"; // определяем вспомогательный файл с переводом по-умолчанию
-          //BinaryReader reader = new BinaryReader(File.Open(SourceFile, FileMode.Open));
-          // создаем объект BinaryWriter
+
           if (!File.Exists(OutputFile))
           {   // Если выходной файл еще не существует, копируем выбранный файл во временный
               FileInfo srcF = new FileInfo(SourceFile);
@@ -114,7 +116,7 @@ namespace Rusik
           SearchTranslated_tb.ReadOnly = false;
         }
 
-        private void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)
+        private void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)//MENU Open Text File
         {
             OpenFileDialog openFileDialog1 = new();
             openFileDialog1.ShowDialog();
@@ -123,7 +125,7 @@ namespace Rusik
             if(SourceFile=="" || SourceFile==null)OpenTranslatedFile();
         }
 
-        private void OpenTranslatedFile()
+        private void OpenTranslatedFile() // Чтение и разбор текстового переведенного файла
         {       
             if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
             using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
@@ -136,6 +138,7 @@ namespace Rusik
                 long onepercent = l / 100 - 1, percent = onepercent;
                 byte b;
                 bool sourcePart = true;
+                bool flag_ReplaceData = false;
                 int bufcounter = 0;
                 object maxK_Node = null ; // ссылка на потенциально дублирующуюся строку из текстового файла с kTanimoto->MAX 
 
@@ -151,27 +154,39 @@ namespace Rusik
                         str1 = Encoding.UTF8.GetString(tmp_bytes1);
                         
                         var maxK=FindSameString(str1, linkedListSF, out maxK_Node); // curr указывает куда и unq
-                       
-                        if (maxK < 1 && maxK>0.75) // строка из доп файла очень Похожа на одну из текстовых строк бинарного файла,
-                        {   
+                        if (maxK_Node != null) { linkedListSF.SetCurrent((DoublyNode<string>)maxK_Node); }
+
+                        if ((maxK <= 1)&& (maxK>=0.88)) // совпадение от 88 до 100% - это та же самая строка
+                        {   if (maxK_Node != null) { linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node); flag_ReplaceData = true; }
+                            else MessageBox.Show("maxK_Node=null. Please restart program.", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        }
+                        else if (maxK < 0.88 && maxK>0.75)// строка очень Похожа на одну из строк в списке,
+                        {                                   // спросим пользователя
+                            var str2_tmp = linkedListSF.CurrentData; //  linkedListSF.DataFrom((DoublyNode<object>)maxK_Node);
                             DialogResult result = MessageBox.Show(
                             "There were detected couple seemless strings! Tanimoto k="+Convert.ToString(maxK*100)+"%\nIs it the same?\n"+
-                            "1: "+str1 + "\n2: "+linkedListSF.DataFrom((DoublyNode<string>)maxK_Node),
+                            "1:("+str1.Length+"): "+str1 + 
+                            "\n2:("+((string)str2_tmp).Length+"): "+ str2_tmp,
                             "Please attention !",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button1,
                             MessageBoxOptions.DefaultDesktopOnly);
+                            if (result == DialogResult.No) { linkedListSF.Add(str1, 0); }// создаем новый элемент списка
+                            else // пользователь сказал что строки одинаковые, тогда заменим старую строку новой
+                            {
+                                if (maxK_Node != null){ linkedListSF.ReplaceData(str1); flag_ReplaceData = true; }
+                                else MessageBox.Show("maxK_Node=null. Please restart program.", "Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                            } 
 
-                            if (result == DialogResult.No) { linkedListSF.Add(str1, 0); maxK_Node = null; }// создаем новый элемент списка
-                            //else {  // заменяем перевод в записе с указателем maxK_Node, это случится т.к maxK_node не null }
                         }
                         else // maxK <0.75 можно не спрашивать строка точно уникальная
                         {
-                            linkedListSF.Add(str1, 0); // создаем новый элемент списка, с файловым указателем на начало строки
-                            //skipTranslateFlag = true; //такая строка уже есть в списке спрашиваем о замене содержимого?
+                            linkedListSF.Add(str1, 0);// создаем новый элемент списка
                         }
-                        // if (maxK==1)//заменяем пеервод
+                        maxK_Node = null;
                         sourcePart = false; 
                         bufcounter = 0;
                         continue;
@@ -188,16 +203,18 @@ namespace Rusik
                         str2= Encoding.UTF8.GetString(tmp_bytes2);
                         bufcounter =0; 
                         sourcePart = true;
-                        if (maxK_Node==null)//(linkedListSF.curr.Twin == null || 
+                        if (flag_ReplaceData == false|| linkedListSF.curr==null)//(linkedListSF.curr.Twin == null || 
                         {
                            linkedListOF.Add(str2, 0); // создаем запись в списке с переводом
                            linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
                            linkedListOF.SetTwin(linkedListSF.curr);
                         }
-                        else
+                        else //flag_ReplaceData==true
                         {
-                            linkedListOF.ReplaceData(str2, (DoublyNode<string>)maxK_Node); //заменим перевод в имеющейся записи
-                            maxK_Node = null; // отработал - сбросили
+                            linkedListOF.SetCurrent(linkedListSF.curr.Twin);
+                            // Если str2.length =0 или перевод не совпадает - спрашиваем пользователя
+                            linkedListOF.ReplaceData(str2);//, (DoublyNode<string>)maxK_Node); //заменим перевод в имеющейся записи
+                            flag_ReplaceData = false; // отработал - сбросили
                         }
                         continue; 
                     } 
@@ -210,7 +227,7 @@ namespace Rusik
                     if (i >= percent)
                     {
                         if (progressBar1.Value < 100) { progressBar1.Value++; }
-                        percent += onepercent; progressBar1_lb.Text = progressBar1.Value.ToString()+" %";
+                        percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+" %";
                     }
                 }
                 //progressBar1.Value = 0;
@@ -228,30 +245,34 @@ namespace Rusik
             }
         }
 
-        private float FindSameString( string str1, DoublyLinkedList<string> linkedList, out object current_kMax)
+        private float FindSameString( string str1, DoublyLinkedList<string> linkedList, out object maxK_node)
         { //возвращает 0 если найдена такая же запись как в заданном списке, либо число расхождений
           // Если число расхождений больше 3% создаем новую запись в списке
             float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
 
             //Сохраним текущее значения указателя linkedList.curr
-            var curr_tmp = linkedList.Curr;
-            current_kMax = null;
+            //var curr_tmp = linkedList.Curr;
+            maxK_node = null;
+
             foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
                 if (str1 == item)// фразы в linkedlistSF и доп.файле с переводом - совпали
-                { linkedList.SetCurrent((DoublyNode<string>)curr_tmp);  return 1; }  // строка есть в списке
-            return 0;/*
+                {
+                    maxK_node = linkedList.Curr;
+                    //linkedList.SetCurrent((DoublyNode<string>)curr_tmp);  //восстанавливаем curr
+                    return 1; // строка есть в списке
+                }  
+            
             // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
 
             foreach (var item in linkedList) 
             {
                // Найдем строку в списке linkedlist максимально схожую (по алгоритму Танимото) с входной строкой
                kTanimoto_tmp = Tanimoto(str1,item);
-               if (kTanimoto < kTanimoto_tmp) 
-                { kTanimoto = kTanimoto_tmp; current_kMax = linkedList.Curr; } //ссылка на запись с максимальным коэфф. Танимото
+               if (kTanimoto_tmp > kTanimoto) 
+               { kTanimoto = kTanimoto_tmp; maxK_node = linkedList.Curr; } //ссылка на запись с максимальным коэфф. Танимото
             }
-
-            linkedList.SetCurrent((DoublyNode<string>)curr_tmp); //восстанавливаем curr
-            return kTanimoto;*/
+            //linkedList.SetCurrent((DoublyNode<string>)curr_tmp); //восстанавливаем curr
+            return kTanimoto;
         }
 
         private float Tanimoto(string str1, string str2)
@@ -259,26 +280,35 @@ namespace Rusik
           // при использовании строк с русскими буквами, их лучше подавать сюда в Unicode
             float kTanimoto = 0;
             //str1.ToLower(); str2.ToLower(); //переводим обе строки в нижний регистр - в этой проге, точнее так не делать
-            string str1out = Regex.Replace(str1, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
-            string str2out = Regex.Replace(str2, @"^[A-Za-z0-9]+ ", String.Empty); // Оставим Англ.буквы цифры и пробел
+
+
+            string str1out = Regex.Replace(str1, @"\\r", String.Empty); //уберем символ \r
+            string str2out = Regex.Replace(str2, @"\\r", String.Empty);
+            str1out = Regex.Replace(str1out, @"\\n", String.Empty); // уберем символ \n
+            str2out = Regex.Replace(str2out, @"\\n", String.Empty);
+            str1out = Regex.Replace(str1out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и пробел
+            str2out = Regex.Replace(str2out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и пробел
+            if (str1out == str2out) return 1; // строки идентичны
+            // отличие по содержимому строк более 10% -не равны
+            if ((str1out.Length == str2out.Length && str1out != str2out) ||
+                Math.Abs(str1out.Length-str2out.Length)>=(str1out.Length + str2out.Length)/20) return 0; 
+
             int a = 0; // кол-во элементов в 1-ом множестве
             int b = 0; //кол-во элементов во 2-ом множестве
             int c = 0; //кол-во общих элементов  в двух множествах
-            if (str1out == str2out) return 1; // строки идентичны
-            if (str1out.Length == str2out.Length && str1out != str2out) return 0; // отличие по содержимому строк -не равны
-
             Dictionary<char, int> dictionarys1 = str1out.GroupBy(x => x)
                 .ToDictionary(x => x.Key, x => x.Count());
             Dictionary<char, int> dictionarys2 = str2out.GroupBy(x => x)
                 .ToDictionary(x => x.Key, x => x.Count());
-            a = dictionarys1.Count;
-            b = dictionarys2.Count;
+
             // пересечение последовательностей
             var result = dictionarys1.Intersect(dictionarys2);
+            a = dictionarys1.Count;
+            b = dictionarys2.Count;
             c = result.Count();
 
-            kTanimoto =(float)c / (a + b - c);
-            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно
+            kTanimoto =(float)c / (a + b - (float)c);
+            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно */
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -404,7 +434,7 @@ namespace Rusik
             if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++;}
             //проверим, если TextBox изменился - сохраним его
             //linkedListOF.SetCurrent(linkedListSF.Twin);
-            if ((string)linkedListOF.Current != Translated_tb.Text)
+            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
 
             byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
@@ -420,7 +450,7 @@ namespace Rusik
             if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else {nudRecord.Value--; }
             //проверим, если TextBox изменился - сохраним его
             //linkedListOF.SetCurrent(linkedListSF.Twin);
-            if ((string)linkedListOF.Current != Translated_tb.Text)
+            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
 
             byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
@@ -435,7 +465,7 @@ namespace Rusik
             long counter = (long)nudRecord.Value;
             //проверим, если TextBox изменился - сохраним его
             //linkedListOF.SetCurrent(linkedListSF.Twin);
-            if ((string)linkedListOF.Current != Translated_tb.Text)
+            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
             foreach (var item in linkedListSF)
             {
@@ -582,11 +612,12 @@ namespace Rusik
         public DoublyNode<T> Twin { get { return curr.Twin; } }
 
         public bool IsEmpty { get { return count == 0; } }
-        public object Current { get { return curr.Data; } }
+        public object CurrentData { get { return curr.Data; } }
         public object Curr { get { return curr; } }
-        public object DataFrom (DoublyNode<T> Node)
+        public object DataFrom (DoublyNode<object> Node)
         {
-            if (Node != null) return Node.Data; else return "";
+            //if (Node != null) return Node.Data; else return "";
+            return Node.Data;
         }
 
         public void ReplaceData(T data, DoublyNode<T> directNode=null) // Заменяет поле даты текущего элемента, либо иного
