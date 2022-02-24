@@ -140,7 +140,7 @@ namespace Rusik
                 bool sourcePart = true;
                 bool flag_ReplaceData = false;
                 int bufcounter = 0;
-                object maxK_Node = null ; // ссылка на потенциально дублирующуюся строку из текстового файла с kTanimoto->MAX 
+               // object maxK_Node = null ; // ссылка на потенциально дублирующуюся строку из текстового файла с kTanimoto->MAX 
 
                 for (long i = 0; i < l; i++) ////////////!!!!!!
                 { // посимвольно читаем исходный файл в буффер
@@ -151,18 +151,24 @@ namespace Rusik
                         byte[] tmp_bytes1 = new byte[bufcounter];
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         
-                        str1 = Encoding.UTF8.GetString(tmp_bytes1);
-                        
-                        var maxK=FindSameString(str1, linkedListSF, out maxK_Node); // curr указывает куда и unq
-                        if (maxK_Node != null) { linkedListSF.SetCurrent((DoublyNode<string>)maxK_Node); }
-
-                        if ((maxK <= 1)&& (maxK>=0.88)) // совпадение от 88 до 100% - это та же самая строка
-                        {   if (maxK_Node != null) { linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node); flag_ReplaceData = true; }
-                            else MessageBox.Show("maxK_Node=null. Please restart program.", "Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                        str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
+                        float maxK;
+                        if (linkedListSF.curr != null)
+                        { maxK = FindSameString(str1);
+                            if(linkedListSF.curr==null) MessageBox.Show("Ahtung2!");
                         }
-                        else if (maxK < 0.88 && maxK>0.75)// строка очень Похожа на одну из строк в списке,
+                        else { maxK = 0; }
+
+                        if ((maxK <= 1)&& (maxK>=0.95)) // совпадение от 95 до 100% - это та же самая строка
+                        {
+                            if (linkedListSF.Curr == null)
+                                MessageBox.Show("Ahtung3!");
+                            linkedListSF.ReplaceData(str1); flag_ReplaceData = true;
+                        }
+                        else if (maxK < 0.95 && maxK>0.85)// строка очень Похожа на одну из строк в списке,
                         {                                   // спросим пользователя
+                            if (linkedListSF.Curr == null)
+                                MessageBox.Show("Ahtung4!");
                             var str2_tmp = linkedListSF.CurrentData; //  linkedListSF.DataFrom((DoublyNode<object>)maxK_Node);
                             DialogResult result = MessageBox.Show(
                             "There were detected couple seemless strings! Tanimoto k="+Convert.ToString(maxK*100)+"%\nIs it the same?\n"+
@@ -176,9 +182,10 @@ namespace Rusik
                             if (result == DialogResult.No) { linkedListSF.Add(str1, 0); }// создаем новый элемент списка
                             else // пользователь сказал что строки одинаковые, тогда заменим старую строку новой
                             {
-                                if (maxK_Node != null){ linkedListSF.ReplaceData(str1); flag_ReplaceData = true; }
+                                linkedListSF.ReplaceData(str1); flag_ReplaceData = true;
+                               /* if (maxK_Node != null){ linkedListSF.ReplaceData(str1); flag_ReplaceData = true; }
                                 else MessageBox.Show("maxK_Node=null. Please restart program.", "Error", MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
+                                MessageBoxIcon.Warning);*/
                             } 
 
                         }
@@ -186,7 +193,6 @@ namespace Rusik
                         {
                             linkedListSF.Add(str1, 0);// создаем новый элемент списка
                         }
-                        maxK_Node = null;
                         sourcePart = false; 
                         bufcounter = 0;
                         continue;
@@ -203,7 +209,9 @@ namespace Rusik
                         str2= Encoding.UTF8.GetString(tmp_bytes2);
                         bufcounter =0; 
                         sourcePart = true;
-                        if (flag_ReplaceData == false|| linkedListSF.curr==null)//(linkedListSF.curr.Twin == null || 
+                        //if (linkedListSF.Curr == null)
+                           // MessageBox.Show("Ahtung5!");
+                        if (flag_ReplaceData == false || linkedListSF.curr==null)//(linkedListSF.curr.Twin == null || 
                         {
                            linkedListOF.Add(str2, 0); // создаем запись в списке с переводом
                            linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
@@ -245,33 +253,30 @@ namespace Rusik
             }
         }
 
-        private float FindSameString( string str1, DoublyLinkedList<string> linkedList, out object maxK_node)
-        { //возвращает 0 если найдена такая же запись как в заданном списке, либо число расхождений
-          // Если число расхождений больше 3% создаем новую запись в списке
-            float kTanimoto=0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
-
+        private float FindSameString(string str1)//, out object maxK_node)
+        { //возвращает 1 если найдена такая же запись как в заданном списке, 0-если такой строки нет в списке, либо 
+          // коэффициент Танимото указывающий степень схожести 
+            float kTanimoto = 0, kTanimoto_tmp; // степень схожести строк [0..1]. 0-Несхожие. 1-идентичные
             //Сохраним текущее значения указателя linkedList.curr
-            //var curr_tmp = linkedList.Curr;
-            maxK_node = null;
-
-            foreach (var item in linkedList) // прямое сравнение строк на точное совпадение
+            var curr_tmp = linkedListSF.curr;
+            if (linkedListSF.curr==null) MessageBox.Show("Ahtung0!");
+            object maxK_node = null;
+            foreach (var item in linkedListSF) // прямое сравнение строк на точное совпадение
                 if (str1 == item)// фразы в linkedlistSF и доп.файле с переводом - совпали
                 {
-                    maxK_node = linkedList.Curr;
-                    //linkedList.SetCurrent((DoublyNode<string>)curr_tmp);  //восстанавливаем curr
                     return 1; // строка есть в списке
-                }  
-            
-            // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
+                }
 
-            foreach (var item in linkedList) 
+            // Расчет коэфф.Танимото схожести для всех строк списка и поиска максимального
+            foreach (var item in linkedListSF)
             {
-               // Найдем строку в списке linkedlist максимально схожую (по алгоритму Танимото) с входной строкой
-               kTanimoto_tmp = Tanimoto(str1,item);
-               if (kTanimoto_tmp > kTanimoto) 
-               { kTanimoto = kTanimoto_tmp; maxK_node = linkedList.Curr; } //ссылка на запись с максимальным коэфф. Танимото
+                // Найдем строку в списке linkedlist максимально схожую (по алгоритму Танимото) с входной строкой
+                kTanimoto_tmp = Tanimoto(str1, item);
+                if (kTanimoto_tmp > kTanimoto)
+                { kTanimoto = kTanimoto_tmp; maxK_node = linkedListSF.curr; } //ссылка на запись с максимальным коэфф. Танимото
             }
-            //linkedList.SetCurrent((DoublyNode<string>)curr_tmp); //восстанавливаем curr
+ 
+            if (maxK_node==null)linkedListSF.SetCurrent(curr_tmp);else linkedListSF.SetCurrent((DoublyNode<string>)maxK_node);
             return kTanimoto;
         }
 
@@ -280,33 +285,35 @@ namespace Rusik
           // при использовании строк с русскими буквами, их лучше подавать сюда в Unicode
             float kTanimoto = 0;
             //str1.ToLower(); str2.ToLower(); //переводим обе строки в нижний регистр - в этой проге, точнее так не делать
-
+            if (str1 == String.Empty || str2 == String.Empty) return 0; // одна из строк нулевой длинны - строки неравны
 
             string str1out = Regex.Replace(str1, @"\\r", String.Empty); //уберем символ \r
             string str2out = Regex.Replace(str2, @"\\r", String.Empty);
             str1out = Regex.Replace(str1out, @"\\n", String.Empty); // уберем символ \n
             str2out = Regex.Replace(str2out, @"\\n", String.Empty);
-            str1out = Regex.Replace(str1out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и пробел
-            str2out = Regex.Replace(str2out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и пробел
+            str1out = Regex.Replace(str1out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и знаки ,.?! 
+            str2out = Regex.Replace(str2out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и знаки ,.?! 
             if (str1out == str2out) return 1; // строки идентичны
-            // отличие по содержимому строк более 10% -не равны
-            if ((str1out.Length == str2out.Length && str1out != str2out) ||
-                Math.Abs(str1out.Length-str2out.Length)>=(str1out.Length + str2out.Length)/20) return 0; 
+            if (str1 == String.Empty || str2 == String.Empty) return 0; //одна из строк стала нулевой длинны
+            if (str1out.Length == str2out.Length && str1out != str2out) return 0; //||
+                //Math.Abs(str1out.Length-str2out.Length)>=(str1out.Length + str2out.Length)/20) return 0; 
 
+            // найдем отличие между строками используя алгоритм Танимото
             int a = 0; // кол-во элементов в 1-ом множестве
             int b = 0; //кол-во элементов во 2-ом множестве
             int c = 0; //кол-во общих элементов  в двух множествах
+            // Найдем множество - количество уникальных символов в каждой из строк
             Dictionary<char, int> dictionarys1 = str1out.GroupBy(x => x)
-                .ToDictionary(x => x.Key, x => x.Count());
-            Dictionary<char, int> dictionarys2 = str2out.GroupBy(x => x)
-                .ToDictionary(x => x.Key, x => x.Count());
-
-            // пересечение последовательностей
-            var result = dictionarys1.Intersect(dictionarys2);
+                .ToDictionary(x => x.Key, x => x.Count()); 
             a = dictionarys1.Count;
+            Dictionary<char, int> dictionarys2 = str2out.GroupBy(x => x)
+                .ToDictionary(x => x.Key, x => x.Count()); 
             b = dictionarys2.Count;
-            c = result.Count();
 
+            // Найдем пересечение множеств
+            var result = dictionarys1.Intersect(dictionarys2);
+            c = result.Count();
+            // Расчет коэффициента Танимото
             kTanimoto =(float)c / (a + b - (float)c);
             return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно */
         }
