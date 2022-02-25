@@ -56,14 +56,18 @@ namespace Rusik
         }
 
         private bool SaveFile() // сохраняем список из памяти в файл с разделителем =
-        {   
+        {
             SaveFileDialog saveFileDialog1 = new();
             saveFileDialog1.OverwritePrompt = true; //предупреждение о перезаписи
             saveFileDialog1.ShowDialog();
             string tmpOutputFile = saveFileDialog1.FileName;
             if (tmpOutputFile == null || tmpOutputFile == "") return false;
+            long onepercent = linkedListSF.Count / 100 - 1, percent = onepercent;
+            progressBar1.Value = 0;
+            progressBar1_lb.Text = "";
             using (BinaryWriter writer = new BinaryWriter(File.Open(tmpOutputFile, FileMode.OpenOrCreate)))
             {
+                long counter = 0;
                 // записываем в файл содержимое списков с данными
                 foreach (var item in linkedListSF)
                 {
@@ -75,8 +79,16 @@ namespace Rusik
                     item2+= "\n";
                     bytes = System.Text.Encoding.UTF8.GetBytes(item2);
                     writer.Write(bytes);
+                    counter++;
+                    if (counter >= percent)
+                    {
+                        if (progressBar1.Value < 100) { progressBar1.Value++; }
+                        percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + " %";
+                    }
                 }
             }
+            progressBar1.Value = 0;
+            progressBar1_lb.Text = "";
             NotSavedYet = false; // актуальная версия сохранена
             return true;
         }
@@ -107,7 +119,6 @@ namespace Rusik
           }
           // разблокируем поля SourceFile_tb TranslatedFile_tb
           SourceFile_tb.Text = SourceFile;
-          TranslatedFile_tb.Text = OutputFile;
 
           //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
           Offset_tb.ReadOnly = false; // textbox Offset
@@ -142,7 +153,7 @@ namespace Rusik
                 int bufcounter = 0;
                 object maxK_Node=null; // ссылка на потенциально дублирующуюся строку из списка
                 object maxK_NodeOF=null; //ссылка на перевод заменяемой строки
-
+                TranslatedFile_tb.Text = TranslatedFile;
 
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл в буффер
@@ -160,12 +171,11 @@ namespace Rusik
 
                         if ((maxK <= 1)&& (maxK>=0.95)) // совпадение от 95 до 100% - это та же самая строка
                         {
-                            if (maxK_Node == null)MessageBox.Show("Ahtung3!");
-                            linkedListSF.ReplaceData(str1,(DoublyNode<string>)maxK_Node); flag_ReplaceData = true;
+                            linkedListSF.ReplaceData(str1,(DoublyNode<string>)maxK_Node); 
+                            flag_ReplaceData = true;
                         }
                         else if (maxK < 0.95 && maxK>0.85)// строка очень Похожа на одну из строк в списке,
                         {                                   // спросим пользователя
-                            if (maxK_Node == null)MessageBox.Show("Ahtung4!");
                             var str2_tmp = linkedListSF.DataFrom((DoublyNode<string>)maxK_Node); 
                             DialogResult result = MessageBox.Show(
                             "There were detected couple seemless strings! Tanimoto k="+Convert.ToString(maxK*100)+"%\nIs it the same?\n"+
@@ -173,16 +183,14 @@ namespace Rusik
                             "\n2:("+((string)str2_tmp).Length+"): "+ str2_tmp,
                             "Please attention !",
                             MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Warning,
+                            MessageBoxIcon.Question,
                             MessageBoxDefaultButton.Button1,
                             MessageBoxOptions.DefaultDesktopOnly);
                             if (result == DialogResult.No) { linkedListSF.Add(str1, 0); }// создаем новый элемент списка
                             else // пользователь сказал что строки одинаковые, тогда заменим старую строку новой
                             {
-                                linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node); flag_ReplaceData = true;
-                               /* if (maxK_Node != null){ linkedListSF.ReplaceData(str1); flag_ReplaceData = true; }
-                                else MessageBox.Show("maxK_Node=null. Please restart program.", "Error", MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);*/
+                                linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node); 
+                                flag_ReplaceData = true;
                             } 
 
                         }
@@ -213,14 +221,24 @@ namespace Rusik
                            linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
                            linkedListOF.SetTwin(linkedListSF.curr);
                         }
-                        else //Делаем замену
+                        else //Делаем замену перевода
                         {
-                            //linkedListOF.SetCurrent(maxK_Node);
-                           // var maxK_Node_twin = linkedListSF.TwinFrom((DoublyNode<string>)maxK_NodeOF);
                             var old_data =linkedListOF.DataFrom((DoublyNode<string>)maxK_NodeOF);
-                            // linkedListOF.SetCurrent((DoublyNode<string>)(maxK_Node.Twin));//linkedListSF.curr.Twin);
-                            // Если str2.length =0 или перевод не совпадает - спрашиваем пользователя
-                            linkedListOF.ReplaceData(str2, (DoublyNode<string>)maxK_NodeOF);
+                            
+                            if ((((string)old_data).Length != 0) && (str2.Length != 0 || str2 != (string)old_data))
+                            {   // спрашиваем пользователя если старое значение НЕ пустое И переводы отличаются длинами строк
+                                DialogResult result = MessageBox.Show(
+                                "Do you really wants to replace string 1 with string 2 ?" +
+                                "\n1:(" + ((string)old_data).Length + "): " + (string)old_data +
+                                "\n2:(" + str2.Length + "): " + str2,
+                                "Please attention !",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question,
+                                MessageBoxDefaultButton.Button1,
+                                MessageBoxOptions.DefaultDesktopOnly);
+                                if (result == DialogResult.No) { flag_ReplaceData = false; continue; }// перевод не меняем
+                            }
+                            linkedListOF.ReplaceData(str2, (DoublyNode<string>)maxK_NodeOF);//меняем перевод
                             flag_ReplaceData = false; // отработал - сбросили
                         }
                         continue; 
@@ -237,17 +255,16 @@ namespace Rusik
                         percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+" %";
                     }
                 }
-                //progressBar1.Value = 0;
-                //progressBar1_lb.Text = "";
+                progressBar1.Value = 0;
+                progressBar1_lb.Text = "";
                 nudRecord.Maximum = linkedListSF.Count;
                 nudRecord.Minimum = 1;
 
                 Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                 Translated_tb.ReadOnly = false;
                 //Выведем в SourceFile_tb первый элемент списка
-                foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
-                foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
-                nudRecord.Value = 1;
+                Next_btn_Click(null, null);
+                //nudRecord.Value = 1;
                 nudRecord.ReadOnly = false;
             }
         }
@@ -422,9 +439,8 @@ namespace Rusik
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Translated_tb.ReadOnly = false;
                     //Выведем в SourceFile_tb первый элемент списка
-                    foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
-                    foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
-                    nudRecord.Value = 1;
+                    Next_btn_Click(null, null);
+                    //nudRecord.Value = 1;
                     nudRecord.ReadOnly = false;
                 }
                 OpenTranslatedFile();
@@ -445,6 +461,9 @@ namespace Rusik
             Source_tb.Text = Encoding.UTF8.GetString(bytes);
             bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
             Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+            // выводим сообщения о количестве символов в записях исходника и перевода
+            lbTranslated.Text = "Translated Message: "+ Convert.ToString(Translated_tb.Text.Length)+" symbols";
+            lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
             nudRecord.ReadOnly = false;
         }
         private void Prev_btn_Click(object sender, EventArgs e)
@@ -461,6 +480,9 @@ namespace Rusik
             Source_tb.Text = Encoding.UTF8.GetString(bytes);
             bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
             Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+            // выводим сообщения о количестве символов в записях исходника и перевода
+            lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
+            lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
             nudRecord.ReadOnly = false;
         }
         private void nudRecord_ValueChanged(object sender, EventArgs e)
@@ -468,7 +490,6 @@ namespace Rusik
             if (nudRecord.ReadOnly==true) return; // это пришел афтершок из функций Next_btn_Click И Prev_btn_click
             long counter = (long)nudRecord.Value;
             //проверим, если TextBox изменился - сохраним его
-            //linkedListOF.SetCurrent(linkedListSF.Twin);
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
             foreach (var item in linkedListSF)
@@ -481,6 +502,9 @@ namespace Rusik
                     linkedListOF.curr = linkedListSF.Twin;
                     bytes = Encoding.Default.GetBytes(linkedListOF.curr.Data);
                     Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+                    // выводим сообщения о количестве символов в записях исходника и перевода
+                    lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
+                    lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
                     break; 
                 }
             }
