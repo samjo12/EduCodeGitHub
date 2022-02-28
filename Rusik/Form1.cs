@@ -46,6 +46,7 @@ namespace Rusik
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Quit_tsmi_Click(sender, e);
+            bgWorker.Dispose();
         }
 
         private void StartBackgroundWork()
@@ -60,7 +61,9 @@ namespace Rusik
              else
                  progressBar1.Value = progressBar1.Minimum;*/
             progressBar1.Invalidate();
-            progressBar1_lb.Text = Convert.ToString(progressBar1.Value); progressBar1_lb.Invalidate();
+
+            progressBar1_lb.Text = Convert.ToString(progressBar1.Value);
+            progressBar1_lb.Invalidate();
             
         }
 
@@ -106,7 +109,7 @@ namespace Rusik
                     writer.Write(bytes);
                     var item2 = linkedListSF.Twin.Data;
                     if (item2 == null) item2 = String.Empty;
-                    item2 += "\n";
+                    item2 += "\r\n";
                     bytes = System.Text.Encoding.UTF8.GetBytes(item2);
                     writer.Write(bytes);
                     counter++;
@@ -119,7 +122,7 @@ namespace Rusik
                 }
             }
             progressBar1.Value = 0;
-            progressBar1_lb.Text = "";
+            //progressBar1_lb.Text = "";
             NotSavedYet = false; // актуальная версия сохранена
             return true;
         }
@@ -187,7 +190,7 @@ namespace Rusik
 
 
         TranslatedFile_tb.Text = TranslatedFile;
-                StartBackgroundWork();
+               // StartBackgroundWork();
 
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл в буффер
@@ -278,8 +281,8 @@ namespace Rusik
                     }
                     if (bufcounter > MaxBytesMessage) { bufcounter = 0; continue; }// размер сообщения превышен - урезаем его
 
-                    if (sourcePart == true) { buf1[bufcounter - 1] = b; }
-                    else { buf2[bufcounter - 1] = b; }
+                    if (sourcePart == true) { buf1[bufcounter - 1] = b;  }
+                    else {  buf2[bufcounter - 1] = b; }
 
                     // играем с прогрессбаром
 
