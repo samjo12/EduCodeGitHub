@@ -195,9 +195,13 @@ namespace Rusik
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл в буффер
                     b = readerTF.ReadByte(); bufcounter++;
+                    //Пустые строки не будем принимать за отдельные сообщения
+                    if (b == 0xa && bufcounter==2 && sourcePart == true && buf1[bufcounter - 2] == 0xd) 
+                    { bufcounter = 0; continue; }
+                    
                     if (b == 0x3d && sourcePart == true) //найден символ =  
                     { //теперь строку из буфера нужно проверить на наличие в списке linkedListSF оригинальных строк
-                        bufcounter--;
+                        bufcounter-- ;
                         byte[] tmp_bytes1 = new byte[bufcounter];
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
@@ -241,7 +245,7 @@ namespace Rusik
                     }
                     // Если встретили символы в оригинальной части фразы, то просто пропускаем
                     // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы перeвода
-                    if (sourcePart == false && ((b == 0xa && buf2[bufcounter - 2] == 0xd) || (i <= l - 1)))
+                    if (sourcePart == false && ((b == 0xa && buf2[bufcounter - 2] == 0xd) || (i == l - 1)))
                     {
                         if (i < l - 1) bufcounter--; //удаляем последниe символы 0d и 0a
                         else buf2[bufcounter - 1] = b; // дописываем последний символ в файле
