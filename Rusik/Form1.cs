@@ -205,21 +205,22 @@ namespace Rusik
                         byte[] tmp_bytes1 = new byte[bufcounter];
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
-
+                        //Если строка пустая, менее 3 символов или содержит символ ENTER, то такое сообщение - пропускаем
+                        if (str1 == "" || str1.Length <= 3) { bufcounter = 0; continue; }
                         float maxK = FindSameString(str1, linkedListSF, out maxK_Node); // проверим на наличие совпадений в списке
                         if (maxK_Node == null) { maxK = 0; }
                         maxK_NodeOF = linkedListSF.TwinFrom((DoublyNode<string>)maxK_Node); // получаем ссылку на ячейку с переводом
 
-                        if ((maxK <= 1) && (maxK >= 0.95)) // совпадение от 95 до 100% - это та же самая строка
+                        if ((maxK <= 1) && (maxK >= 0.96)) // совпадение от 96 до 100% - это та же самая строка
                         {
                             linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
                             flag_ReplaceData = true;
                         }
-                        else if (maxK < 0.95 && maxK > 0.85)// строка очень Похожа на одну из строк в списке,
+                        else if (maxK < 0.96 && maxK > 0.85)// строка очень Похожа на одну из строк в списке,
                         {                                   // спросим пользователя
                             var str2_tmp = linkedListSF.DataFrom((DoublyNode<string>)maxK_Node);
                             DialogResult result = MessageBox.Show(
-                            "There were detected couple seemless strings! Tanimoto k=" + Convert.ToString(maxK * 100) + "%\nIs it the same?" +
+                            "There were detected couple similar strings! Similarity is " + Convert.ToString(maxK * 100) + "%\nAre it the same?" +
                             "\n1:(" + str1.Length + "): " + str1 +
                             "\n2:(" + ((string)str2_tmp).Length + "): " + str2_tmp,
                             "Please attention !",
@@ -247,7 +248,7 @@ namespace Rusik
                     // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы перeвода
                     if (sourcePart == false && ((b == 0xa && buf2[bufcounter - 2] == 0xd) || (i == l - 1)))
                     {
-                        if (i < l - 1) bufcounter--; //удаляем последниe символы 0d и 0a
+                        if (i < l - 1) bufcounter -= 2; //удаляем последниe символы 0d и 0a
                         else buf2[bufcounter - 1] = b; // дописываем последний символ в файле
                         byte[] tmp_bytes2 = new byte[bufcounter];
                         for (int j = 0; j < bufcounter; j++) tmp_bytes2[j] = buf2[j];
@@ -264,13 +265,16 @@ namespace Rusik
                         else //Делаем замену перевода
                         {
                             var old_data = linkedListOF.DataFrom((DoublyNode<string>)maxK_NodeOF);
-
-                            if ((((string)old_data).Length != 0) && (str2.Length != 0 || str2 != (string)old_data))
-                            {   // спрашиваем пользователя если старое значение НЕ пустое И переводы отличаются длинами строк
+                            // перевод не меняем т.к. новое значение - пустое , ИЛИ новая строка идентична старой
+                            if (str2 == "" || str2== (string)old_data) { flag_ReplaceData = false; continue; }
+                            // Если старое значение не пустое ИЛИ новая строка не пустая - спрашиваем пользователя о замене
+                            if (((string)old_data != "") && (str2 != "" ))
+                            {   
                                 DialogResult result = MessageBox.Show(
                                 "Do you really wants to replace string 1 with string 2 ?" +
                                 "\n1:(" + ((string)old_data).Length + "): " + (string)old_data +
-                                "\n2:(" + str2.Length + "): " + str2,
+                                "\n2:(" + str2.Length + "): " + str2+
+                                "\nIf you say \"No\"  - string \"2:\" will be lost!",
                                 "Please attention !",
                                 MessageBoxButtons.YesNo,
                                 MessageBoxIcon.Question,
@@ -350,7 +354,8 @@ namespace Rusik
             str2out = Regex.Replace(str2out, @"\\n", String.Empty);
             str1out = Regex.Replace(str1out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и знаки ,.?! 
             str2out = Regex.Replace(str2out, @"[^A-Za-z0-9,.!?]+", String.Empty); // Оставим Англ.буквы цифры и знаки ,.?! 
-            if (str1out == str2out) return 1; // строки идентичны
+            if (str1out == str2out)// строки идентичны, но есть расхождение в знаках - нужно спросить у пользователя
+                return kTanimoto = (float)0.85;
             if (str1out == String.Empty || str2out == String.Empty) return 0; //одна из строк стала нулевой длинны
             if (str1out.Length != str2out.Length) return 0; //вычищенные строки не совпадают по длинне
             //Длины строк совпадают, а содержимое нет. Сравним методом Танимото
@@ -373,7 +378,7 @@ namespace Rusik
             c = result.Count();
             // Расчет коэффициента Танимото
             kTanimoto = (float)c / (a + b - (float)c);
-            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. 0.85 - уже вполне достоверно */
+            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. обычно 0.85 - уже вполне достоверно */
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -574,7 +579,9 @@ namespace Rusik
 
         private void SearchTranslated_btn_Click(object sender, EventArgs e)
         {
-
+            //создаем новый TAB
+            //на нем открываем новый TEXTBOX
+            // Проходимся по всему списку и ищем подстроку
         }
 
         private void closeFilesClearToolStripMenuItem_Click(object sender, EventArgs e)
