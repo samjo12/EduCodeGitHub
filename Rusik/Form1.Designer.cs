@@ -255,7 +255,7 @@ namespace Rusik
             // 
             this.SearchTranslated_tb.Location = new System.Drawing.Point(511, 694);
             this.SearchTranslated_tb.Name = "SearchTranslated_tb";
-            this.SearchTranslated_tb.PlaceholderText = "Some text to search ...";
+            this.SearchTranslated_tb.PlaceholderText = "Some text for searching ...";
             this.SearchTranslated_tb.ReadOnly = true;
             this.SearchTranslated_tb.Size = new System.Drawing.Size(430, 23);
             this.SearchTranslated_tb.TabIndex = 20;
@@ -284,11 +284,10 @@ namespace Rusik
             // 
             this.SearchSource_tb.Location = new System.Drawing.Point(12, 694);
             this.SearchSource_tb.Name = "SearchSource_tb";
-            this.SearchSource_tb.PlaceholderText = "Some text to search ...";
+            this.SearchSource_tb.PlaceholderText = "Some text for searching ...";
             this.SearchSource_tb.ReadOnly = true;
             this.SearchSource_tb.Size = new System.Drawing.Size(411, 23);
             this.SearchSource_tb.TabIndex = 22;
-            this.SearchSource_tb.TextChanged += new System.EventHandler(this.SearchSource_Click);
             // 
             // OutputFile_lb
             // 

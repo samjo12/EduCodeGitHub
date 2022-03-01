@@ -31,6 +31,8 @@ namespace Rusik
         public string OutputFile; // Выходной текстовый файл с текущим рабочим переводом
         public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new DoublyLinkedList<string>(); // связный список для выходного файла
+        public DoublyLinkedList<string> linkedListSS = new DoublyLinkedList<string>(); // связный список для поиска по исходому тексту
+        public DoublyLinkedList<string> linkedListOS = new DoublyLinkedList<string>(); // связный список для поиска по пепреводу
         public bool NotSavedYet = false;
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
         BackgroundWorker bgWorker=new();
@@ -433,6 +435,9 @@ namespace Rusik
                                 for (int j = 0; j < lentxt; j++)//читаем lentxt байт сообщения
                                 {
                                     buf[j] = readerSF.ReadByte(); i++;
+                                    if (j > 1 && buf[j] == 0xa0)//заменяем символ UTF-8 C2A0 на пробел .
+                                        if (buf[j - 1] == 0xc2){ buf[j-1] = 0x20; j -= 1; lentxt -= 1; }
+
                                     if (j > 2 && buf[j] == 0xa6)//заменяем символ UTF-8 E280A6 на три точки 2E2E2E .
                                         if (buf[j - 1] == 0x80)
                                             if (buf[j - 2] == 0xe2) { buf[j] = 0x2e; buf[j - 1] = 0x2e; buf[j - 2] = 0x2e; }
@@ -445,9 +450,9 @@ namespace Rusik
                                         if (buf[j - 1] == 0x80)
                                             if (buf[j - 2] == 0xe3) { buf[j - 2] = 0x5d; j -= 2; lentxt -= 2; }
 
-                                    /* if (j > 2 && buf[j] == 0x9f)//заменяем символ UTF-8 EFBC9F на вопрос  0x3f ?
+                                    if (j > 2 && buf[j] == 0x9f)//заменяем символ UTF-8 EFBC9F на вопрос  0x3f ?
                                          if (buf[j - 1] == 0xbc)
-                                             if (buf[j - 2] == 0xef) { buf[j - 2] = 0x5d; j -= 2; lentxt -= 2; }*/
+                                             if (buf[j - 2] == 0xef) { buf[j - 2] = 0x5d; j -= 2; lentxt -= 2; }
 
                                     if (j > 3 && buf[j] == 0x3e)//3c, 62||42, 52||72, 3E // <br> или <BR> заменяем на \n  0x5c,0x6e
                                         if (buf[j - 1] == 0x72 || buf[j - 1] == 0x52)
@@ -561,20 +566,30 @@ namespace Rusik
         }
         private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
+            string str = SearchSource_tb.Text; 
             if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
-            //нужно открыть новую вкладку, и создать новый список со всеми включениями подстроки
+            
+            if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
+            //Начинаем поиск подстроки по всем элементам списка linkListSF
             foreach (var item in linkedListSF)
             {
-                var str1 = (string)item;
-                if (str1 == SearchSource_tb.Text)
+                if (item.Contains(str))
                 {
-                    byte[] bytes = Encoding.Default.GetBytes(item);
-                    Source_tb.Text = Encoding.UTF8.GetString(bytes);
-                    bytes = Encoding.Default.GetBytes(linkedListSF.Twin.Data);
-                    Translated_tb.Text = Encoding.UTF8.GetString(bytes);
-                    break;
+                    // Вхождения найдены
+                    linkedListSS.Add(item, 0);
                 }
             }
+            if (linkedListSS.Count == 0) return;
+            // а иначе нужно открыть новую вкладку, и переключить обзор функций Next Prev на новый список
+            // и вывести из него первый элемент.
+            //добавление вкладки
+            TabPage newTabPage = new TabPage();
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0,len);
+            Source_tc.TabPages.Add(newTabPage);
+            Source_tc.SelectedTab=newTabPage;
+            Source_tb.BringToFront();
+            Translated_tb.BringToFront();
         }
 
         private void SearchTranslated_btn_Click(object sender, EventArgs e)
