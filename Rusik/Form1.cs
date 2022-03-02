@@ -588,8 +588,10 @@ namespace Rusik
             newTabPage.Text = str.Substring(0,len);
             Source_tc.TabPages.Add(newTabPage);
             Source_tc.SelectedTab=newTabPage;
-            Source_tb.BringToFront();
-            Translated_tb.BringToFront();
+
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb);
+            this.Source_tc.SelectedTab.Controls.Add(this.Translated_tb);
+
         }
 
         private void SearchTranslated_btn_Click(object sender, EventArgs e)
