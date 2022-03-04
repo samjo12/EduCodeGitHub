@@ -162,7 +162,7 @@ namespace Rusik
             this.closeFilesClearToolStripMenuItem.Name = "closeFilesClearToolStripMenuItem";
             this.closeFilesClearToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.closeFilesClearToolStripMenuItem.Text = "Close Files/Clear";
-            this.closeFilesClearToolStripMenuItem.Click += new System.EventHandler(this.closeFilesClearToolStripMenuItem_Click);
+            this.closeFilesClearToolStripMenuItem.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 

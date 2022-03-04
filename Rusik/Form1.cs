@@ -84,10 +84,14 @@ namespace Rusik
                         MessageBoxIcon.Information,
                         MessageBoxDefaultButton.Button1,
                         MessageBoxOptions.DefaultDesktopOnly);
-
                         if (result == DialogResult.No) return; // пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
-            } // конец программе
+                linkedListOF.Clear();
+                linkedListOS.Clear();
+                linkedListSF.Clear();
+                linkedListSS.Clear();
+                nudRecord.Value = 1;
+            }
         }
 
         private bool SaveFile() // сохраняем список из памяти в файл с разделителем =
@@ -184,8 +188,9 @@ namespace Rusik
                 long l = src.Length; //размер исходного файла в байтах
                 long onepercent = l / 100 - 1, percent = onepercent;
                 byte b;
-                bool sourcePart = true;
-                bool flag_ReplaceData = false;
+                bool sourcePart = true; // флаг 
+                bool flag_ReplaceData = false; // флаг
+                bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
                 int bufcounter = 0;
                 object maxK_Node = null; // ссылка на потенциально дублирующуюся строку из списка
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
@@ -209,10 +214,13 @@ namespace Rusik
                         str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
                         //Если строка пустая, менее 3 символов или содержит символ ENTER, то такое сообщение - пропускаем
                         if (str1 == "" || str1.Length <= 3) { bufcounter = 0; continue; }
-                        float maxK = FindSameString(str1, linkedListSF, out maxK_Node); // проверим на наличие совпадений в списке
+                        float maxK;
+
+                        if (flag_Skipdialog == false) //если включен режим пропуска диалога, то поиск совпадающих строк-отключаем
+                        { maxK = FindSameString(str1, linkedListSF, out maxK_Node); } // проверим на наличие совпадений в списке
+                        else { maxK = 0; }
                         if (maxK_Node == null) { maxK = 0; }
                         maxK_NodeOF = linkedListSF.TwinFrom((DoublyNode<string>)maxK_Node); // получаем ссылку на ячейку с переводом
-
                         if ((maxK <= 1) && (maxK >= 0.96)) // совпадение от 96 до 100% - это та же самая строка
                         {
                             linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
@@ -224,27 +232,30 @@ namespace Rusik
                             DialogResult result = MessageBox.Show(
                             "There were detected couple similar strings! Similarity is " + Convert.ToString(maxK * 100) + "%\nAre it the same?" +
                             "\n1:(" + str1.Length + "): " + str1 +
-                            "\n2:(" + ((string)str2_tmp).Length + "): " + str2_tmp,
+                            "\n2:(" + ((string)str2_tmp).Length + "): " + str2_tmp +
+                            "\n\nCancel will skip this dialog and adding all strings as new.",
                             "Please attention !",
-                            MessageBoxButtons.YesNo,
+                            MessageBoxButtons.YesNoCancel,
                             MessageBoxIcon.Question,
                             MessageBoxDefaultButton.Button1,
                             MessageBoxOptions.DefaultDesktopOnly);
                             if (result == DialogResult.No) { linkedListSF.Add(str1, 0); }// создаем новый элемент списка
-                            else // пользователь сказал что строки одинаковые, тогда заменим старую строку новой
+                            else if (result == DialogResult.Yes)// пользователь сказал что строки одинаковые, тогда заменим старую строку новой
                             {
                                 linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
                                 flag_ReplaceData = true;
                             }
+                            else //result == DialogResult.Cancel
+                            { flag_Skipdialog = true; }
 
-                        }
-                        else // maxK <0.75 можно не спрашивать строка точно уникальная
-                        {
-                            linkedListSF.Add(str1, 0);// создаем новый элемент списка
-                        }
-                        sourcePart = false;
-                        bufcounter = 0;
-                        continue;
+                   }
+                   else // maxK <0.75 можно не спрашивать строка точно уникальная
+                   {
+                       linkedListSF.Add(str1, 0);// создаем новый элемент списка
+                   }
+                   sourcePart = false;
+                   bufcounter = 0;
+                   continue;
                     }
                     // Если встретили символы в оригинальной части фразы, то просто пропускаем
                     // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы перeвода
@@ -258,13 +269,13 @@ namespace Rusik
                         bufcounter = 0;
                         sourcePart = true;
 
-                        if (flag_ReplaceData == false)// запишем новую строку в список
+                        if (flag_ReplaceData == false || flag_Skipdialog==true)// запишем новую строку в список
                         {
                             linkedListOF.Add(str2, 0); // создаем запись в списке с переводом
                             linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
                             linkedListOF.SetTwin(linkedListSF.curr);
                         }
-                        else //Делаем замену перевода
+                        else //Делаем замену перевода т.к. flag_ReplaceData == true
                         {
                             var old_data = linkedListOF.DataFrom((DoublyNode<string>)maxK_NodeOF);
                             // перевод не меняем т.к. новое значение - пустое , ИЛИ новая строка идентична старой
@@ -276,13 +287,15 @@ namespace Rusik
                                 "Do you really wants to replace string 1 with string 2 ?" +
                                 "\n1:(" + ((string)old_data).Length + "): " + (string)old_data +
                                 "\n2:(" + str2.Length + "): " + str2+
-                                "\nIf you say \"No\"  - string \"2:\" will be lost!",
+                                "\nIf you say \"No\"  - string \"2:\" will be lost!"+
+                                "\n\nCancel will skipiing this dialog and adding all records as new.",
                                 "Please attention !",
-                                MessageBoxButtons.YesNo,
+                                MessageBoxButtons.YesNoCancel,
                                 MessageBoxIcon.Question,
                                 MessageBoxDefaultButton.Button1,
                                 MessageBoxOptions.DefaultDesktopOnly);
                                 if (result == DialogResult.No) { flag_ReplaceData = false; continue; }// перевод не меняем
+                                else if (result == DialogResult.Cancel) { flag_Skipdialog = true; }
                             }
                             linkedListOF.ReplaceData(str2, (DoublyNode<string>)maxK_NodeOF);//меняем перевод
                             flag_ReplaceData = false; // отработал - сбросили
@@ -302,7 +315,7 @@ namespace Rusik
                         percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + " %";
                     }
                 }
-               //bgWorker.CancelAsync();
+                //bgWorker.CancelAsync();
                 progressBar1.Value = 0;
                 progressBar1_lb.Text = "";
                 nudRecord.Maximum = linkedListSF.Count;
@@ -601,9 +614,25 @@ namespace Rusik
             // Проходимся по всему списку и ищем подстроку
         }
 
-        private void closeFilesClearToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CloseFilesClear_Click(object sender, EventArgs e)
         {
-            // сохранение файлов/очистка списков
+            Quit_tsmi_Click(null,null); //сохраним работу в файл
+            nudRecord.ReadOnly = true; 
+            nudRecord.Value = 1; 
+            Records_lb.Text = "Found: 0 records";
+            
+            TranslatedFile_tb.Text = ""; TranslatedFile = "";
+            SourceFile_lb.Text = ""; SourceFile = "";
+
+            Source_tb.Text = ""; Source_tb.ReadOnly = true;
+            Translated_tb.Text = ""; Translated_tb.ReadOnly = true;
+            lbSource.Text = "Source Message: 0 symbols"; 
+            lbTranslated.Text = "Translated Message: 0 symbols";
+            Offset_tb.Text = ""; Offset_tb.ReadOnly = true;
+            Signature_tb.Text = "";Signature_tb.ReadOnly = true;
+            SearchSource_tb.Text = ""; SearchTranslated_tb.Text = "";
+            SearchSource_tb.ReadOnly = true; SearchTranslated_tb.ReadOnly = true;
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
