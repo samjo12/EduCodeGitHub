@@ -6,7 +6,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-//using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
@@ -14,9 +13,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Web;
-//using Newtonsoft.Json;
-//using System.Web.Extensions;
-//using System.Web.Script.Serialization;
 using System.Text.RegularExpressions;
 
 
@@ -37,6 +33,10 @@ namespace Rusik
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
         BackgroundWorker bgWorker=new();
         public Timer timer1 = new System.Windows.Forms.Timer { Interval = 100 };
+        public string languageEn = "en"; //из модуля google-переводчика
+        public string languageRu = "ru";
+        public string InterfaceLanguage = "ru";
+        public long LastRecordNumber=1; // это сохраненный в ini файле nudRecord 
         public Form1()
         {
             InitializeComponent();
@@ -90,7 +90,6 @@ namespace Rusik
                 linkedListOS.Clear();
                 linkedListSF.Clear();
                 linkedListSS.Clear();
-                nudRecord.Value = 1;
             }
         }
 
@@ -398,14 +397,103 @@ namespace Rusik
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // LoadFile();
+            // InterfaceLanguage={EN,RU};
+            // TranslatedFile= {Full Path to last editing file}; полный путь
+            // LastRecordNumber= {integer} -номер последней редактируемой записи с прошлой сессии
+            // SourceLanguage={EN...} - указание для переводчика Google
+            // TranslationLanguage ={RU...} - указание для переводчика Google
+            // 
+            // Загрузим первоначальные настройки программы. Ini файл
+            string[] commands = { "InterfaceLanguage", "TranslatedFile", "LastRecordNumber", "SourceLanguage", "TranslationLanguage" };
+            string[] IL = { "en","ru"}; // возможные языки интерфейса
+            string[] SL = { "en","ru"}; string[] TL = { "ru","en"}; //направления перевода
+            string IniFile = Environment.GetCommandLineArgs()[0]; //получаем имя запущенного файла
+            string message="", command="", command_value="";
+           // bool flag_Newfile = true;
+            int cm_start=0; // command_value_start
+            IniFile = IniFile.Substring(0, IniFile.Length - 3); IniFile += "ini";
+            FileInfo src = new FileInfo(IniFile);
+            if (src == null) return; // ini - файл отсутствует
+            byte[] buf = new byte[1024 * 3]; //Буффер для чтения из файла строки текста
+            long l = src.Length; //размер исходного файла в байтах
+            if (l > 1024) return; //дефективный ini - игнорируем
+            //ЧИТАЕМ ФАЙЛ В БУФЕР
+            using (BinaryReader readerSF = new BinaryReader(File.Open(IniFile, FileMode.Open)))
+            {  //for (long i = 0; i < l; i++) buf[i] = readerSF.ReadByte(); 
+               while((message=readerSF.ReadString())!=null)
+                {
+                    for (int i = 0; i < message.Length; i++) 
+                    {
+                        if (message[i] == '=')
+                        {
+                            command = message.Substring(0, i - 1);
+                            cm_start = i + 1;
+                        }
+                        else if(message[i] == 0xa && message[i-1]==0xd) //конец строки
+                        {
+                            command_value = message.Substring(cm_start,i-2-cm_start);
+                            foreach(var item in commands)
+                            {
+                                if (item == command) //есть поддерживаемая команда INI !
+                                {   
+                                    FileInfo src1;
+                                    switch (command)
+                                    {   
+                                        case "InterfaceLanguage":
+                                            foreach (var item1 in IL)
+                                                if(item1==command_value.ToLower())InterfaceLanguage=command_value;
+                                            break;
+                                        case "TranslatedFile":
+                                            if((src1 = new FileInfo(command_value))!=null)TranslatedFile=command_value;
+                                            break;
+                                        case "LastRecordNumber":
+                                            LastRecordNumber=Convert.ToInt64(command_value);
+                                            break;
+                                        case "SourceLanguage":
+                                            foreach (var item1 in SL)
+                                                if (item1 == command_value.ToLower()) languageEn = command_value;
+                                            break;
+                                        case "TranslationLanguage":
+                                            foreach (var item1 in TL)
+                                                if (item1 == command_value.ToLower()) languageRu = command_value;
+                                            break;
+                                    }
+                                   break;
+                                }
+
+
+                            }
+                            
+                        }
+
+                    }
+                }
+            }
+            //Ищем названия параметров
+         /*   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
+            for (int i = 0; i < l; i++)
+            {
+                if (message[i] == '=')
+                {
+                    command = message.Substring(pointer1, i - pointer2);
+                    switch (command)
+                    {
+                       // case "InterfaceLanguage": InterfaceLanguage=;
+                       //     break;
+                    }
+
+                }
+            }*/
+
+
+
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
             string str1 = "This program may be useful for translating text" +
                           " in some binary or text files.\n" +
-                          "You can search & catch strings of text in binary files using HEX-coded or symbols signature.\n" +
-                          "Supports Google or Yandex translating services.\n" +
+                          "You can search & catch strings of text in binary files using HEX-coded signatures.\n" +
+                          "Supports Google translating service for limited translations.\n" +
                           "Program can operate with text files that consist of two parts:\n" +
                           "original sentence and translation sentense compared with symbol =";
             MessageBox.Show(str1, "About program ...", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -632,7 +720,7 @@ namespace Rusik
             Signature_tb.Text = "";Signature_tb.ReadOnly = true;
             SearchSource_tb.Text = ""; SearchTranslated_tb.Text = "";
             SearchSource_tb.ReadOnly = true; SearchTranslated_tb.ReadOnly = true;
-
+            NotSavedYet = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -650,8 +738,8 @@ namespace Rusik
             string mathod = "GET";
             string userAgent = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
             string urlFormat = "https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}";
-            string languageEn = "en";
-            string languageRu = "ru";
+            //string languageEn = "en";// обьявлены глобально в классе F0rm1
+            //string languageRu = "ru";
             string text = source;
             string url = string.Format(urlFormat, languageEn, languageRu, Uri.EscapeUriString(text));
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
