@@ -21,50 +21,66 @@ namespace Rusik
     public partial class Form1 : Form
     {
         static readonly int MaxBytesMessage = 7000; // Максимальный размер сообщения в байтах
+        public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
-        public string SourceFile; // бинарный файл
-        public string TranslatedFile; //Текстовый файл частично переведенный ранее со знаком разделителем "="
-        public string OutputFile; // Выходной текстовый файл с текущим рабочим переводом
-        public DoublyLinkedList<string> linkedListSF = new DoublyLinkedList<string>(); // связный список для исходного файла
-        public DoublyLinkedList<string> linkedListOF = new DoublyLinkedList<string>(); // связный список для выходного файла
-        public DoublyLinkedList<string> linkedListSS = new DoublyLinkedList<string>(); // связный список для поиска по исходому тексту
-        public DoublyLinkedList<string> linkedListOS = new DoublyLinkedList<string>(); // связный список для поиска по пепреводу
-        public bool NotSavedYet = false;
+        public string SourceFile=""; // бинарный файл
+        public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
+        public string OutputFile=""; // Выходной текстовый файл с текущим рабочим переводом
+        string IniFile = ""; //полный путь к INI файлу
+        public DoublyLinkedList<string> linkedListSF = new(); // связный список для исходного файла
+        public DoublyLinkedList<string> linkedListOF = new(); // связный список для выходного файла
+        public DoublyLinkedList<string> linkedListSS = new(); // связный список для поиска по исходому тексту
+        public DoublyLinkedList<string> linkedListOS = new(); // связный список для поиска по переводу
+        public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
+        public bool flag_NotSavedYet = false;
+        public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
-        BackgroundWorker bgWorker=new();
-        public Timer timer1 = new System.Windows.Forms.Timer { Interval = 100 };
+        //BackgroundWorker bgWorker=new();
+        //public Timer timer1 = new System.Windows.Forms.Timer { Interval = 100 };
         public string languageEn = "en"; //из модуля google-переводчика
         public string languageRu = "ru";
-        public string InterfaceLanguage = "ru";
-        public long LastRecordNumber=1; // это сохраненный в ini файле nudRecord 
+        public string InterfaceLanguage = "en"; //английский язык по-умолчанию
+        public long LastRecordNumber=1; // это сохраненный в ini файле параметр nudRecord последнего открытого файла
+        public Dictionary<string, string> GoogleLangs = new Dictionary<string, string>(){
+{ "Afrikaans","af"},{ "Albanian","sq"},{ "Arabic","ar"},{ "Armenian","hy"},{ "Azerbaijani","az"},{ "Basque","eu"},{ "Belarusian","be"},
+{ "Bulgarian","bg"},{ "Catalan","ca"},{ "Chinese(Simplified)","zh-CN"},{ "Chinese(Traditional)","zh-TW"},{ "Croatian","hr"},
+{ "Czech","cs"},{ "Danish","da"},{ "Dutch","nl"},{ "English","en"},{ "Estonian","et"},{ "Filipino","tl"},{ "Finnish","fi"},
+{ "French","fr"},{ "Galician","gl"},{ "Georgian","ka"},{ "German","de"},{ "Greek","el"},{ "Haitian","ht"},{ "Hebrew","iw"},
+{ "Hindi","hi"},{ "Hungarian","hu"},{ "Icelandic","is"},{ "Indonesian","id"},{ "Irish", "ga"},{ "Italian","it"},{ "Japanese","ja"},
+{ "Korean","ko"},{ "Latvian","lv"},{ "Lithuanian","lt"},{ "Macedonian","mk"},{ "Malay","ms"},{ "Maltese","mt"},{ "Norwegian","no"},
+{ "Persian","fa"},{ "Polish","pl"},{ "Portuguese","pt"},{ "Romanian","ro"},{ "Russian","ru"},{ "Serbian","sr"},{ "Slovak","sk"},
+{ "Slovenian","sl"},{ "Spanish","es"},{ "Swahili","sw"},{ "Swedish","sv"},{ "Thai","th"},{ "Turkish","tr"},{ "Ukrainian","uk"},
+{ "Urdu","ur"},{ "Vietnamese","vi"},{ "Welsh","cy"},{ "Yiddish","yi"} };
         public Form1()
         {
             InitializeComponent();
-            bgWorker.WorkerReportsProgress = true;
-            bgWorker .WorkerSupportsCancellation = true;
+            //bgWorker.WorkerReportsProgress = true;
+            //bgWorker .WorkerSupportsCancellation = true;
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);// обработчик закрытия окна по крестику
-            timer1.Tick += new EventHandler(Timer_Tick);
+            //timer1.Tick += new EventHandler(Timer_Tick);
+            
+            comboBox1.DataSource = new BindingSource(GoogleLangs, null);
+            comboBox2.DataSource = new BindingSource(GoogleLangs, null);
+            comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
+            comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
+            Load_INI();
         }
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Quit_tsmi_Click(sender, e);
-            bgWorker.Dispose();
+            //bgWorker.Dispose();
         }
 
         private void StartBackgroundWork()
         {
-            timer1.Enabled = true; bgWorker.RunWorkerAsync();
+            //timer1.Enabled = true; bgWorker.RunWorkerAsync();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            /* if (progressBar1.Value < progressBar1.Maximum)
-                 progressBar1.Increment(5);
-             else
-                 progressBar1.Value = progressBar1.Minimum;*/
             progressBar1.Invalidate();
 
-            progressBar1_lb.Text = Convert.ToString(progressBar1.Value);
+            progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+"%";
             progressBar1_lb.Invalidate();
             
         }
@@ -74,35 +90,35 @@ namespace Rusik
             // если исходный файл открыт, то предлагаем сохранить выходной файл
             if (linkedListOF.Curr != null) // если в памяти есть список - то предлагаем сохраниться
             {
-                if (NotSavedYet == true)
+                if (flag_NotSavedYet == true)
                     do
                     {
                         DialogResult result = MessageBox.Show(
-                        "Do yo want to Save \rthe result of your work?",
-                        "Message",
+                        "Do yo want to Save file?\n"+TranslatedFile,
+                        "Attention",
                         MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Information,
+                        MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1,
                         MessageBoxOptions.DefaultDesktopOnly);
                         if (result == DialogResult.No) return; // пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
-                linkedListOF.Clear();
+                /*linkedListOF.Clear();
                 linkedListOS.Clear();
                 linkedListSF.Clear();
-                linkedListSS.Clear();
+                linkedListSS.Clear();*/
             }
+            Save_INI();
+
         }
 
-        private bool SaveFile() // сохраняем список из памяти в файл с разделителем =
+        private bool SaveFile(string outfile="") // сохраняем список из памяти в файл с разделителем =
         {
-            SaveFileDialog saveFileDialog1 = new();
-            saveFileDialog1.OverwritePrompt = true; //предупреждение о перезаписи
-            saveFileDialog1.ShowDialog();
-            string tmpOutputFile = saveFileDialog1.FileName;
-            if (tmpOutputFile == null || tmpOutputFile == "") return false;
+            String tmpOutputFile;
+            if (outfile == "") tmpOutputFile = TranslatedFile;
+            else tmpOutputFile = outfile;
             long onepercent = linkedListSF.Count / 100 - 1, percent = onepercent;
             progressBar1.Value = 0;
-            progressBar1_lb.Text = "";
+            progressBar1_lb.Text = "%";
             using (BinaryWriter writer = new BinaryWriter(File.Open(tmpOutputFile, FileMode.OpenOrCreate)))
             {
                 long counter = 0;
@@ -121,18 +137,22 @@ namespace Rusik
                     if (counter >= percent)
                     {
                         if (progressBar1.Value < 100) 
-                        { progressBar1.Value++; }
+                        { progressBar1.Value++; progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+"%"; }
                         percent += onepercent; 
                     }
                 }
             }
-            progressBar1.Value = 0;
-            //progressBar1_lb.Text = "";
-            NotSavedYet = false; // актуальная версия сохранена
+            Save_INI();
             return true;
         }
         private void SaveFile_tsmi_Click(object sender, EventArgs e) // Меню Save File As
-        {  SaveFile();
+        {
+            SaveFileDialog saveFileDialog1 = new();
+            saveFileDialog1.OverwritePrompt = true; //предупреждение о перезаписи
+            saveFileDialog1.ShowDialog();
+            string tmpOutputFile = saveFileDialog1.FileName;
+            if (tmpOutputFile == null || tmpOutputFile == "") return;
+            else SaveFile(tmpOutputFile);  
         }
 
         private void OpenFile_tsmi_Click(object sender, EventArgs e) //MENU Open Binary File
@@ -181,21 +201,21 @@ namespace Rusik
             using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
             { // откроем файл Translated Text File на чтение
                 FileInfo src = new FileInfo(TranslatedFile);
+                long l = src.Length; //размер исходного файла в байтах
                 byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
                 byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
                 string str1 = "", str2 = "";
-                long l = src.Length; //размер исходного файла в байтах
                 long onepercent = l / 100 - 1, percent = onepercent;
                 byte b;
                 bool sourcePart = true; // флаг 
                 bool flag_ReplaceData = false; // флаг
-                bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
+                //bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон перенес в заголовок класса
                 int bufcounter = 0;
                 object maxK_Node = null; // ссылка на потенциально дублирующуюся строку из списка
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
 
 
-        TranslatedFile_tb.Text = TranslatedFile;
+                TranslatedFile_tb.Text = TranslatedFile;
                // StartBackgroundWork();
 
                 for (long i = 0; i < l; i++)
@@ -247,18 +267,18 @@ namespace Rusik
                             else //result == DialogResult.Cancel
                             { flag_Skipdialog = true; }
 
-                   }
-                   else // maxK <0.75 можно не спрашивать строка точно уникальная
-                   {
-                       linkedListSF.Add(str1, 0);// создаем новый элемент списка
-                   }
-                   sourcePart = false;
-                   bufcounter = 0;
-                   continue;
+                        }
+                        else // maxK <0.75 можно не спрашивать строка точно уникальная
+                        { linkedListSF.Add(str1, 0);// создаем новый элемент списка
+                        }
+                        sourcePart = false;
+                        bufcounter = 0;
+                        continue;
                     }
                     // Если встретили символы в оригинальной части фразы, то просто пропускаем
                     // если "0d 0a" втретили в переводе, то это конец строки и будем ожидать новой фразы перeвода
-                    if (sourcePart == false && ((b == 0xa && buf2[bufcounter - 2] == 0xd) || (i == l - 1)))
+                    if(bufcounter>=2)
+                    if ((sourcePart == false && b == 0xa && buf2[bufcounter - 2] == 0xd) || (i == (l - 1)))
                     {
                         if (i < l - 1) bufcounter -= 2; //удаляем последниe символы 0d и 0a
                         else buf2[bufcounter - 1] = b; // дописываем последний символ в файле
@@ -311,23 +331,25 @@ namespace Rusik
                     if (i >= percent) // проверяем нужно ли двигать прогресс бар на 1%
                     {
                         if (progressBar1.Value < 100) { progressBar1.Value++; }
-                        percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + " %";
+                        percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%";
                     }
                 }
-                //bgWorker.CancelAsync();
-                progressBar1.Value = 0;
-                progressBar1_lb.Text = "";
                 nudRecord.Maximum = linkedListSF.Count;
                 nudRecord.Minimum = 1;
-
-                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
-                Translated_tb.ReadOnly = false;
-                //Выведем в SourceFile_tb первый элемент списка
-                foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
-                foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
-                nudRecord.Value = 1;
-                nudRecord.ReadOnly = false;
-                timer1.Enabled = false;
+                if (linkedListSF.Count > 1)
+                {
+                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                    Translated_tb.ReadOnly = false;
+                    //Выведем в SourceFile_tb первый элемент списка
+                    foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
+                    foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
+                    nudRecord.Value = 1;
+                    nudRecord.ReadOnly = false;
+                    Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
+                    // разблокируем строки поиска
+                    SearchSource_tb.ReadOnly = false;
+                    SearchTranslated_tb.ReadOnly = false;
+                }
             }
         }
 
@@ -394,99 +416,139 @@ namespace Rusik
             kTanimoto = (float)c / (a + b - (float)c);
             return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. обычно 0.85 - уже вполне достоверно */
         }
-
-        private void MainForm_Load(object sender, EventArgs e)
+        private void Load_INI()
         {
             // InterfaceLanguage={EN,RU};
             // TranslatedFile= {Full Path to last editing file}; полный путь
             // LastRecordNumber= {integer} -номер последней редактируемой записи с прошлой сессии
             // SourceLanguage={EN...} - указание для переводчика Google
             // TranslationLanguage ={RU...} - указание для переводчика Google
-            // 
+            // OpenFileHistory={полный путь к файлу,LastNumber}
             // Загрузим первоначальные настройки программы. Ini файл
-            string[] commands = { "InterfaceLanguage", "TranslatedFile", "LastRecordNumber", "SourceLanguage", "TranslationLanguage" };
-            string[] IL = { "en","ru"}; // возможные языки интерфейса
-            string[] SL = { "en","ru"}; string[] TL = { "ru","en"}; //направления перевода
-            string IniFile = Environment.GetCommandLineArgs()[0]; //получаем имя запущенного файла
-            string message="", command="", command_value="";
-           // bool flag_Newfile = true;
-            int cm_start=0; // command_value_start
-            IniFile = IniFile.Substring(0, IniFile.Length - 3); IniFile += "ini";
+            string[] commands = { "InterfaceLanguage", "TranslatedFile", "LastRecordNumber", "SourceLanguage", "TranslationLanguage", "OpenFileHistory" };
+            string[] IL = { "en", "ru" }; // возможные языки интерфейса
+            IniFile = Environment.GetCommandLineArgs()[0]; //получаем имя запущенного файла
+            string message = "", command = "", command_value = "";
+            IniFile = IniFile[0..^3]; IniFile += "ini";
             FileInfo src = new FileInfo(IniFile);
-            if (src == null) return; // ini - файл отсутствует
-            byte[] buf = new byte[1024 * 3]; //Буффер для чтения из файла строки текста
-            long l = src.Length; //размер исходного файла в байтах
-            if (l > 1024) return; //дефективный ini - игнорируем
-            //ЧИТАЕМ ФАЙЛ В БУФЕР
-            using (BinaryReader readerSF = new BinaryReader(File.Open(IniFile, FileMode.Open)))
-            {  //for (long i = 0; i < l; i++) buf[i] = readerSF.ReadByte(); 
-               while((message=readerSF.ReadString())!=null)
+            if (!src.Exists) return; // ini - файл отсутствует
+            //ЧИТАЕМ ФАЙЛ построчно
+            using (StreamReader readerSF = new StreamReader(File.Open(IniFile, FileMode.Open)))
+            {  
+                while ((message = readerSF.ReadLine()) != null)
                 {
-                    for (int i = 0; i < message.Length; i++) 
+                    for (int i = 0; i < message.Length; i++)
                     {
                         if (message[i] == '=')
                         {
-                            command = message.Substring(0, i - 1);
-                            cm_start = i + 1;
-                        }
-                        else if(message[i] == 0xa && message[i-1]==0xd) //конец строки
-                        {
-                            command_value = message.Substring(cm_start,i-2-cm_start);
-                            foreach(var item in commands)
+                            command = message.Substring(0, i);
+                            //Убираем все пробелы
+                            command = Regex.Replace(command, @"\s", ""); //удаляем пробелы
+                            command = Regex.Replace(command, @"\t", ""); // удаляем табуляцию
+
+                            command_value = message.Substring(i+1, message.Length-i-1);
+                            command_value = Regex.Replace(command_value, @"\t", "");// удаляем табуляцию
+                            foreach (var item in commands) //проверяем, команда ли это?
                             {
                                 if (item == command) //есть поддерживаемая команда INI !
-                                {   
+                                {
                                     FileInfo src1;
                                     switch (command)
-                                    {   
+                                    {
                                         case "InterfaceLanguage":
+                                            command_value = Regex.Replace(command_value, @"\s", "");
+                                            command_value = command_value.ToLower();
                                             foreach (var item1 in IL)
-                                                if(item1==command_value.ToLower())InterfaceLanguage=command_value;
+                                                if (item1 == command_value) InterfaceLanguage = command_value;
                                             break;
-                                        case "TranslatedFile":
-                                            if((src1 = new FileInfo(command_value))!=null)TranslatedFile=command_value;
+                                        case "TranslatedFile": 
+                                            if(command_value != "" && command_value != null)
+                                            if ((src1 = new FileInfo(command_value)) != null)
+                                            { TranslatedFile = command_value; }
                                             break;
                                         case "LastRecordNumber":
-                                            LastRecordNumber=Convert.ToInt64(command_value);
+                                            command_value = Regex.Replace(command_value, @"\s", "");
+                                            LastRecordNumber = Convert.ToInt64(command_value);
                                             break;
                                         case "SourceLanguage":
-                                            foreach (var item1 in SL)
-                                                if (item1 == command_value.ToLower()) languageEn = command_value;
+                                            command_value = Regex.Replace(command_value, @"\s", "");
+                                            command_value = command_value.ToLower();
+                                            foreach (var item1 in GoogleLangs.Values)
+                                                if (item1 == command_value) languageEn = command_value;
+                                            comboBox1.SelectedValue = languageEn;
+                                            foreach (var item1 in GoogleLangs.Keys)
+                                                if (GoogleLangs[item1] == languageEn) 
+                                                {  comboBox1.Text = GoogleLangs[item1]; break; }
                                             break;
                                         case "TranslationLanguage":
-                                            foreach (var item1 in TL)
-                                                if (item1 == command_value.ToLower()) languageRu = command_value;
+                                            command_value = Regex.Replace(command_value, @"\s", "");
+                                            command_value = command_value.ToLower();
+                                            foreach (var item1 in GoogleLangs.Values)
+                                                if (item1 == command_value) languageRu = command_value;
+                                            comboBox2.SelectedValue = languageRu;
+                                            foreach (var item1 in GoogleLangs.Keys)
+                                                if (GoogleLangs[item1] == languageRu)
+                                                { comboBox2.Text = GoogleLangs[item1]; break; }
                                             break;
+                                            /*   case "OpenFileHistory": // делим строку на параметры по запятой
+                                                   var result = new Regex(@"^.").Matches(command_value);
+                                                   foreach (Match item1 in result)
+                                                   {
+                                                       //Console.WriteLine(item1);
+                                                   }
+                                                   break;*/
                                     }
-                                   break;
+                                    break;
                                 }
-
-
                             }
-                            
+                            break;
                         }
-
                     }
-                }
+                }//читаем следующую строку
+            }//закрываем файл
+             //Ищем названия параметров
+            //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
+
+            if (TranslatedFile != "" && TranslatedFile !=null) { flag_Skipdialog = true; OpenTranslatedFile(); }
+            if (LastRecordNumber!=1)
+            { 
+                nudRecord.Value = LastRecordNumber; 
+                nudRecord_ValueChanged(null,null); 
             }
-            //Ищем названия параметров
-         /*   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
-            for (int i = 0; i < l; i++)
+            if (comboBox1.Text == null) comboBox1.Text = "en";
+            if (comboBox1.Text == null) comboBox1.Text = "ru";
+        }
+
+        private void Save_INI()
+        {
+            /*string[] commands = { "InterfaceLanguage", "TranslatedFile", "LastRecordNumber", "SourceLanguage", "TranslationLanguage", "OpenFileHistory" };
+            string[] IL = { "en", "ru" }; // возможные языки интерфейса
+            string[] SL = { "en", "ru" }; string[] TL = { "ru", "en" }; //направления перевода
+            string message = "", command = "", command_value = "";*/
+            //записываем файл Ini заново, поверх старого
+            using (StreamWriter writer = new StreamWriter(File.Open(IniFile, FileMode.Create)))
             {
-                if (message[i] == '=')
+                writer.WriteLine("[Last session Section]");
+                writer.WriteLine("InterfaceLanguage="+ InterfaceLanguage);
+                writer.WriteLine("SourceLanguage=" + languageEn);
+                writer.WriteLine("TranslationLanguage=" + languageRu);
+                writer.WriteLine("LastRecordNumber=" + Convert.ToString(nudRecord.Value));
+                writer.WriteLine("TranslatedFile=" + TranslatedFile);
+                writer.WriteLine("[History Section - don't change anything below this line !]");
+                //далее нужно сохранять ранее считанный список истории linkedListHS
+         /*       if (linkedListHS.curr != null) // список есть, выгружаем
                 {
-                    command = message.Substring(pointer1, i - pointer2);
-                    switch (command)
+                    foreach (var item in linkedListHS)
                     {
-                       // case "InterfaceLanguage": InterfaceLanguage=;
-                       //     break;
+                        if (item == null) break;
+                        writer.WriteLine(item);
                     }
-
-                }
-            }*/
-
-
-
+                }*/
+            }
+        }
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+           
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
@@ -583,11 +645,9 @@ namespace Rusik
                         if (i >= percent) // проверяем нужно ли двигать прогресс бар на 1%
                         {
                             if (progressBar1.Value < 100) { progressBar1.Value++; }
-                            percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + " %";
+                            percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%";
                         }
                     }
-                    progressBar1.Value = 0;
-                    progressBar1_lb.Text = "";
                     nudRecord.Maximum = linkedListSF.Count;
                     nudRecord.Minimum = 1;
 
@@ -609,17 +669,17 @@ namespace Rusik
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
             if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++; }
             //проверим, если TextBox изменился - сохраним его
-            //linkedListOF.SetCurrent(linkedListSF.Twin);
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
+                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
 
             byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
             Source_tb.Text = Encoding.UTF8.GetString(bytes);
             bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
             Translated_tb.Text = Encoding.UTF8.GetString(bytes);
             // выводим сообщения о количестве символов в записях исходника и перевода
-            lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
-            lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
+            //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
+            lbSource.Text = Convert.ToString(Source_tb.Text.Length);
+            Translated_tb_KeyUp(null, null);
             nudRecord.ReadOnly = false;
         }
         private void Prev_btn_Click(object sender, EventArgs e)
@@ -630,15 +690,16 @@ namespace Rusik
             //проверим, если TextBox изменился - сохраним его
             //linkedListOF.SetCurrent(linkedListSF.Twin);
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
+                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
 
             byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
             Source_tb.Text = Encoding.UTF8.GetString(bytes);
             bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
             Translated_tb.Text = Encoding.UTF8.GetString(bytes);
             // выводим сообщения о количестве символов в записях исходника и перевода
-            lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
-            lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
+            //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
+            Translated_tb_KeyUp(null, null);
+            lbSource.Text = Convert.ToString(Source_tb.Text.Length);
             nudRecord.ReadOnly = false;
         }
         private void nudRecord_ValueChanged(object sender, EventArgs e)
@@ -647,7 +708,7 @@ namespace Rusik
             long counter = (long)nudRecord.Value;
             //проверим, если TextBox изменился - сохраним его
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); NotSavedYet = true; }
+                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
             foreach (var item in linkedListSF)
             {
                 counter--;
@@ -659,8 +720,9 @@ namespace Rusik
                     bytes = Encoding.Default.GetBytes(linkedListOF.curr.Data);
                     Translated_tb.Text = Encoding.UTF8.GetString(bytes);
                     // выводим сообщения о количестве символов в записях исходника и перевода
-                    lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
-                    lbSource.Text = "Source Message: " + Convert.ToString(Source_tb.Text.Length) + " symbols";
+                    //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
+                    Translated_tb_KeyUp(null, null);
+                    lbSource.Text = Convert.ToString(Source_tb.Text.Length);
                     break;
                 }
             }
@@ -684,7 +746,7 @@ namespace Rusik
             // а иначе нужно открыть новую вкладку, и переключить обзор функций Next Prev на новый список
             // и вывести из него первый элемент.
             //добавление вкладки
-            TabPage newTabPage = new TabPage();
+            TabPage newTabPage = new();
             int len = str.Length < 50 ? str.Length : 50;
             newTabPage.Text = str.Substring(0,len);
             Source_tc.TabPages.Add(newTabPage);
@@ -705,7 +767,7 @@ namespace Rusik
         private void CloseFilesClear_Click(object sender, EventArgs e)
         {
             Quit_tsmi_Click(null,null); //сохраним работу в файл
-            nudRecord.ReadOnly = true; 
+            nudRecord.ReadOnly = true; // устанавливаем номер записи в 1
             nudRecord.Value = 1; 
             Records_lb.Text = "Found: 0 records";
             
@@ -714,24 +776,27 @@ namespace Rusik
 
             Source_tb.Text = ""; Source_tb.ReadOnly = true;
             Translated_tb.Text = ""; Translated_tb.ReadOnly = true;
-            lbSource.Text = "Source Message: 0 symbols"; 
-            lbTranslated.Text = "Translated Message: 0 symbols";
+            lbSource.Text = ""; 
+            lbTranslated.Text = "";
             Offset_tb.Text = ""; Offset_tb.ReadOnly = true;
             Signature_tb.Text = "";Signature_tb.ReadOnly = true;
             SearchSource_tb.Text = ""; SearchTranslated_tb.Text = "";
             SearchSource_tb.ReadOnly = true; SearchTranslated_tb.ReadOnly = true;
-            NotSavedYet = false;
+            flag_NotSavedYet = false; // флаг -сохранение не требуется
+            flag_Skipdialog = false; //по-умолчанию - не пропускать диалоги
+            progressBar1.Value = 0; progressBar1_lb.Text = "%";
         }
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
 
+
         private void Translate_btn_Click(object sender, EventArgs e)
         {
             if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n"+Translate_Google(Source_tb.Text);
             // выводим сообщения о количестве символов в переводe
-            lbTranslated.Text = "Translated Message: " + Convert.ToString(Translated_tb.Text.Length) + " symbols";
+            Translated_tb_KeyUp(null,null);
         }
         private string Translate_Google(string source)
         { 
@@ -749,7 +814,7 @@ namespace Rusik
             // Parse json data
             return Parse_Google_JSON(response);
         }
-        private string Parse_Google_JSON(string str)
+        private string Parse_Google_JSON(string str) //распарсиваем ответ Google в JSON
         {
             int openbr = 0; //счетчик скобок []
             int openbrTR = 0; // номер скобы перед переводом
@@ -778,13 +843,47 @@ namespace Rusik
                 }
                 if (str[i] == '\"' && str[i + 1] == ',' && ( i + 1 ) < len) 
                 { 
-                    result += str.Substring(startST,i-1-startST);
+                    result += str[startST..(i - 1)];
                     //result += "\n";
                     flag_sent = true;
                 }
             }
             return ("\n"+result);
         }
+
+        private void Translated_tb_KeyUp(object sender, KeyEventArgs e)
+        {
+            int Translated_tb_len = Translated_tb.Text.Length;
+            int Source_lb_len = Source_tb.Text.Length;
+
+            if(Translated_tb_len>Source_lb_len) lbTranslated.ForeColor = Color.DarkRed;
+            else lbTranslated.ForeColor = Color.Black;
+            lbTranslated.Text = Convert.ToString(Translated_tb_len);
+            //проверим, если TextBox изменился - сохраним его в списке
+            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
+                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            languageRu =(string)comboBox1.SelectedValue;
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            languageRu = (string)comboBox2.SelectedValue;
+        }
+        private void Source_tb_MouseClick(object sender, MouseEventArgs e)
+        {
+            Source_tb.ReadOnly = false; // временно разблокируем текст исходного сообщения для редактирования
+        }        
+        private void Source_tb_TextChanged(object sender, EventArgs e)
+        {
+            Source_tb.ReadOnly = true; // блокировку текст исходного сообщения от редактирования
+        }
+
+
     }
 
     public class DoublyNode <T>
@@ -985,3 +1084,4 @@ namespace Rusik
     }
 
 }
+

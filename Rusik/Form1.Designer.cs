@@ -32,61 +32,89 @@ namespace Rusik
             this.Prev_btn = new System.Windows.Forms.Button();
             this.Next_btn = new System.Windows.Forms.Button();
             this.nudRecord = new System.Windows.Forms.NumericUpDown();
-            this.lbTranslated = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.File_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenTranslatedFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeFilesClearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CloseFilesClear_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.Quit_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.About_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            this.Translate_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            this.SourceLanguage_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            this.TranslationLanguage_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             this.Offset_tb = new System.Windows.Forms.TextBox();
             this.Offset_lb = new System.Windows.Forms.Label();
-            this.Offset_hp = new System.Windows.Forms.HelpProvider();
             this.Records_lb = new System.Windows.Forms.Label();
             this.Translate_btn = new System.Windows.Forms.Button();
-            this.Translated_tb = new System.Windows.Forms.TextBox();
-            this.SourceFile_lb = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SearchTranslated_tb = new System.Windows.Forms.TextBox();
             this.SearchTranslated_btn = new System.Windows.Forms.Button();
             this.SearchSource_btn = new System.Windows.Forms.Button();
             this.SearchSource_tb = new System.Windows.Forms.TextBox();
-            this.OutputFile_lb = new System.Windows.Forms.Label();
-            this.SourceFile_tb = new System.Windows.Forms.TextBox();
             this.Signature_lb = new System.Windows.Forms.Label();
             this.Signature_tb = new System.Windows.Forms.TextBox();
-            this.TranslatedFile_tb = new System.Windows.Forms.TextBox();
             this.Start_btn = new System.Windows.Forms.Button();
             this.progressBar1_lb = new System.Windows.Forms.Label();
             this.Source_tc = new System.Windows.Forms.TabControl();
-            this.Source_tab = new System.Windows.Forms.TabPage();
+            this.HomeSource = new System.Windows.Forms.TabPage();
             this.Source_tb = new System.Windows.Forms.TextBox();
-            this.lbSource = new System.Windows.Forms.Label();
+            this.statusStrip2 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbSource = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip4 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SourceFile_tb = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SourceFile_lb = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Translated_tb = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
+            this.Translate_tc = new System.Windows.Forms.TabControl();
+            this.TranslatedHome = new System.Windows.Forms.TabPage();
+            this.statusStrip3 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TranslatedFile_tb = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.Source_tc.SuspendLayout();
-            this.Source_tab.SuspendLayout();
+            this.HomeSource.SuspendLayout();
+            this.statusStrip2.SuspendLayout();
+            this.statusStrip4.SuspendLayout();
+            this.Translate_tc.SuspendLayout();
+            this.TranslatedHome.SuspendLayout();
+            this.statusStrip3.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Prev_btn
             // 
             this.Prev_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.Prev_btn.Location = new System.Drawing.Point(422, 631);
+            this.Prev_btn.Font = new System.Drawing.Font("Segoe UI Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Prev_btn.Location = new System.Drawing.Point(500, 609);
             this.Prev_btn.Name = "Prev_btn";
-            this.Prev_btn.Size = new System.Drawing.Size(75, 23);
+            this.Prev_btn.Size = new System.Drawing.Size(75, 56);
             this.Prev_btn.TabIndex = 3;
-            this.Prev_btn.Text = "Previous";
+            this.Prev_btn.Text = "Prev";
             this.Prev_btn.UseVisualStyleBackColor = false;
             this.Prev_btn.Click += new System.EventHandler(this.Prev_btn_Click);
             // 
             // Next_btn
             // 
             this.Next_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.Next_btn.Location = new System.Drawing.Point(511, 631);
+            this.Next_btn.Font = new System.Drawing.Font("Segoe UI Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Next_btn.Location = new System.Drawing.Point(581, 609);
             this.Next_btn.Name = "Next_btn";
-            this.Next_btn.Size = new System.Drawing.Size(75, 23);
+            this.Next_btn.Size = new System.Drawing.Size(75, 56);
             this.Next_btn.TabIndex = 4;
             this.Next_btn.Text = "Next";
             this.Next_btn.UseVisualStyleBackColor = false;
@@ -94,7 +122,7 @@ namespace Rusik
             // 
             // nudRecord
             // 
-            this.nudRecord.Location = new System.Drawing.Point(592, 631);
+            this.nudRecord.Location = new System.Drawing.Point(677, 611);
             this.nudRecord.Minimum = new decimal(new int[] {
             1,
             0,
@@ -111,20 +139,12 @@ namespace Rusik
             0});
             this.nudRecord.ValueChanged += new System.EventHandler(this.nudRecord_ValueChanged);
             // 
-            // lbTranslated
-            // 
-            this.lbTranslated.AutoSize = true;
-            this.lbTranslated.Location = new System.Drawing.Point(511, 606);
-            this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(170, 15);
-            this.lbTranslated.TabIndex = 10;
-            this.lbTranslated.Text = "Translated Message: 0 symbols";
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.File_tsmi,
-            this.About_tsmi});
+            this.About_tsmi,
+            this.Translate_tsmi});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1008, 24);
@@ -136,7 +156,7 @@ namespace Rusik
             this.File_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenFile_tsmi,
             this.OpenTranslatedFile_tsmi,
-            this.closeFilesClearToolStripMenuItem,
+            this.CloseFilesClear_tsmi,
             this.SaveFile_tsmi,
             this.Quit_tsmi});
             this.File_tsmi.Name = "File_tsmi";
@@ -157,12 +177,12 @@ namespace Rusik
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
-            // closeFilesClearToolStripMenuItem
+            // CloseFilesClear_tsmi
             // 
-            this.closeFilesClearToolStripMenuItem.Name = "closeFilesClearToolStripMenuItem";
-            this.closeFilesClearToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.closeFilesClearToolStripMenuItem.Text = "Close Files/Clear";
-            this.closeFilesClearToolStripMenuItem.Click += new System.EventHandler(this.CloseFilesClear_Click);
+            this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
+            this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
@@ -185,9 +205,30 @@ namespace Rusik
             this.About_tsmi.Text = "About";
             this.About_tsmi.Click += new System.EventHandler(this.About_tsmi_Click);
             // 
+            // Translate_tsmi
+            // 
+            this.Translate_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SourceLanguage_tsmi,
+            this.TranslationLanguage_tsmi});
+            this.Translate_tsmi.Name = "Translate_tsmi";
+            this.Translate_tsmi.Size = new System.Drawing.Size(67, 20);
+            this.Translate_tsmi.Text = "Translate";
+            // 
+            // SourceLanguage_tsmi
+            // 
+            this.SourceLanguage_tsmi.Name = "SourceLanguage_tsmi";
+            this.SourceLanguage_tsmi.Size = new System.Drawing.Size(188, 22);
+            this.SourceLanguage_tsmi.Text = "Source Language";
+            // 
+            // TranslationLanguage_tsmi
+            // 
+            this.TranslationLanguage_tsmi.Name = "TranslationLanguage_tsmi";
+            this.TranslationLanguage_tsmi.Size = new System.Drawing.Size(188, 22);
+            this.TranslationLanguage_tsmi.Text = "Translation Language";
+            // 
             // Offset_tb
             // 
-            this.Offset_tb.Location = new System.Drawing.Point(66, 662);
+            this.Offset_tb.Location = new System.Drawing.Point(65, 609);
             this.Offset_tb.Name = "Offset_tb";
             this.Offset_tb.PlaceholderText = "HEX number";
             this.Offset_tb.ReadOnly = true;
@@ -197,7 +238,7 @@ namespace Rusik
             // Offset_lb
             // 
             this.Offset_lb.AutoSize = true;
-            this.Offset_lb.Location = new System.Drawing.Point(12, 667);
+            this.Offset_lb.Location = new System.Drawing.Point(11, 614);
             this.Offset_lb.Name = "Offset_lb";
             this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
@@ -206,7 +247,7 @@ namespace Rusik
             // Records_lb
             // 
             this.Records_lb.AutoSize = true;
-            this.Records_lb.Location = new System.Drawing.Point(651, 635);
+            this.Records_lb.Location = new System.Drawing.Point(740, 614);
             this.Records_lb.Name = "Records_lb";
             this.Records_lb.Size = new System.Drawing.Size(95, 15);
             this.Records_lb.TabIndex = 14;
@@ -215,45 +256,26 @@ namespace Rusik
             // Translate_btn
             // 
             this.Translate_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.Translate_btn.Location = new System.Drawing.Point(777, 631);
+            this.Translate_btn.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Translate_btn.Location = new System.Drawing.Point(922, 609);
             this.Translate_btn.Name = "Translate_btn";
-            this.Translate_btn.Size = new System.Drawing.Size(75, 23);
+            this.Translate_btn.Size = new System.Drawing.Size(75, 56);
             this.Translate_btn.TabIndex = 15;
             this.Translate_btn.Text = "Translate";
             this.Translate_btn.UseVisualStyleBackColor = false;
             this.Translate_btn.Click += new System.EventHandler(this.Translate_btn_Click);
             // 
-            // Translated_tb
-            // 
-            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Translated_tb.Location = new System.Drawing.Point(495, 0);
-            this.Translated_tb.Multiline = true;
-            this.Translated_tb.Name = "Translated_tb";
-            this.Translated_tb.ReadOnly = true;
-            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Translated_tb.Size = new System.Drawing.Size(481, 522);
-            this.Translated_tb.TabIndex = 17;
-            // 
-            // SourceFile_lb
-            // 
-            this.SourceFile_lb.AutoSize = true;
-            this.SourceFile_lb.Location = new System.Drawing.Point(15, 28);
-            this.SourceFile_lb.Name = "SourceFile_lb";
-            this.SourceFile_lb.Size = new System.Drawing.Size(67, 15);
-            this.SourceFile_lb.TabIndex = 18;
-            this.SourceFile_lb.Text = "Binary File: ";
-            // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(651, 660);
+            this.progressBar1.Location = new System.Drawing.Point(11, 708);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(345, 26);
+            this.progressBar1.Size = new System.Drawing.Size(930, 22);
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 19;
             // 
             // SearchTranslated_tb
             // 
-            this.SearchTranslated_tb.Location = new System.Drawing.Point(511, 694);
+            this.SearchTranslated_tb.Location = new System.Drawing.Point(511, 676);
             this.SearchTranslated_tb.Name = "SearchTranslated_tb";
             this.SearchTranslated_tb.PlaceholderText = "Some text for searching ...";
             this.SearchTranslated_tb.ReadOnly = true;
@@ -262,7 +284,7 @@ namespace Rusik
             // 
             // SearchTranslated_btn
             // 
-            this.SearchTranslated_btn.Location = new System.Drawing.Point(939, 694);
+            this.SearchTranslated_btn.Location = new System.Drawing.Point(940, 676);
             this.SearchTranslated_btn.Name = "SearchTranslated_btn";
             this.SearchTranslated_btn.Size = new System.Drawing.Size(57, 23);
             this.SearchTranslated_btn.TabIndex = 21;
@@ -272,7 +294,7 @@ namespace Rusik
             // 
             // SearchSource_btn
             // 
-            this.SearchSource_btn.Location = new System.Drawing.Point(422, 694);
+            this.SearchSource_btn.Location = new System.Drawing.Point(421, 677);
             this.SearchSource_btn.Name = "SearchSource_btn";
             this.SearchSource_btn.Size = new System.Drawing.Size(75, 23);
             this.SearchSource_btn.TabIndex = 23;
@@ -282,35 +304,17 @@ namespace Rusik
             // 
             // SearchSource_tb
             // 
-            this.SearchSource_tb.Location = new System.Drawing.Point(12, 694);
+            this.SearchSource_tb.Location = new System.Drawing.Point(11, 677);
             this.SearchSource_tb.Name = "SearchSource_tb";
             this.SearchSource_tb.PlaceholderText = "Some text for searching ...";
             this.SearchSource_tb.ReadOnly = true;
             this.SearchSource_tb.Size = new System.Drawing.Size(411, 23);
             this.SearchSource_tb.TabIndex = 22;
             // 
-            // OutputFile_lb
-            // 
-            this.OutputFile_lb.AutoSize = true;
-            this.OutputFile_lb.Location = new System.Drawing.Point(511, 28);
-            this.OutputFile_lb.Name = "OutputFile_lb";
-            this.OutputFile_lb.Size = new System.Drawing.Size(114, 15);
-            this.OutputFile_lb.TabIndex = 24;
-            this.OutputFile_lb.Text = "Translated Text File: ";
-            // 
-            // SourceFile_tb
-            // 
-            this.SourceFile_tb.Location = new System.Drawing.Point(88, 24);
-            this.SourceFile_tb.Name = "SourceFile_tb";
-            this.SourceFile_tb.ReadOnly = true;
-            this.SourceFile_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.SourceFile_tb.Size = new System.Drawing.Size(409, 23);
-            this.SourceFile_tb.TabIndex = 25;
-            // 
             // Signature_lb
             // 
             this.Signature_lb.AutoSize = true;
-            this.Signature_lb.Location = new System.Drawing.Point(187, 667);
+            this.Signature_lb.Location = new System.Drawing.Point(11, 645);
             this.Signature_lb.Name = "Signature_lb";
             this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
@@ -318,26 +322,19 @@ namespace Rusik
             // 
             // Signature_tb
             // 
-            this.Signature_tb.Location = new System.Drawing.Point(261, 662);
+            this.Signature_tb.Location = new System.Drawing.Point(85, 640);
             this.Signature_tb.Name = "Signature_tb";
             this.Signature_tb.PlaceholderText = "HEX number";
             this.Signature_tb.ReadOnly = true;
             this.Signature_tb.Size = new System.Drawing.Size(162, 23);
             this.Signature_tb.TabIndex = 27;
             // 
-            // TranslatedFile_tb
-            // 
-            this.TranslatedFile_tb.Location = new System.Drawing.Point(628, 24);
-            this.TranslatedFile_tb.Name = "TranslatedFile_tb";
-            this.TranslatedFile_tb.ReadOnly = true;
-            this.TranslatedFile_tb.Size = new System.Drawing.Size(364, 23);
-            this.TranslatedFile_tb.TabIndex = 28;
-            // 
             // Start_btn
             // 
             this.Start_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.Start_btn.DialogResult = System.Windows.Forms.DialogResult.Retry;
             this.Start_btn.Font = new System.Drawing.Font("Segoe UI Black", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.Start_btn.Location = new System.Drawing.Point(422, 662);
+            this.Start_btn.Location = new System.Drawing.Point(246, 640);
             this.Start_btn.Name = "Start_btn";
             this.Start_btn.Size = new System.Drawing.Size(164, 23);
             this.Start_btn.TabIndex = 29;
@@ -348,93 +345,331 @@ namespace Rusik
             // 
             // progressBar1_lb
             // 
+            this.progressBar1_lb.AccessibleRole = System.Windows.Forms.AccessibleRole.ProgressBar;
+            this.progressBar1_lb.BackColor = System.Drawing.Color.Transparent;
+            this.progressBar1_lb.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.progressBar1_lb.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.progressBar1_lb.Location = new System.Drawing.Point(605, 666);
+            this.progressBar1_lb.Location = new System.Drawing.Point(947, 710);
             this.progressBar1_lb.Name = "progressBar1_lb";
-            this.progressBar1_lb.Size = new System.Drawing.Size(40, 15);
+            this.progressBar1_lb.Size = new System.Drawing.Size(46, 20);
             this.progressBar1_lb.TabIndex = 30;
             // 
             // Source_tc
             // 
-            this.Source_tc.Controls.Add(this.Source_tab);
-            this.Source_tc.Location = new System.Drawing.Point(12, 53);
+            this.Source_tc.Controls.Add(this.HomeSource);
+            this.Source_tc.Location = new System.Drawing.Point(11, 39);
             this.Source_tc.Name = "Source_tc";
             this.Source_tc.SelectedIndex = 0;
-            this.Source_tc.Size = new System.Drawing.Size(984, 550);
+            this.Source_tc.Size = new System.Drawing.Size(486, 565);
             this.Source_tc.TabIndex = 31;
             // 
-            // Source_tab
+            // HomeSource
             // 
-            this.Source_tab.Controls.Add(this.Source_tb);
-            this.Source_tab.Controls.Add(this.Translated_tb);
-            this.Source_tab.Location = new System.Drawing.Point(4, 24);
-            this.Source_tab.Name = "Source_tab";
-            this.Source_tab.Padding = new System.Windows.Forms.Padding(3);
-            this.Source_tab.Size = new System.Drawing.Size(976, 522);
-            this.Source_tab.TabIndex = 0;
-            this.Source_tab.Text = "All";
-            this.Source_tab.UseVisualStyleBackColor = true;
+            this.HomeSource.BackColor = System.Drawing.SystemColors.Control;
+            this.HomeSource.Controls.Add(this.Source_tb);
+            this.HomeSource.Controls.Add(this.statusStrip2);
+            this.HomeSource.Controls.Add(this.statusStrip4);
+            this.HomeSource.Location = new System.Drawing.Point(4, 24);
+            this.HomeSource.Name = "HomeSource";
+            this.HomeSource.Size = new System.Drawing.Size(478, 537);
+            this.HomeSource.TabIndex = 0;
+            this.HomeSource.Text = "Home";
             // 
             // Source_tb
             // 
+            this.Source_tb.AllowDrop = true;
+            this.Source_tb.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.Source_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Source_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Source_tb.Location = new System.Drawing.Point(-3, 0);
+            this.Source_tb.Location = new System.Drawing.Point(0, 25);
             this.Source_tb.Multiline = true;
             this.Source_tb.Name = "Source_tb";
             this.Source_tb.ReadOnly = true;
             this.Source_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Source_tb.Size = new System.Drawing.Size(484, 522);
-            this.Source_tb.TabIndex = 18;
+            this.Source_tb.Size = new System.Drawing.Size(472, 485);
+            this.Source_tb.TabIndex = 36;
+            this.Source_tb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Source_tb_MouseClick);
+            this.Source_tb.LocationChanged += new System.EventHandler(this.Source_tb_TextChanged);
+            // 
+            // statusStrip2
+            // 
+            this.statusStrip2.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel2,
+            this.lbSource});
+            this.statusStrip2.Location = new System.Drawing.Point(0, 515);
+            this.statusStrip2.Name = "statusStrip2";
+            this.statusStrip2.Size = new System.Drawing.Size(478, 22);
+            this.statusStrip2.TabIndex = 19;
+            this.statusStrip2.Text = "statusStrip2";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(142, 17);
+            this.toolStripStatusLabel2.Text = "Source message symbols:";
             // 
             // lbSource
             // 
-            this.lbSource.AutoSize = true;
-            this.lbSource.Location = new System.Drawing.Point(16, 606);
             this.lbSource.Name = "lbSource";
-            this.lbSource.Size = new System.Drawing.Size(151, 15);
-            this.lbSource.TabIndex = 9;
-            this.lbSource.Text = "Source message: 0 symbols";
+            this.lbSource.Size = new System.Drawing.Size(0, 17);
+            // 
+            // statusStrip4
+            // 
+            this.statusStrip4.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.statusStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel4,
+            this.SourceFile_tb,
+            this.SourceFile_lb});
+            this.statusStrip4.Location = new System.Drawing.Point(0, 0);
+            this.statusStrip4.Name = "statusStrip4";
+            this.statusStrip4.Size = new System.Drawing.Size(478, 22);
+            this.statusStrip4.TabIndex = 20;
+            this.statusStrip4.Text = "statusStrip4";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(67, 17);
+            this.toolStripStatusLabel4.Text = "Source File:";
+            // 
+            // SourceFile_tb
+            // 
+            this.SourceFile_tb.Name = "SourceFile_tb";
+            this.SourceFile_tb.Size = new System.Drawing.Size(0, 17);
+            // 
+            // SourceFile_lb
+            // 
+            this.SourceFile_lb.Name = "SourceFile_lb";
+            this.SourceFile_lb.Size = new System.Drawing.Size(0, 17);
+            // 
+            // Translated_tb
+            // 
+            this.Translated_tb.AllowDrop = true;
+            this.Translated_tb.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.Translated_tb.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.Translated_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Translated_tb.Location = new System.Drawing.Point(3, 27);
+            this.Translated_tb.Multiline = true;
+            this.Translated_tb.Name = "Translated_tb";
+            this.Translated_tb.ReadOnly = true;
+            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.Translated_tb.Size = new System.Drawing.Size(483, 485);
+            this.Translated_tb.TabIndex = 37;
+            this.Translated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "{ \"Afrikaans\",\"af\"},{ \"Albanian\",\"sq\"},{ \"Arabic\",\"ar\"},{ \"Armenian\",\"hy\"},{ \"Aze" +
+                "rbaijani\",\"az\"},{ \"Basque\",\"eu\"},{ \"Belarusian\",\"be\"},",
+            "{ \"Bulgarian\",\"bg\"},{ \"Catalan\",\"ca\"},{ \"Chinese(Simplified)\",\"zh-CN\"},{ \"Chinese" +
+                "(Traditional)\",\"zh-TW\"},{ \"Croatian\",\"hr\"},",
+            "{ \"Czech\",\"cs\"},{ \"Danish\",\"da\"},{ \"Dutch\",\"nl\"},{ \"English\",\"en\"},{ \"Estonian\",\"" +
+                "et\"},{ \"Filipino\",\"tl\"},{ \"Finnish\",\"fi\"},",
+            "{ \"French\",\"fr\"},{ \"Galician\",\"gl\"},{ \"Georgian\",\"ka\"},{ \"German\",\"de\"},{ \"Greek\"" +
+                ",\"el\"},{ \"Haitian\",\"ht\"},{ \"Hebrew\",\"iw\"},",
+            "{ \"Hindi\",\"hi\"},{ \"Hungarian\",\"hu\"},{ \"Icelandic\",\"is\"},{ \"Indonesian\",\"id\"},{ \"I" +
+                "rish\", \"ga\"},{ \"Italian\",\"it\"},{ \"Japanese\",\"ja\"},",
+            "{ \"Korean\",\"ko\"},{ \"Latvian\",\"lv\"},{ \"Lithuanian\",\"lt\"},{ \"Macedonian\",\"mk\"},{ \"M" +
+                "alay\",\"ms\"},{ \"Maltese\",\"mt\"},{ \"Norwegian\",\"no\"},",
+            "{ \"Persian\",\"fa\"},{ \"Polish\",\"pl\"},{ \"Portuguese\",\"pt\"},{ \"Romanian\",\"ro\"},{ \"Rus" +
+                "sian\",\"ru\"},{ \"Serbian\",\"sr\"},{ \"Slovak\",\"sk\"},",
+            "{ \"Slovenian\",\"sl\"},{ \"Spanish\",\"es\"},{ \"Swahili\",\"sw\"},{ \"Swedish\",\"sv\"},{ \"Thai" +
+                "\",\"th\"},{ \"Turkish\",\"tr\"},{ \"Ukrainian\",\"uk\"},",
+            "{ \"Urdu\",\"ur\"},{ \"Vietnamese\",\"vi\"},{ \"Welsh\",\"cy\"},{ \"Yiddish\",\"yi\"} "});
+            this.comboBox1.Location = new System.Drawing.Point(740, 642);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(73, 23);
+            this.comboBox1.TabIndex = 32;
+            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(839, 642);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(73, 23);
+            this.comboBox2.TabIndex = 33;
+            this.comboBox2.SelectionChangeCommitted += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // BottomToolStripPanel
+            // 
+            this.BottomToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.BottomToolStripPanel.Name = "BottomToolStripPanel";
+            this.BottomToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.BottomToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.BottomToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // TopToolStripPanel
+            // 
+            this.TopToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.TopToolStripPanel.Name = "TopToolStripPanel";
+            this.TopToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.TopToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.TopToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // RightToolStripPanel
+            // 
+            this.RightToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.RightToolStripPanel.Name = "RightToolStripPanel";
+            this.RightToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.RightToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.RightToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // LeftToolStripPanel
+            // 
+            this.LeftToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.LeftToolStripPanel.Name = "LeftToolStripPanel";
+            this.LeftToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.LeftToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.LeftToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // ContentPanel
+            // 
+            this.ContentPanel.Size = new System.Drawing.Size(150, 130);
+            // 
+            // Translate_tc
+            // 
+            this.Translate_tc.Controls.Add(this.TranslatedHome);
+            this.Translate_tc.Location = new System.Drawing.Point(500, 36);
+            this.Translate_tc.Name = "Translate_tc";
+            this.Translate_tc.SelectedIndex = 0;
+            this.Translate_tc.Size = new System.Drawing.Size(497, 568);
+            this.Translate_tc.TabIndex = 34;
+            // 
+            // TranslatedHome
+            // 
+            this.TranslatedHome.Controls.Add(this.statusStrip3);
+            this.TranslatedHome.Controls.Add(this.Translated_tb);
+            this.TranslatedHome.Controls.Add(this.statusStrip1);
+            this.TranslatedHome.Location = new System.Drawing.Point(4, 24);
+            this.TranslatedHome.Name = "TranslatedHome";
+            this.TranslatedHome.Padding = new System.Windows.Forms.Padding(3);
+            this.TranslatedHome.Size = new System.Drawing.Size(489, 540);
+            this.TranslatedHome.TabIndex = 0;
+            this.TranslatedHome.Text = "Home";
+            // 
+            // statusStrip3
+            // 
+            this.statusStrip3.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.statusStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel3,
+            this.TranslatedFile_tb});
+            this.statusStrip3.Location = new System.Drawing.Point(3, 3);
+            this.statusStrip3.Name = "statusStrip3";
+            this.statusStrip3.Size = new System.Drawing.Size(483, 22);
+            this.statusStrip3.TabIndex = 38;
+            this.statusStrip3.Text = "statusStrip3";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(86, 17);
+            this.toolStripStatusLabel3.Text = "Translated File:";
+            // 
+            // TranslatedFile_tb
+            // 
+            this.TranslatedFile_tb.Name = "TranslatedFile_tb";
+            this.TranslatedFile_tb.Size = new System.Drawing.Size(0, 17);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.lbTranslated});
+            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.statusStrip1.Location = new System.Drawing.Point(3, 517);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(483, 20);
+            this.statusStrip1.TabIndex = 0;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
+            this.toolStripStatusLabel1.Text = "Translated message symbols:";
+            // 
+            // lbTranslated
+            // 
+            this.lbTranslated.Name = "lbTranslated";
+            this.lbTranslated.Size = new System.Drawing.Size(0, 0);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Wingdings 3", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(813, 646);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(28, 13);
+            this.label1.TabIndex = 35;
+            this.label1.Text = "->";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(677, 640);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 30);
+            this.label2.TabIndex = 36;
+            this.label2.Text = "Direction\r\ntranslator";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.Translate_tc);
             this.Controls.Add(this.progressBar1_lb);
-            this.Controls.Add(this.Source_tc);
+            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.Start_btn);
-            this.Controls.Add(this.TranslatedFile_tb);
             this.Controls.Add(this.Signature_tb);
             this.Controls.Add(this.Signature_lb);
-            this.Controls.Add(this.SourceFile_tb);
-            this.Controls.Add(this.OutputFile_lb);
             this.Controls.Add(this.SearchSource_btn);
             this.Controls.Add(this.SearchSource_tb);
             this.Controls.Add(this.SearchTranslated_btn);
             this.Controls.Add(this.SearchTranslated_tb);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.SourceFile_lb);
             this.Controls.Add(this.Translate_btn);
             this.Controls.Add(this.Records_lb);
             this.Controls.Add(this.Offset_lb);
             this.Controls.Add(this.Offset_tb);
-            this.Controls.Add(this.lbTranslated);
-            this.Controls.Add(this.lbSource);
             this.Controls.Add(this.nudRecord);
             this.Controls.Add(this.Next_btn);
             this.Controls.Add(this.Prev_btn);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.Source_tc);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Binary Files Text Translator";
+            this.Text = "Help Custom Translator";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.Source_tc.ResumeLayout(false);
-            this.Source_tab.ResumeLayout(false);
-            this.Source_tab.PerformLayout();
+            this.HomeSource.ResumeLayout(false);
+            this.HomeSource.PerformLayout();
+            this.statusStrip2.ResumeLayout(false);
+            this.statusStrip2.PerformLayout();
+            this.statusStrip4.ResumeLayout(false);
+            this.statusStrip4.PerformLayout();
+            this.Translate_tc.ResumeLayout(false);
+            this.TranslatedHome.ResumeLayout(false);
+            this.TranslatedHome.PerformLayout();
+            this.statusStrip3.ResumeLayout(false);
+            this.statusStrip3.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -444,7 +679,6 @@ namespace Rusik
         private System.Windows.Forms.Button Prev_btn;
         private System.Windows.Forms.Button Next_btn;
         private System.Windows.Forms.NumericUpDown nudRecord;
-        private System.Windows.Forms.Label lbTranslated;
        /// private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem File_tsmi;
@@ -454,29 +688,50 @@ namespace Rusik
         private System.Windows.Forms.ToolStripMenuItem About_tsmi;
         private System.Windows.Forms.TextBox Offset_tb;
         private System.Windows.Forms.Label Offset_lb;
-        private System.Windows.Forms.HelpProvider Offset_hp;
         private System.Windows.Forms.Label Records_lb;
         private System.Windows.Forms.Button Translate_btn;
-        private System.Windows.Forms.TextBox Translated_tb;
-        private System.Windows.Forms.Label SourceFile_lb;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TextBox SearchTranslated_tb;
         private System.Windows.Forms.Button SearchTranslated_btn;
         private System.Windows.Forms.Button SearchSource_btn;
         private System.Windows.Forms.TextBox SearchSource_tb;
-        private System.Windows.Forms.Label OutputFile_lb;
-        private System.Windows.Forms.TextBox SourceFile_tb;
         private System.Windows.Forms.Label Signature_lb;
         private System.Windows.Forms.TextBox Signature_tb;
-        private System.Windows.Forms.TextBox TranslatedFile_tb;
         private System.Windows.Forms.Button Start_btn;
         private System.Windows.Forms.Label progressBar1_lb;
         private System.Windows.Forms.TabControl Source_tc;
-        private System.Windows.Forms.TabPage Source_tab;
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.ToolStripMenuItem OpenTranslatedFile_tsmi;
-        private System.Windows.Forms.ToolStripMenuItem closeFilesClearToolStripMenuItem;
-        private System.Windows.Forms.Label lbSource;
+        private System.Windows.Forms.ToolStripMenuItem CloseFilesClear_tsmi;
+        private System.Windows.Forms.ToolStripMenuItem Translate_tsmi;
+        private System.Windows.Forms.ToolStripMenuItem SourceLanguage_tsmi;
+        private System.Windows.Forms.ToolStripMenuItem TranslationLanguage_tsmi;
+        private System.Windows.Forms.TextBox Translated_tb;
+        private System.Windows.Forms.StatusStrip statusStrip2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel lbSource;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TabPage HomeSource;
+        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
+        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
+        private System.Windows.Forms.TabControl Translate_tc;
+        private System.Windows.Forms.TabPage TranslatedHome;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.StatusStrip statusStrip4;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel SourceFile_tb;
+        private System.Windows.Forms.StatusStrip statusStrip3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel TranslatedFile_tb;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
+        private System.Windows.Forms.ToolStripStatusLabel SourceFile_lb;
+        private System.Windows.Forms.Label label2;
     }
 }
 
