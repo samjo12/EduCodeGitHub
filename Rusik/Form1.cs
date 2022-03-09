@@ -77,10 +77,10 @@ namespace Rusik
             //bgWorker.Dispose();
         }
 
-        private void StartBackgroundWork()
+      /*  private void StartBackgroundWork()
         {
             //timer1.Enabled = true; bgWorker.RunWorkerAsync();
-        }
+        }*/
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -108,10 +108,10 @@ namespace Rusik
                         MessageBoxOptions.DefaultDesktopOnly);
                         if (result == DialogResult.No) return; // пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
-                /*linkedListOF.Clear();
-                linkedListOS.Clear();
+                linkedListOF.Clear();
+                linkedListTS.Clear();
                 linkedListSF.Clear();
-                linkedListSS.Clear();*/
+                linkedListSS.Clear();
             }
             Save_INI();
 
@@ -186,8 +186,8 @@ namespace Rusik
             //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
             Offset_tb.ReadOnly = false; // textbox Offset
             Signature_tb.ReadOnly = false; // texbox Signature
-            SearchSource_tb.ReadOnly = false;
-            SearchTranslated_tb.ReadOnly = false;
+            SearchSource_tstb.ReadOnly = false;
+            SearchTranslated_tstb.ReadOnly = false;
             Start_btn.Visible = true;
         }
 
@@ -221,7 +221,7 @@ namespace Rusik
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
 
 
-                TranslatedFile_tb.Text = TranslatedFile;
+                
                // StartBackgroundWork();
 
                 for (long i = 0; i < l; i++)
@@ -353,8 +353,9 @@ namespace Rusik
                     nudRecord.ReadOnly = false;
                     Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
                     // разблокируем строки поиска
-                    SearchSource_tb.ReadOnly = false;
-                    SearchTranslated_tb.ReadOnly = false;
+                    SearchSource_tstb.ReadOnly = false;
+                    SearchTranslated_tstb.ReadOnly = false;
+                    TranslatedFile_tb.Text = TranslatedFile;
                 }
             }
         }
@@ -436,11 +437,10 @@ namespace Rusik
             IniFile = Environment.GetCommandLineArgs()[0]; //получаем имя запущенного файла
             string message = "", command = "", command_value = "";
             IniFile = IniFile[0..^3]; IniFile += "ini";
-            FileInfo src = new FileInfo(IniFile);
-            FileInfo src1=null;
-            if (!src.Exists) return; // ini - файл отсутствует
+
+            if (!File.Exists(IniFile)) return; // ini - файл отсутствует
             //ЧИТАЕМ ФАЙЛ построчно
-            using (StreamReader readerSF = new StreamReader(File.Open(IniFile, FileMode.Open)))
+            using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
             {  
                 while ((message = readerSF.ReadLine()) != null)
                 {
@@ -469,7 +469,7 @@ namespace Rusik
                                             break;
                                         case "TranslatedFile":
                                             if (command_value != "" && command_value != null)
-                                                if ((src1 = new FileInfo(command_value)) != null)
+                                                if (File.Exists(command_value))
                                                 { TranslatedFile = command_value; }
                                                 else LastRecordNumber = 1;
                                             break;
@@ -515,7 +515,7 @@ namespace Rusik
             }//закрываем файл
              //Ищем названия параметров
              //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
-            if (src1 == null) LastRecordNumber = 1;
+            if (TranslatedFile=="" || TranslatedFile==null) LastRecordNumber = 1;
             if (TranslatedFile != "" && TranslatedFile !=null) { flag_Skipdialog = true; OpenTranslatedFile(); }
             if (LastRecordNumber!=1)
             { 
@@ -670,6 +670,7 @@ namespace Rusik
             }
         }
 
+
         private void Next_btn_Click(object sender, EventArgs e)
         {
             nudRecord.ReadOnly = true;
@@ -742,8 +743,8 @@ namespace Rusik
         public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
         public int currentTabS = 0; // номер текущей вкладки в окне с Source
         public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
-            string str = SearchSource_tb.Text; //строка поиска
-            if (SearchSource_tb.Text.Length == 0) return; //пустая строка поиска
+            string str = SearchSource_tstb.Text; //строка поиска
+            if (SearchSource_tstb.Text.Length == 0) return; //пустая строка поиска
             
             if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
             //Начинаем поиск подстроки по всем элементам списка linkListSF
@@ -775,7 +776,33 @@ namespace Rusik
   
 
         }
+        private void Search_Next_btn_Click(object sender, EventArgs e)
+        {
 
+        }
+        private void Source_Delete_btn_Click(object sender, EventArgs e)
+        { long num;
+            string data = (string)linkedListSF.CurrentData;
+            DialogResult result = MessageBox.Show(
+                                "Do you really wants delete message:" +
+                                "\n"+data +"?",
+                                "Please attention !",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question,
+                                MessageBoxDefaultButton.Button1,
+                                MessageBoxOptions.DefaultDesktopOnly);
+            if (result == DialogResult.No) { return; }// перевод не меняем
+            else
+            {
+                linkedListSF.Remove(linkedListSF.curr); //удаляем текущий элемент
+                linkedListOF.Remove(linkedListOF.curr); //удаляем текущий элемент
+                nudRecord.ReadOnly = true;
+                num=linkedListSF.GetNumCurrentPosition();
+                if (num != 0) nudRecord.Value = num;
+                nudRecord.ReadOnly = false;
+                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+            }
+        }
         private void SearchTranslated_btn_Click(object sender, EventArgs e)
         {
             //создаем новый TAB
@@ -791,7 +818,7 @@ namespace Rusik
             Records_lb.Text = "Found: 0 records";
             
             TranslatedFile_tb.Text = ""; TranslatedFile = "";
-            SourceFile_lb.Text = ""; SourceFile = "";
+            SourceFile_tb.Text = ""; SourceFile = "";
 
             Source_tb.Text = ""; Source_tb.ReadOnly = true;
             Translated_tb.Text = ""; Translated_tb.ReadOnly = true;
@@ -799,8 +826,8 @@ namespace Rusik
             lbTranslated.Text = "";
             Offset_tb.Text = ""; Offset_tb.ReadOnly = true;
             Signature_tb.Text = "";Signature_tb.ReadOnly = true;
-            SearchSource_tb.Text = ""; SearchTranslated_tb.Text = "";
-            SearchSource_tb.ReadOnly = true; SearchTranslated_tb.ReadOnly = true;
+            SearchSource_tstb.Text = ""; SearchTranslated_tstb.Text = "";
+            SearchSource_tstb.ReadOnly = true; SearchTranslated_tstb.ReadOnly = true;
             flag_NotSavedYet = false; // флаг -сохранение не требуется
             flag_Skipdialog = false; //по-умолчанию - не пропускать диалоги
             progressBar1.Value = 0; progressBar1_lb.Text = "%";
@@ -901,8 +928,6 @@ namespace Rusik
         {
             Source_tb.ReadOnly = true; // блокировку текст исходного сообщения от редактирования
         }
-
-
     }
 
     public class DoublyNode <T>
@@ -953,8 +978,23 @@ namespace Rusik
             count++;
             node.Fileposition = Fileposition;
         }
-        // удаление
-        public bool Remove(T data)
+        // удаление по ссылке на элемент
+        public void Remove(DoublyNode<T> item) //УДАЛИТЬ текущий элемент списка
+        {
+            if (item == null) return; //нечего удалять
+            if (item == curr) // если удаляемый элемент текущий, выбираем подходящий элемент
+            {   // если узел не последний
+                if (item.Next != null) { curr = item.Next; item.Next.Previous = item.Previous; }
+                else { tail = item.Previous; }
+                // если узел не первый
+                if (item.Previous != null) { curr = item.Previous; item.Previous.Next = item.Next; }
+                else { head = item.Next; }
+                count--;
+            }
+            return;
+        }
+        
+        public bool RemoveData(T data)// удаление элемента с поиском по строке
         {
             DoublyNode<T> current = head;
 
@@ -1028,6 +1068,20 @@ namespace Rusik
         {
             if (curr == null) return;
             curr =(DoublyNode<T>)current;
+        }
+
+        public long GetNumCurrentPosition() 
+        {
+            DoublyNode<T> item=head;
+            long num=0,num1=0; //
+            if (item == null) return 0; //список пуст
+            while(item!=null)
+            {
+                item = item.Next; num1++;
+                if (item == curr) break;
+            }
+            if (item == null) return 0;
+            return num;
         }
 
         public void Clear()
