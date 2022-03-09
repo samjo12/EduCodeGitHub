@@ -166,35 +166,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -211,19 +211,19 @@ namespace Rusik
             this.SourceLanguage_tsmi,
             this.TranslationLanguage_tsmi});
             this.Translate_tsmi.Name = "Translate_tsmi";
-            this.Translate_tsmi.Size = new System.Drawing.Size(67, 20);
+            this.Translate_tsmi.Size = new System.Drawing.Size(65, 20);
             this.Translate_tsmi.Text = "Translate";
             // 
             // SourceLanguage_tsmi
             // 
             this.SourceLanguage_tsmi.Name = "SourceLanguage_tsmi";
-            this.SourceLanguage_tsmi.Size = new System.Drawing.Size(188, 22);
+            this.SourceLanguage_tsmi.Size = new System.Drawing.Size(186, 22);
             this.SourceLanguage_tsmi.Text = "Source Language";
             // 
             // TranslationLanguage_tsmi
             // 
             this.TranslationLanguage_tsmi.Name = "TranslationLanguage_tsmi";
-            this.TranslationLanguage_tsmi.Size = new System.Drawing.Size(188, 22);
+            this.TranslationLanguage_tsmi.Size = new System.Drawing.Size(186, 22);
             this.TranslationLanguage_tsmi.Text = "Translation Language";
             // 
             // Offset_tb
@@ -240,7 +240,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(11, 614);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -316,7 +316,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(11, 645);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -346,7 +346,7 @@ namespace Rusik
             // progressBar1_lb
             // 
             this.progressBar1_lb.AccessibleRole = System.Windows.Forms.AccessibleRole.ProgressBar;
-            this.progressBar1_lb.BackColor = System.Drawing.Color.Transparent;
+            this.progressBar1_lb.BackColor = System.Drawing.SystemColors.Control;
             this.progressBar1_lb.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.progressBar1_lb.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.progressBar1_lb.Location = new System.Drawing.Point(947, 710);
@@ -569,7 +569,7 @@ namespace Rusik
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(86, 17);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(84, 17);
             this.toolStripStatusLabel3.Text = "Translated File:";
             // 
             // TranslatedFile_tb
@@ -593,7 +593,7 @@ namespace Rusik
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
             this.toolStripStatusLabel1.Text = "Translated message symbols:";
             // 
             // lbTranslated

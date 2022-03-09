@@ -22,6 +22,11 @@ namespace Rusik
     {
         static readonly int MaxBytesMessage = 7000; // Максимальный размер сообщения в байтах
         public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
+        public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
+        public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
+        public int currentTabS = 0; // номер текущей вкладки в окне с Source
+        public int currentTabT = 0; // номер текущей вкладки в окне с Translated
+
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
         public string SourceFile=""; // бинарный файл
         public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
@@ -30,7 +35,8 @@ namespace Rusik
         public DoublyLinkedList<string> linkedListSF = new(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new(); // связный список для выходного файла
         public DoublyLinkedList<string> linkedListSS = new(); // связный список для поиска по исходому тексту
-        public DoublyLinkedList<string> linkedListOS = new(); // связный список для поиска по переводу
+        public DoublyLinkedList<string> linkedListTS = new(); // связный список для поиска по переводу
+
         public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
         public bool flag_NotSavedYet = false;
         public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
@@ -431,6 +437,7 @@ namespace Rusik
             string message = "", command = "", command_value = "";
             IniFile = IniFile[0..^3]; IniFile += "ini";
             FileInfo src = new FileInfo(IniFile);
+            FileInfo src1=null;
             if (!src.Exists) return; // ini - файл отсутствует
             //ЧИТАЕМ ФАЙЛ построчно
             using (StreamReader readerSF = new StreamReader(File.Open(IniFile, FileMode.Open)))
@@ -452,7 +459,6 @@ namespace Rusik
                             {
                                 if (item == command) //есть поддерживаемая команда INI !
                                 {
-                                    FileInfo src1;
                                     switch (command)
                                     {
                                         case "InterfaceLanguage":
@@ -461,10 +467,11 @@ namespace Rusik
                                             foreach (var item1 in IL)
                                                 if (item1 == command_value) InterfaceLanguage = command_value;
                                             break;
-                                        case "TranslatedFile": 
-                                            if(command_value != "" && command_value != null)
-                                            if ((src1 = new FileInfo(command_value)) != null)
-                                            { TranslatedFile = command_value; }
+                                        case "TranslatedFile":
+                                            if (command_value != "" && command_value != null)
+                                                if ((src1 = new FileInfo(command_value)) != null)
+                                                { TranslatedFile = command_value; }
+                                                else LastRecordNumber = 1;
                                             break;
                                         case "LastRecordNumber":
                                             command_value = Regex.Replace(command_value, @"\s", "");
@@ -507,8 +514,8 @@ namespace Rusik
                 }//читаем следующую строку
             }//закрываем файл
              //Ищем названия параметров
-            //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
-
+             //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
+            if (src1 == null) LastRecordNumber = 1;
             if (TranslatedFile != "" && TranslatedFile !=null) { flag_Skipdialog = true; OpenTranslatedFile(); }
             if (LastRecordNumber!=1)
             { 
@@ -729,8 +736,14 @@ namespace Rusik
         }
         private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
-            string str = SearchSource_tb.Text; 
-            if (SearchSource_tb.Text.Length == 0) return; // не задана строка поиска
+            /*        
+        public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
+        public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
+        public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
+        public int currentTabS = 0; // номер текущей вкладки в окне с Source
+        public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
+            string str = SearchSource_tb.Text; //строка поиска
+            if (SearchSource_tb.Text.Length == 0) return; //пустая строка поиска
             
             if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
             //Начинаем поиск подстроки по всем элементам списка linkListSF
@@ -742,18 +755,24 @@ namespace Rusik
                     linkedListSS.Add(item, 0);
                 }
             }
-            if (linkedListSS.Count == 0) return;
+            if (linkedListSS.Count == 0) return; //ничего не найдено
+           // если вкладка не создавалась - то создадим
+
+            TabPage newTabPage = new();
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0, len);
+            Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
+            Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
+            
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
+            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            /// нужны свои кнопки next prev    
+             
+          
             // а иначе нужно открыть новую вкладку, и переключить обзор функций Next Prev на новый список
             // и вывести из него первый элемент.
             //добавление вкладки
-            TabPage newTabPage = new();
-            int len = str.Length < 50 ? str.Length : 50;
-            newTabPage.Text = str.Substring(0,len);
-            Source_tc.TabPages.Add(newTabPage);
-            Source_tc.SelectedTab=newTabPage;
-
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb);
-            this.Source_tc.SelectedTab.Controls.Add(this.Translated_tb);
+  
 
         }
 
