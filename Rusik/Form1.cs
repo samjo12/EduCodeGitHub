@@ -750,8 +750,13 @@ namespace Rusik
             //Начинаем поиск подстроки по всем элементам списка linkListSF
             foreach (var item in linkedListSF)
             {
-                if (item.Contains(str)) linkedListSS.Add(item, 0);// Вхождения найдены
+                if (item.Contains(str))// Вхождения найдены
+                {
+                    linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
+                    linkedListSS.SetTwin(linkedListSF.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                }
             }
+            foreach (var item in linkedListSS) break; // ставим curr на head
             if (linkedListSS.Count == 0) return; //ничего не найдено
            
             // вот что-то найдено, если вкладка не создавалась - то создадим
@@ -766,9 +771,9 @@ namespace Rusik
             this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
             this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
             //обновляем визуальную информацию
-            SearchStat_tslb.Text = "1 of " + linkedListSS.Count;
-            Source_tb.Text = linkedListSS.curr.Data;
-            Translated_tb.Text = linkedListSS.curr.Twin.Data;
+            SearchStat_tslb.Text = "1 of " + Convert.ToString(linkedListSS.Count);
+            Source_tb.Text = linkedListSS.Twin.Data;
+            Translated_tb.Text = linkedListSS.Twin.Twin.Data;
             /// нужны свои кнопки next prev    
 
 
@@ -1049,13 +1054,13 @@ namespace Rusik
         public DoublyNode<T> Twin { get { return curr.Twin; } }
 
         public bool IsEmpty { get { return count == 0; } }
-        public object CurrentData { get { return curr.Data; } }
-        public object Curr { get { return curr; } }
-        public object DataFrom (DoublyNode<T> Node)
+        public object CurrentData { get { return curr.Data; } } //возвращает данные из текущего элемента списка
+        public object Curr { get { return curr; } } //возвращает указатель на текущий элемент списка
+        public object DataFrom (DoublyNode<T> Node) ////возвращает данные из произвольного элемента списка
         {
             if (Node != null) return Node.Data; else return null;
         }
-        public object TwinFrom(DoublyNode<T> Node)
+        public object TwinFrom(DoublyNode<T> Node) //возвращает указатель на Twin произвольного элемента списка
         {
             if (Node != null) return Node.Twin; else return null;
         }
