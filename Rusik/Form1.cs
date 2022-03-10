@@ -738,26 +738,23 @@ namespace Rusik
         private void SearchSource_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
             /*        
-        public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
-        public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
-        public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
-        public int currentTabS = 0; // номер текущей вкладки в окне с Source
-        public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
+            public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
+            public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
+            public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
+            public int currentTabS = 0; // номер текущей вкладки в окне с Source
+            public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
             string str = SearchSource_tstb.Text; //строка поиска
-            if (SearchSource_tstb.Text.Length == 0) return; //пустая строка поиска
+            if (SearchSource_tstb.Text.Length == 0) return; //пустая строка поиска 
             
             if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
             //Начинаем поиск подстроки по всем элементам списка linkListSF
             foreach (var item in linkedListSF)
             {
-                if (item.Contains(str))
-                {
-                    // Вхождения найдены
-                    linkedListSS.Add(item, 0);
-                }
+                if (item.Contains(str)) linkedListSS.Add(item, 0);// Вхождения найдены
             }
             if (linkedListSS.Count == 0) return; //ничего не найдено
-           // если вкладка не создавалась - то создадим
+           
+            // вот что-то найдено, если вкладка не создавалась - то создадим
 
             TabPage newTabPage = new();
             int len = str.Length < 50 ? str.Length : 50;
@@ -767,21 +764,27 @@ namespace Rusik
             
             this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
             this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
+            //обновляем визуальную информацию
+            SearchStat_tslb.Text = "1 of " + linkedListSS.Count;
+            Source_tb.Text = linkedListSS.curr.Data;
+            Translated_tb.Text = linkedListSS.curr.Twin.Data;
             /// нужны свои кнопки next prev    
-             
-          
+
+
             // а иначе нужно открыть новую вкладку, и переключить обзор функций Next Prev на новый список
             // и вывести из него первый элемент.
             //добавление вкладки
-  
+
 
         }
         private void Search_Next_btn_Click(object sender, EventArgs e)
         {
 
         }
-        private void Source_Delete_btn_Click(object sender, EventArgs e)
-        { long num;
+        private void Delete_btn_Click(object sender, EventArgs e)
+        { 
+            long num;
             string data = (string)linkedListSF.CurrentData;
             DialogResult result = MessageBox.Show(
                                 "Do you really wants delete message:" +
@@ -800,7 +803,11 @@ namespace Rusik
                 num=linkedListSF.GetNumCurrentPosition();
                 if (num != 0) nudRecord.Value = num;
                 nudRecord.ReadOnly = false;
+                //обновляем визуальную информацию
                 Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                Source_tb.Text = linkedListSF.curr.Data;
+                Translated_tb.Text = linkedListOF.curr.Data;
+                flag_NotSavedYet = true;
             }
         }
         private void SearchTranslated_btn_Click(object sender, EventArgs e)
@@ -985,9 +992,9 @@ namespace Rusik
             if (item == curr) // если удаляемый элемент текущий, выбираем подходящий элемент
             {   // если узел не последний
                 if (item.Next != null) { curr = item.Next; item.Next.Previous = item.Previous; }
-                else { tail = item.Previous; }
+                else { tail = item.Previous; curr = item.Previous; }
                 // если узел не первый
-                if (item.Previous != null) { curr = item.Previous; item.Previous.Next = item.Next; }
+                if (item.Previous != null) {  item.Previous.Next = item.Next; }
                 else { head = item.Next; }
                 count--;
             }
