@@ -1167,6 +1167,50 @@ namespace Rusik
             return current.Data;
         }
     }
+    /*
+     SearchTabs newSearchTab = new();
+        newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
+     
+     
+     */
+    public class SearchTabs
+    {
+        TabPage newTabPage = new();
+        DoublyLinkedList <string> linkedListSS = new(); //создфдим список с результатами поиска
+
+        DoublyLinkedList<string> linkedListSF { get;  set; } //получим ссылку на список SF
+        string str { get; set; } //получим строку поиска
+        SearchTabs()
+        {
+              //Начинаем поиск подстроки по всем элементам списка linkListSF
+            foreach (var item in linkedListSF)
+            {
+                if (item.Contains(str))// Вхождения найдены
+                {
+                    linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
+                    linkedListSS.SetTwin(linkedListSF.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                }
+            }
+            foreach (var item in linkedListSS) break; // ставим curr на head
+            if (linkedListSS.Count == 0) return; //ничего не найдено
+
+            // вот что-то найдено, если вкладка не создавалась - то создадим
+
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0, 6);
+            Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
+            Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
+
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
+            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
+            //обновляем визуальную информацию
+            SearchStat_tslb.Text = "1 of " + Convert.ToString(linkedListSS.Count);
+            Source_tb.Text = linkedListSS.Twin.Data;
+            Translated_tb.Text = linkedListSS.Twin.Twin.Data;
+        }
+
+    }
 
 }
 
