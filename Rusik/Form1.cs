@@ -353,6 +353,7 @@ namespace Rusik
                     foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
                     nudRecord.Value = 1;
                     nudRecord.ReadOnly = false;
+                    lbSource.Text = Convert.ToString(Source_tb.Text.Length); // указываем кол-во символов в исходном сообщении
                     Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
                     // разблокируем строки поиска
                     SearchSource_tstb.ReadOnly = false;
@@ -773,9 +774,12 @@ namespace Rusik
             Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
             Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
             
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
+           // this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
             this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
             this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
+            this.Source_tc.SelectedTab.Controls.Add(newSource_tb);
+            this.Source_tc.SelectedTab.Controls.Add(newTranslated_tb);
+
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(linkedListSS.Count);
             Source_tb.Text = linkedListSS.Twin.Data;
@@ -1173,9 +1177,9 @@ namespace Rusik
             return current.Data;
         }
     }
-    /*
-     SearchTabs newSearchTab = new();
-        newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
+    
+    // SearchTabs newSearchTab = new();
+    //    newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
      
      
      
@@ -1200,13 +1204,22 @@ namespace Rusik
             foreach (var item in linkedListSS) break; // ставим curr на head
             if (linkedListSS.Count == 0) return; //ничего не найдено
         }
-        public DoublyLinkedList<string> Next()
+        public object Next()
         {
-            if (linkedListSS.curr.Next == null) { linkedListSS.curr = linkedListSS.curr.Next; return linkedListSS}
-            return;
+            if (linkedListSS.curr.Next != null) { linkedListSS.curr = linkedListSS.curr.Next; return linkedListSS.curr.Twin; }
+            else { return null; }
+        }
+        public object Prev()
+        {
+            if (linkedListSS.curr.Previous != null) { linkedListSS.curr = linkedListSS.curr.Previous; return linkedListSS.curr.Twin; }
+            else { return null; }
+        }
+        public void RefreshTextbox()
+        { 
+            
         }
 
-    }*/
+    }
 
 }
 
