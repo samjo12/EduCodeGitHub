@@ -57,6 +57,8 @@ namespace Rusik
 { "Persian","fa"},{ "Polish","pl"},{ "Portuguese","pt"},{ "Romanian","ro"},{ "Russian","ru"},{ "Serbian","sr"},{ "Slovak","sk"},
 { "Slovenian","sl"},{ "Spanish","es"},{ "Swahili","sw"},{ "Swedish","sv"},{ "Thai","th"},{ "Turkish","tr"},{ "Ukrainian","uk"},
 { "Urdu","ur"},{ "Vietnamese","vi"},{ "Welsh","cy"},{ "Yiddish","yi"} };
+        public TabControl Source_tc1;
+
         public Form1()
         {
             InitializeComponent();
@@ -744,6 +746,8 @@ namespace Rusik
             public int currentTabS = 0; // номер текущей вкладки в окне с Source
             public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
             string str = SearchSource_tstb.Text; //строка поиска
+
+
             if (SearchSource_tstb.Text.Length == 0) return; //пустая строка поиска 
             
             if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
@@ -762,6 +766,8 @@ namespace Rusik
             // вот что-то найдено, если вкладка не создавалась - то создадим
 
             TabPage newTabPage = new();
+            TextBox newSource_tb = new();
+            TextBox newTranslated_tb = new();
             int len = str.Length < 50 ? str.Length : 50;
             newTabPage.Text = str.Substring(0, len);
             Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
@@ -1172,7 +1178,7 @@ namespace Rusik
         newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
      
      
-     */
+     
     public class SearchTabs
     {
         TabPage newTabPage = new();
@@ -1193,24 +1199,14 @@ namespace Rusik
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
             if (linkedListSS.Count == 0) return; //ничего не найдено
-
-            // вот что-то найдено, если вкладка не создавалась - то создадим
-
-            int len = str.Length < 50 ? str.Length : 50;
-            newTabPage.Text = str.Substring(0, 6);
-            Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
-            Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
-
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
-            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
-            //обновляем визуальную информацию
-            SearchStat_tslb.Text = "1 of " + Convert.ToString(linkedListSS.Count);
-            Source_tb.Text = linkedListSS.Twin.Data;
-            Translated_tb.Text = linkedListSS.Twin.Twin.Data;
+        }
+        public DoublyLinkedList<string> Next()
+        {
+            if (linkedListSS.curr.Next == null) { linkedListSS.curr = linkedListSS.curr.Next; return linkedListSS}
+            return;
         }
 
-    }
+    }*/
 
 }
 

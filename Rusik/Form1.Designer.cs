@@ -353,6 +353,7 @@ namespace Rusik
             // 
             // SearchSource_tstb
             // 
+            this.SearchSource_tstb.AcceptsReturn = true;
             this.SearchSource_tstb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SearchSource_tstb.Name = "SearchSource_tstb";
             this.SearchSource_tstb.ReadOnly = true;
@@ -586,6 +587,7 @@ namespace Rusik
             // 
             // SearchTranslated_tstb
             // 
+            this.SearchTranslated_tstb.AcceptsReturn = true;
             this.SearchTranslated_tstb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SearchTranslated_tstb.Name = "SearchTranslated_tstb";
             this.SearchTranslated_tstb.ReadOnly = true;
