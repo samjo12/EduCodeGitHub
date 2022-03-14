@@ -73,7 +73,7 @@ namespace Rusik
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
-            this.Translate_tc = new System.Windows.Forms.TabControl();
+            this.Translated_tc = new System.Windows.Forms.TabControl();
             this.TranslatedHome = new System.Windows.Forms.TabPage();
             this.Translated_ts = new System.Windows.Forms.ToolStrip();
             this.SearchTranslated_tstb = new System.Windows.Forms.ToolStripTextBox();
@@ -98,7 +98,7 @@ namespace Rusik
             this.HomeSource.SuspendLayout();
             this.Source_ts.SuspendLayout();
             this.statusStrip2.SuspendLayout();
-            this.Translate_tc.SuspendLayout();
+            this.Translated_tc.SuspendLayout();
             this.TranslatedHome.SuspendLayout();
             this.Translated_ts.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -313,6 +313,7 @@ namespace Rusik
             this.Source_tc.SelectedIndex = 0;
             this.Source_tc.Size = new System.Drawing.Size(486, 565);
             this.Source_tc.TabIndex = 31;
+            this.Source_tc.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.Source_tc_Selecting);
             // 
             // HomeSource
             // 
@@ -546,14 +547,14 @@ namespace Rusik
             // 
             this.ContentPanel.Size = new System.Drawing.Size(150, 130);
             // 
-            // Translate_tc
+            // Translated_tc
             // 
-            this.Translate_tc.Controls.Add(this.TranslatedHome);
-            this.Translate_tc.Location = new System.Drawing.Point(500, 36);
-            this.Translate_tc.Name = "Translate_tc";
-            this.Translate_tc.SelectedIndex = 0;
-            this.Translate_tc.Size = new System.Drawing.Size(497, 568);
-            this.Translate_tc.TabIndex = 34;
+            this.Translated_tc.Controls.Add(this.TranslatedHome);
+            this.Translated_tc.Location = new System.Drawing.Point(500, 36);
+            this.Translated_tc.Name = "Translated_tc";
+            this.Translated_tc.SelectedIndex = 0;
+            this.Translated_tc.Size = new System.Drawing.Size(497, 568);
+            this.Translated_tc.TabIndex = 34;
             // 
             // TranslatedHome
             // 
@@ -734,7 +735,7 @@ namespace Rusik
             this.Controls.Add(this.SourceFile_tb);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.Translate_tc);
+            this.Controls.Add(this.Translated_tc);
             this.Controls.Add(this.progressBar1_lb);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.comboBox1);
@@ -766,7 +767,7 @@ namespace Rusik
             this.Source_ts.PerformLayout();
             this.statusStrip2.ResumeLayout(false);
             this.statusStrip2.PerformLayout();
-            this.Translate_tc.ResumeLayout(false);
+            this.Translated_tc.ResumeLayout(false);
             this.TranslatedHome.ResumeLayout(false);
             this.TranslatedHome.PerformLayout();
             this.Translated_ts.ResumeLayout(false);
@@ -814,7 +815,7 @@ namespace Rusik
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
         private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
-        private System.Windows.Forms.TabControl Translate_tc;
+        private System.Windows.Forms.TabControl Translated_tc;
         private System.Windows.Forms.TabPage TranslatedHome;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.StatusStrip statusStrip1;

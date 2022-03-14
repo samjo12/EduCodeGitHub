@@ -747,13 +747,13 @@ namespace Rusik
             public int currentTabS = 0; // номер текущей вкладки в окне с Source
             public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
             string str = SearchSource_tstb.Text; //строка поиска
-
+            SearchTabs newSearch = new();
 
             if (SearchSource_tstb.Text.Length == 0) return; //пустая строка поиска 
-            
+
             if (linkedListSS.Count != 0) linkedListSS.Clear(); //очищаем список если был ранее создан
             //Начинаем поиск подстроки по всем элементам списка linkListSF
-            foreach (var item in linkedListSF)
+     /*       foreach (var item in linkedListSF)
             {
                 if (item.Contains(str))// Вхождения найдены
                 {
@@ -762,35 +762,64 @@ namespace Rusik
                 }
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
-            if (linkedListSS.Count == 0) return; //ничего не найдено
-           
-            // вот что-то найдено, если вкладка не создавалась - то создадим
+            if (linkedListSS.Count == 0) return; //ничего не найдено*/
 
+            
+
+            currentTabS++;
             TabPage newTabPage = new();
+            Font font = new Font("Segoe UI", 14.03f);//, FontStyle.Bold | FontStyle.Italic | FontStyle.Underline);
             TextBox newSource_tb = new();
+            newSource_tb.Location = new Point(0, 25);
+            newSource_tb.Width = 480; newSource_tb.Height = 485;
+            newSource_tb.Font = font;
+            newSource_tb.Name = "newSource_tb" + Convert.ToString(currentTabS);
+            newSource_tb.Multiline = true;
+            newSource_tb.ScrollBars = ScrollBars.Vertical;
+            this.Controls.Add(newSource_tb);
+
             TextBox newTranslated_tb = new();
+            newTranslated_tb.Location = new Point(507, 61);
+            newTranslated_tb.Width = 485;  newTranslated_tb.Height = 513;
+            newTranslated_tb.Font = font;
+            newTranslated_tb.Name = "newTranslated_tb" + Convert.ToString(currentTabS);
+            newTranslated_tb.Multiline = true;
+            newTranslated_tb.ScrollBars = ScrollBars.Vertical;
+            this.Controls.Add(newTranslated_tb);
+
+
+
             int len = str.Length < 50 ? str.Length : 50;
             newTabPage.Text = str.Substring(0, len);
             Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
             Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
-            
-           // this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
+
+            // this.Source_tc.SelectedTab.Controls.Add(this.Source_tb); // перенесем текстбоксы с исходником и переводом на новую вкладку
             this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
             this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
             this.Source_tc.SelectedTab.Controls.Add(newSource_tb);
-            this.Source_tc.SelectedTab.Controls.Add(newTranslated_tb);
-
+            //this.Translated_tc.SelectedTab.Controls.Add(newTranslated_tb);
+            newTranslated_tb.BringToFront();
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(linkedListSS.Count);
-            Source_tb.Text = linkedListSS.Twin.Data;
-            Translated_tb.Text = linkedListSS.Twin.Twin.Data;
-            /// нужны свои кнопки next prev    
+            /*newSource_tb.Text = linkedListSS.Twin.Data;
+            newTranslated_tb.Text = linkedListSS.Twin.Twin.Data;*/
 
+            newSearch.SetlinkedList(linkedListSF, str); //ищем строку str в списке SF
+            newSearch.RefreshCurrent();
+            Source_tc.SelectedTab.Tag = newSearch;  //сохраним класс поиска
 
-            // а иначе нужно открыть новую вкладку, и переключить обзор функций Next Prev на новый список
-            // и вывести из него первый элемент.
-            //добавление вкладки
-
+        }
+        private void Source_tc_Selecting(object sender, TabControlCancelEventArgs e)
+        {// если выбрана основная вкладка, то вынесем неперед основные текстбоксы
+            //nudRecord_ValueChanged(sender, null);
+            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (Source_tc.SelectedTab == HomeSource) { Source_tb.BringToFront(); Translated_tc.BringToFront(); }
+            else 
+            {// прячем лишние tc 
+                tabSearch.RefreshCurrent();
+            }
+            
 
         }
         private void Search_Next_btn_Click(object sender, EventArgs e)
@@ -858,9 +887,7 @@ namespace Rusik
         {
 
         }
-
-
-        private void Translate_btn_Click(object sender, EventArgs e)
+      private void Translate_btn_Click(object sender, EventArgs e)
         {
             if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n"+Translate_Google(Source_tb.Text);
             // выводим сообщения о количестве символов в переводe
@@ -950,6 +977,8 @@ namespace Rusik
         {
             Source_tb.ReadOnly = true; // блокировку текст исходного сообщения от редактирования
         }
+
+
     }
 
     public class DoublyNode <T>
@@ -1179,20 +1208,23 @@ namespace Rusik
     }
     
     // SearchTabs newSearchTab = new();
-    //    newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
+    // newSearchTab.Text = SearchSource_tstb.Text; //строка поиска
      
      
      
     public class SearchTabs
     {
         TabPage newTabPage = new();
-        DoublyLinkedList <string> linkedListSS = new(); //создфдим список с результатами поиска
+        DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
         DoublyLinkedList<string> linkedListSF { get;  set; } //получим ссылку на список SF
-        string str { get; set; } //получим строку поиска
-        SearchTabs()
+        TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
+        TextBox tabTranslated_tb { get; set; }
+
+        public void SetlinkedList(DoublyLinkedList <string> linkedList, string str)
         {
-              //Начинаем поиск подстроки по всем элементам списка linkListSF
+            linkedListSF = linkedList;              
+            //Начинаем поиск подстроки по всем элементам списка linkListSF
             foreach (var item in linkedListSF)
             {
                 if (item.Contains(str))// Вхождения найдены
@@ -1203,20 +1235,34 @@ namespace Rusik
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
             if (linkedListSS.Count == 0) return; //ничего не найдено
+                                                 // вот что-то найдено, если вкладка не создавалась - то создадим
         }
+        
         public object Next()
         {
-            if (linkedListSS.curr.Next != null) { linkedListSS.curr = linkedListSS.curr.Next; return linkedListSS.curr.Twin; }
+            if (linkedListSS.curr.Next != null) 
+            { 
+                linkedListSS.curr = linkedListSS.curr.Next; 
+                return linkedListSS.curr.Twin; 
+            
+            }
             else { return null; }
         }
         public object Prev()
         {
-            if (linkedListSS.curr.Previous != null) { linkedListSS.curr = linkedListSS.curr.Previous; return linkedListSS.curr.Twin; }
+            if (linkedListSS.curr.Previous != null) 
+            { 
+                linkedListSS.curr = linkedListSS.curr.Previous; 
+                return linkedListSS.curr.Twin; 
+            }
             else { return null; }
         }
-        public void RefreshTextbox()
-        { 
-            
+        public void RefreshCurrent()
+        {
+            tabSource_tb.BringToFront();
+            tabTranslated_tb.BringToFront();
+            tabSource_tb.Text = linkedListSS.curr.Twin.Data;
+            tabTranslated_tb.Text = linkedListSS.curr.Twin.Twin.Data;
         }
 
     }
