@@ -55,6 +55,7 @@ namespace Rusik
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.SearchSource_tstb = new System.Windows.Forms.ToolStripTextBox();
             this.SearchSource_tsb = new System.Windows.Forms.ToolStripButton();
+            this.SourceFirst_tsb = new System.Windows.Forms.ToolStripButton();
             this.SourcePrev_tsb = new System.Windows.Forms.ToolStripButton();
             this.SourceNext_tsb = new System.Windows.Forms.ToolStripButton();
             this.SourceLast_tsb = new System.Windows.Forms.ToolStripButton();
@@ -92,6 +93,7 @@ namespace Rusik
             this.SourceFile_tb = new System.Windows.Forms.Label();
             this.TranslatedFile_tb = new System.Windows.Forms.Label();
             this.Delete_btn = new System.Windows.Forms.Button();
+            this.TranslatedFirst_tsb = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.Source_tc.SuspendLayout();
@@ -173,35 +175,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -226,7 +228,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(15, 678);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -267,7 +269,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(190, 678);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -334,6 +336,7 @@ namespace Rusik
             this.toolStripLabel1,
             this.SearchSource_tstb,
             this.SearchSource_tsb,
+            this.SourceFirst_tsb,
             this.SourcePrev_tsb,
             this.SourceNext_tsb,
             this.SourceLast_tsb,
@@ -372,6 +375,16 @@ namespace Rusik
             this.SearchSource_tsb.ToolTipText = "Go search";
             this.SearchSource_tsb.Click += new System.EventHandler(this.SearchSource_Click);
             // 
+            // SourceFirst_tsb
+            // 
+            this.SourceFirst_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.SourceFirst_tsb.Image = global::Rusik.Properties.Resources.ToFirst;
+            this.SourceFirst_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.SourceFirst_tsb.Name = "SourceFirst_tsb";
+            this.SourceFirst_tsb.Size = new System.Drawing.Size(23, 22);
+            this.SourceFirst_tsb.Text = "First";
+            this.SourceFirst_tsb.Click += new System.EventHandler(this.SourceFirst_tsb_Click);
+            // 
             // SourcePrev_tsb
             // 
             this.SourcePrev_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -380,7 +393,7 @@ namespace Rusik
             this.SourcePrev_tsb.Name = "SourcePrev_tsb";
             this.SourcePrev_tsb.Size = new System.Drawing.Size(23, 22);
             this.SourcePrev_tsb.Text = "Previous";
-
+            this.SourcePrev_tsb.Click += new System.EventHandler(this.Search_Prev_btn_Click);
             // 
             // SourceNext_tsb
             // 
@@ -400,6 +413,7 @@ namespace Rusik
             this.SourceLast_tsb.Name = "SourceLast_tsb";
             this.SourceLast_tsb.Size = new System.Drawing.Size(23, 22);
             this.SourceLast_tsb.Text = "Last";
+            this.SourceLast_tsb.Click += new System.EventHandler(this.SourceLast_tsb_Click);
             // 
             // toolStripSeparator3
             // 
@@ -420,6 +434,7 @@ namespace Rusik
             this.Close.Size = new System.Drawing.Size(23, 22);
             this.Close.Text = "toolStripButton1";
             this.Close.ToolTipText = "Close Search";
+            this.Close.Click += new System.EventHandler(this.SourceClose_tsb_Click);
             // 
             // Source_tb
             // 
@@ -575,6 +590,7 @@ namespace Rusik
             this.Translated_ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SearchTranslated_tstb,
             this.SearchTranslated_tsb,
+            this.TranslatedFirst_tsb,
             this.TranslatedPrev_tsb,
             this.TranslatedNext_tsb,
             this.TranslatedLast_tsb,
@@ -671,7 +687,7 @@ namespace Rusik
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
             this.toolStripStatusLabel1.Text = "Translated message symbols:";
             // 
             // lbTranslated
@@ -725,6 +741,15 @@ namespace Rusik
             this.Delete_btn.TabIndex = 39;
             this.Delete_btn.UseVisualStyleBackColor = true;
             this.Delete_btn.Click += new System.EventHandler(this.Delete_btn_Click);
+            // 
+            // TranslatedFirst_tsb
+            // 
+            this.TranslatedFirst_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.TranslatedFirst_tsb.Image = global::Rusik.Properties.Resources.ToFirst;
+            this.TranslatedFirst_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.TranslatedFirst_tsb.Name = "TranslatedFirst_tsb";
+            this.TranslatedFirst_tsb.Size = new System.Drawing.Size(23, 22);
+            this.TranslatedFirst_tsb.Text = "First";
             // 
             // Form1
             // 
@@ -845,6 +870,8 @@ namespace Rusik
         private System.Windows.Forms.Button Delete_btn;
         private System.Windows.Forms.ToolStripButton Close;
         private System.Windows.Forms.ToolStripButton CloseTS_tsb;
+        private System.Windows.Forms.ToolStripButton SourceFirst_tsb;
+        private System.Windows.Forms.ToolStripButton TranslatedFirst_tsb;
     }
 }
 

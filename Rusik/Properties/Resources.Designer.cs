@@ -123,6 +123,16 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ToFirst {
+            get {
+                object obj = ResourceManager.GetObject("ToFirst", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ToLast {
             get {
                 object obj = ResourceManager.GetObject("ToLast", resourceCulture);
