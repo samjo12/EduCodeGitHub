@@ -795,6 +795,7 @@ namespace Rusik
             newSearch.tabSource_tb = newSource_tb;
 
             TextBox newTranslated_tb = new();
+          
             newTranslated_tb.Location = new Point(507, 61);
             newTranslated_tb.Width = 485;  newTranslated_tb.Height = 513;
             newTranslated_tb.Font = font;
@@ -803,8 +804,9 @@ namespace Rusik
             newTranslated_tb.Multiline = true;
             newTranslated_tb.ScrollBars = ScrollBars.Vertical;
             this.Controls.Add(newTranslated_tb);
+            // this.newTranslated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
             newSearch.tabTranslated_tb = newTranslated_tb;
-            newSearch.tab_Source_lb = lbSource;
+            newSearch.tabSource_lb = lbSource;
 
             int len = str.Length < 50 ? str.Length : 50;
             newTabPage.Text = str.Substring(0, len);
@@ -816,7 +818,7 @@ namespace Rusik
             this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
             this.Source_tc.SelectedTab.Controls.Add(newSource_tb);
             newTranslated_tb.BringToFront();
-            newSearch.tab_Translated_lb = lbTranslated;
+            newSearch.tabTranslated_lb = lbTranslated;
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(newSearch.Count());
             newSearch.tabSearchStat_tslb = SearchStat_tslb;
@@ -936,7 +938,7 @@ namespace Rusik
             lbSource.Text = ""; 
             lbTranslated.Text = "";
             Offset_tb.Text = ""; Offset_tb.ReadOnly = true;
-            Signature_tb.Text = "";Signature_tb.ReadOnly = true;
+            Signature_tb.Text = ""; Signature_tb.ReadOnly = true;
             SourceSearch_tstb.Text = ""; SearchTranslated_tstb.Text = "";
             SourceSearch_tstb.ReadOnly = true; SearchTranslated_tstb.ReadOnly = true;
             flag_NotSavedYet = false; // флаг -сохранение не требуется
@@ -949,9 +951,18 @@ namespace Rusik
         }
       private void Translate_btn_Click(object sender, EventArgs e)
         {
-            if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n"+Translate_Google(Source_tb.Text);
-            // выводим сообщения о количестве символов в переводe
-            Translated_tb_KeyUp(null,null);
+            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (tabSearch == null) // перевод главной вкладки
+            {
+                if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n" + Translate_Google(Source_tb.Text);
+                // выводим сообщения о количестве символов в переводe
+                Translated_tb_KeyUp(null, null);
+            }
+            else 
+            {
+                tabSearch.tabTranslated_tb.Text += "\n" + Translate_Google(tabSearch.tabSource_tb.Text);
+                tabSearch.Translated_KeyUp();
+            }
         }
         private string Translate_Google(string source)
         { 
@@ -1010,13 +1021,20 @@ namespace Rusik
         {
             int Translated_tb_len = Translated_tb.Text.Length;
             int Source_lb_len = Source_tb.Text.Length;
-
-            if(Translated_tb_len>Source_lb_len) lbTranslated.ForeColor = Color.DarkRed;
-            else lbTranslated.ForeColor = Color.Black;
-            lbTranslated.Text = Convert.ToString(Translated_tb_len);
-            //проверим, если TextBox изменился - сохраним его в списке
-            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
+            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (tabSearch == null) // перевод главной вкладки
+            {
+                if (Translated_tb_len > Source_lb_len) lbTranslated.ForeColor = Color.DarkRed;
+                else lbTranslated.ForeColor = Color.Black;
+                lbTranslated.Text = Convert.ToString(Translated_tb_len);
+                //проверим, если TextBox изменился - сохраним его в списке
+                if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+            }
+            else
+            {
+                tabSearch.Translated_KeyUp();
+            }
 
         }
 
@@ -1284,8 +1302,8 @@ namespace Rusik
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
         public TextBox tabTranslated_tb { get; set; }
         public ToolStripLabel tabSearchStat_tslb { get; set; }
-        public ToolStripStatusLabel tab_Source_lb { get; set; }//кол-во символов в сообщении текстбокса
-        public ToolStripStatusLabel tab_Translated_lb{ get; set; }//кол-во символов в сообщении текстбокса
+        public ToolStripStatusLabel tabSource_lb { get; set; }//кол-во символов в сообщении текстбокса
+        public ToolStripStatusLabel tabTranslated_lb{ get; set; }//кол-во символов в сообщении текстбокса
 
         public int currnum=1;
         
@@ -1371,16 +1389,16 @@ namespace Rusik
             tabTranslated_tb.Text = linkedListSS.curr.Twin.Twin.Data;
             Translated_KeyUp();
         }
-        private void Translated_KeyUp()
+        public void Translated_KeyUp()
         {   
             int tabSource_lb_len = tabSource_tb.Text.Length; //длины текстбоксов
             int tabTranslated_tb_len = tabTranslated_tb.Text.Length;
 
 
-            if (tabTranslated_tb_len > tabSource_lb_len) tab_Translated_lb.ForeColor = Color.DarkRed;
-            else tab_Translated_lb.ForeColor = Color.Black;
-            tab_Translated_lb.Text = Convert.ToString(tabTranslated_tb_len);
-            tab_Source_lb.Text = Convert.ToString(tabSource_lb_len);
+            if (tabTranslated_tb_len > tabSource_lb_len) tabTranslated_lb.ForeColor = Color.DarkRed;
+            else tabTranslated_lb.ForeColor = Color.Black;
+            tabTranslated_lb.Text = Convert.ToString(tabTranslated_tb_len);
+            tabSource_lb.Text = Convert.ToString(tabSource_lb_len);
             if(linkedListSS.curr!=null)linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
 
         }
