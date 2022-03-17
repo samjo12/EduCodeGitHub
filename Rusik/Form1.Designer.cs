@@ -51,6 +51,12 @@ namespace Rusik
             this.progressBar1_lb = new System.Windows.Forms.Label();
             this.Source_tc = new System.Windows.Forms.TabControl();
             this.HomeSource = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.Source_tb = new System.Windows.Forms.TextBox();
+            this.Translated_tb = new System.Windows.Forms.TextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
             this.Source_ts = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.SourceSearch_tstb = new System.Windows.Forms.ToolStripTextBox();
@@ -62,11 +68,9 @@ namespace Rusik
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.SearchStat_tslb = new System.Windows.Forms.ToolStripLabel();
             this.SourceClose_tsb = new System.Windows.Forms.ToolStripButton();
-            this.Source_tb = new System.Windows.Forms.TextBox();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbSource = new System.Windows.Forms.ToolStripStatusLabel();
-            this.Translated_tb = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
@@ -74,21 +78,6 @@ namespace Rusik
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
-            this.Translated_tc = new System.Windows.Forms.TabControl();
-            this.TranslatedHome = new System.Windows.Forms.TabPage();
-            this.Translated_ts = new System.Windows.Forms.ToolStrip();
-            this.SearchTranslated_tstb = new System.Windows.Forms.ToolStripTextBox();
-            this.SearchTranslated_tsb = new System.Windows.Forms.ToolStripButton();
-            this.TranslatedFirst_tsb = new System.Windows.Forms.ToolStripButton();
-            this.TranslatedPrev_tsb = new System.Windows.Forms.ToolStripButton();
-            this.TranslatedNext_tsb = new System.Windows.Forms.ToolStripButton();
-            this.TranslatedLast_tsb = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.TRSearchStat_tslb = new System.Windows.Forms.ToolStripLabel();
-            this.TranslatedClose_tsb = new System.Windows.Forms.ToolStripButton();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.SourceFile_tb = new System.Windows.Forms.Label();
@@ -98,12 +87,13 @@ namespace Rusik
             this.menuStrip1.SuspendLayout();
             this.Source_tc.SuspendLayout();
             this.HomeSource.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.Source_ts.SuspendLayout();
             this.statusStrip2.SuspendLayout();
-            this.Translated_tc.SuspendLayout();
-            this.TranslatedHome.SuspendLayout();
-            this.Translated_ts.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // Prev_btn
@@ -175,35 +165,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -228,7 +218,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(15, 678);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -269,7 +259,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(190, 678);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -313,21 +303,97 @@ namespace Rusik
             this.Source_tc.Location = new System.Drawing.Point(11, 39);
             this.Source_tc.Name = "Source_tc";
             this.Source_tc.SelectedIndex = 0;
-            this.Source_tc.Size = new System.Drawing.Size(486, 565);
+            this.Source_tc.Size = new System.Drawing.Size(985, 565);
             this.Source_tc.TabIndex = 31;
             this.Source_tc.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.Source_tc_Selecting);
             // 
             // HomeSource
             // 
             this.HomeSource.BackColor = System.Drawing.SystemColors.Control;
+            this.HomeSource.Controls.Add(this.splitContainer1);
+            this.HomeSource.Controls.Add(this.statusStrip1);
             this.HomeSource.Controls.Add(this.Source_ts);
-            this.HomeSource.Controls.Add(this.Source_tb);
             this.HomeSource.Controls.Add(this.statusStrip2);
             this.HomeSource.Location = new System.Drawing.Point(4, 24);
             this.HomeSource.Name = "HomeSource";
-            this.HomeSource.Size = new System.Drawing.Size(478, 537);
+            this.HomeSource.Size = new System.Drawing.Size(977, 537);
             this.HomeSource.TabIndex = 0;
             this.HomeSource.Text = "Home";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.VSplit;
+            this.splitContainer1.Location = new System.Drawing.Point(1, 28);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.Source_tb);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.Translated_tb);
+            this.splitContainer1.Size = new System.Drawing.Size(976, 484);
+            this.splitContainer1.SplitterDistance = 484;
+            this.splitContainer1.TabIndex = 38;
+            // 
+            // Source_tb
+            // 
+            this.Source_tb.AllowDrop = true;
+            this.Source_tb.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.Source_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Source_tb.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Source_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Source_tb.Location = new System.Drawing.Point(0, 0);
+            this.Source_tb.Multiline = true;
+            this.Source_tb.Name = "Source_tb";
+            this.Source_tb.ReadOnly = true;
+            this.Source_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.Source_tb.Size = new System.Drawing.Size(484, 484);
+            this.Source_tb.TabIndex = 36;
+            this.Source_tb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Source_tb_MouseClick);
+            this.Source_tb.LocationChanged += new System.EventHandler(this.Source_tb_TextChanged);
+            // 
+            // Translated_tb
+            // 
+            this.Translated_tb.AllowDrop = true;
+            this.Translated_tb.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.Translated_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Translated_tb.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Translated_tb.Location = new System.Drawing.Point(0, 0);
+            this.Translated_tb.Multiline = true;
+            this.Translated_tb.Name = "Translated_tb";
+            this.Translated_tb.ReadOnly = true;
+            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.Translated_tb.Size = new System.Drawing.Size(488, 484);
+            this.Translated_tb.TabIndex = 37;
+            this.Translated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.lbTranslated});
+            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.statusStrip1.Location = new System.Drawing.Point(494, 515);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(207, 20);
+            this.statusStrip1.TabIndex = 0;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
+            this.toolStripStatusLabel1.Text = "Translated message symbols:";
+            // 
+            // lbTranslated
+            // 
+            this.lbTranslated.Name = "lbTranslated";
+            this.lbTranslated.Size = new System.Drawing.Size(0, 0);
             // 
             // Source_ts
             // 
@@ -345,7 +411,7 @@ namespace Rusik
             this.SourceClose_tsb});
             this.Source_ts.Location = new System.Drawing.Point(0, 0);
             this.Source_ts.Name = "Source_ts";
-            this.Source_ts.Size = new System.Drawing.Size(478, 25);
+            this.Source_ts.Size = new System.Drawing.Size(977, 25);
             this.Source_ts.TabIndex = 37;
             this.Source_ts.Text = "toolStrip1";
             // 
@@ -442,31 +508,16 @@ namespace Rusik
             this.SourceClose_tsb.Visible = false;
             this.SourceClose_tsb.Click += new System.EventHandler(this.SourceClose_tsb_Click);
             // 
-            // Source_tb
-            // 
-            this.Source_tb.AllowDrop = true;
-            this.Source_tb.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.Source_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Source_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Source_tb.Location = new System.Drawing.Point(0, 25);
-            this.Source_tb.Multiline = true;
-            this.Source_tb.Name = "Source_tb";
-            this.Source_tb.ReadOnly = true;
-            this.Source_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Source_tb.Size = new System.Drawing.Size(472, 485);
-            this.Source_tb.TabIndex = 36;
-            this.Source_tb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Source_tb_MouseClick);
-            this.Source_tb.LocationChanged += new System.EventHandler(this.Source_tb_TextChanged);
-            // 
             // statusStrip2
             // 
             this.statusStrip2.BackColor = System.Drawing.SystemColors.Info;
+            this.statusStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel2,
             this.lbSource});
             this.statusStrip2.Location = new System.Drawing.Point(0, 515);
             this.statusStrip2.Name = "statusStrip2";
-            this.statusStrip2.Size = new System.Drawing.Size(478, 22);
+            this.statusStrip2.Size = new System.Drawing.Size(159, 22);
             this.statusStrip2.TabIndex = 19;
             this.statusStrip2.Text = "statusStrip2";
             // 
@@ -480,22 +531,6 @@ namespace Rusik
             // 
             this.lbSource.Name = "lbSource";
             this.lbSource.Size = new System.Drawing.Size(0, 17);
-            // 
-            // Translated_tb
-            // 
-            this.Translated_tb.AllowDrop = true;
-            this.Translated_tb.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.Translated_tb.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.Translated_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Translated_tb.Location = new System.Drawing.Point(3, 28);
-            this.Translated_tb.Multiline = true;
-            this.Translated_tb.Name = "Translated_tb";
-            this.Translated_tb.ReadOnly = true;
-            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Translated_tb.Size = new System.Drawing.Size(483, 485);
-            this.Translated_tb.TabIndex = 37;
-            this.Translated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
             // 
             // comboBox1
             // 
@@ -569,155 +604,6 @@ namespace Rusik
             // 
             this.ContentPanel.Size = new System.Drawing.Size(150, 130);
             // 
-            // Translated_tc
-            // 
-            this.Translated_tc.Controls.Add(this.TranslatedHome);
-            this.Translated_tc.Location = new System.Drawing.Point(500, 36);
-            this.Translated_tc.Name = "Translated_tc";
-            this.Translated_tc.SelectedIndex = 0;
-            this.Translated_tc.Size = new System.Drawing.Size(497, 568);
-            this.Translated_tc.TabIndex = 34;
-            // 
-            // TranslatedHome
-            // 
-            this.TranslatedHome.Controls.Add(this.Translated_ts);
-            this.TranslatedHome.Controls.Add(this.Translated_tb);
-            this.TranslatedHome.Controls.Add(this.statusStrip1);
-            this.TranslatedHome.Location = new System.Drawing.Point(4, 24);
-            this.TranslatedHome.Name = "TranslatedHome";
-            this.TranslatedHome.Padding = new System.Windows.Forms.Padding(3);
-            this.TranslatedHome.Size = new System.Drawing.Size(489, 540);
-            this.TranslatedHome.TabIndex = 0;
-            this.TranslatedHome.Text = "Home";
-            // 
-            // Translated_ts
-            // 
-            this.Translated_ts.BackColor = System.Drawing.SystemColors.Info;
-            this.Translated_ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SearchTranslated_tstb,
-            this.SearchTranslated_tsb,
-            this.TranslatedFirst_tsb,
-            this.TranslatedPrev_tsb,
-            this.TranslatedNext_tsb,
-            this.TranslatedLast_tsb,
-            this.toolStripSeparator2,
-            this.TRSearchStat_tslb,
-            this.TranslatedClose_tsb});
-            this.Translated_ts.Location = new System.Drawing.Point(3, 3);
-            this.Translated_ts.Name = "Translated_ts";
-            this.Translated_ts.Size = new System.Drawing.Size(483, 25);
-            this.Translated_ts.TabIndex = 38;
-            this.Translated_ts.Text = "toolStrip1";
-            // 
-            // SearchTranslated_tstb
-            // 
-            this.SearchTranslated_tstb.AcceptsReturn = true;
-            this.SearchTranslated_tstb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.SearchTranslated_tstb.Name = "SearchTranslated_tstb";
-            this.SearchTranslated_tstb.ReadOnly = true;
-            this.SearchTranslated_tstb.Size = new System.Drawing.Size(250, 25);
-            this.SearchTranslated_tstb.ToolTipText = "Type text for searching here...";
-            this.SearchTranslated_tstb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SourceSearch_tstb_KeyDown);
-            // 
-            // SearchTranslated_tsb
-            // 
-            this.SearchTranslated_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.SearchTranslated_tsb.Image = global::Rusik.Properties.Resources.Search;
-            this.SearchTranslated_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.SearchTranslated_tsb.Name = "SearchTranslated_tsb";
-            this.SearchTranslated_tsb.Size = new System.Drawing.Size(23, 22);
-            this.SearchTranslated_tsb.Text = "Search";
-            this.SearchTranslated_tsb.ToolTipText = "Go search!";
-            this.SearchTranslated_tsb.Click += new System.EventHandler(this.SearchTranslated_Click);
-            // 
-            // TranslatedFirst_tsb
-            // 
-            this.TranslatedFirst_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TranslatedFirst_tsb.Image = global::Rusik.Properties.Resources.ToFirst;
-            this.TranslatedFirst_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TranslatedFirst_tsb.Name = "TranslatedFirst_tsb";
-            this.TranslatedFirst_tsb.Size = new System.Drawing.Size(23, 22);
-            this.TranslatedFirst_tsb.Text = "First";
-            this.TranslatedFirst_tsb.Visible = false;
-            // 
-            // TranslatedPrev_tsb
-            // 
-            this.TranslatedPrev_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TranslatedPrev_tsb.Image = global::Rusik.Properties.Resources.Prev;
-            this.TranslatedPrev_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TranslatedPrev_tsb.Name = "TranslatedPrev_tsb";
-            this.TranslatedPrev_tsb.Size = new System.Drawing.Size(23, 22);
-            this.TranslatedPrev_tsb.Text = "Previous";
-            this.TranslatedPrev_tsb.ToolTipText = "Previous";
-            this.TranslatedPrev_tsb.Visible = false;
-            // 
-            // TranslatedNext_tsb
-            // 
-            this.TranslatedNext_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TranslatedNext_tsb.Image = global::Rusik.Properties.Resources.Next;
-            this.TranslatedNext_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TranslatedNext_tsb.Name = "TranslatedNext_tsb";
-            this.TranslatedNext_tsb.Size = new System.Drawing.Size(23, 22);
-            this.TranslatedNext_tsb.Text = "Next";
-            this.TranslatedNext_tsb.ToolTipText = "Next";
-            this.TranslatedNext_tsb.Visible = false;
-            // 
-            // TranslatedLast_tsb
-            // 
-            this.TranslatedLast_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TranslatedLast_tsb.Image = global::Rusik.Properties.Resources.ToLast;
-            this.TranslatedLast_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TranslatedLast_tsb.Name = "TranslatedLast_tsb";
-            this.TranslatedLast_tsb.Size = new System.Drawing.Size(23, 22);
-            this.TranslatedLast_tsb.Text = "Last";
-            this.TranslatedLast_tsb.Visible = false;
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // TRSearchStat_tslb
-            // 
-            this.TRSearchStat_tslb.Name = "TRSearchStat_tslb";
-            this.TRSearchStat_tslb.Size = new System.Drawing.Size(0, 22);
-            // 
-            // TranslatedClose_tsb
-            // 
-            this.TranslatedClose_tsb.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TranslatedClose_tsb.Image = global::Rusik.Properties.Resources.cross;
-            this.TranslatedClose_tsb.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TranslatedClose_tsb.Name = "TranslatedClose_tsb";
-            this.TranslatedClose_tsb.Size = new System.Drawing.Size(23, 22);
-            this.TranslatedClose_tsb.Text = "Close";
-            this.TranslatedClose_tsb.ToolTipText = "Close Search";
-            this.TranslatedClose_tsb.Visible = false;
-            this.TranslatedClose_tsb.Click += new System.EventHandler(this.TranslatedClose_tsb_Click);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.BackColor = System.Drawing.SystemColors.Info;
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
-            this.lbTranslated});
-            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.statusStrip1.Location = new System.Drawing.Point(3, 517);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(483, 20);
-            this.statusStrip1.TabIndex = 0;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
-            this.toolStripStatusLabel1.Text = "Translated message symbols:";
-            // 
-            // lbTranslated
-            // 
-            this.lbTranslated.Name = "lbTranslated";
-            this.lbTranslated.Size = new System.Drawing.Size(0, 0);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -775,7 +661,6 @@ namespace Rusik
             this.Controls.Add(this.SourceFile_tb);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.Translated_tc);
             this.Controls.Add(this.progressBar1_lb);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.comboBox1);
@@ -802,17 +687,18 @@ namespace Rusik
             this.Source_tc.ResumeLayout(false);
             this.HomeSource.ResumeLayout(false);
             this.HomeSource.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.Source_ts.ResumeLayout(false);
             this.Source_ts.PerformLayout();
             this.statusStrip2.ResumeLayout(false);
             this.statusStrip2.PerformLayout();
-            this.Translated_tc.ResumeLayout(false);
-            this.TranslatedHome.ResumeLayout(false);
-            this.TranslatedHome.PerformLayout();
-            this.Translated_ts.ResumeLayout(false);
-            this.Translated_ts.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -842,7 +728,6 @@ namespace Rusik
         private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.ToolStripMenuItem OpenTranslatedFile_tsmi;
         private System.Windows.Forms.ToolStripMenuItem CloseFilesClear_tsmi;
-        private System.Windows.Forms.TextBox Translated_tb;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel lbSource;
@@ -854,15 +739,9 @@ namespace Rusik
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
         private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
-        private System.Windows.Forms.TabControl Translated_tc;
-        private System.Windows.Forms.TabPage TranslatedHome;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStrip Source_ts;
-        private System.Windows.Forms.ToolStrip Translated_ts;
         private System.Windows.Forms.Label SourceFile_tb;
         private System.Windows.Forms.Label TranslatedFile_tb;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
@@ -872,19 +751,15 @@ namespace Rusik
         private System.Windows.Forms.ToolStripButton SourceNext_tsb;
         private System.Windows.Forms.ToolStripButton SourceLast_tsb;
         private System.Windows.Forms.ToolStripLabel SearchStat_tslb;
-        private System.Windows.Forms.ToolStripTextBox SearchTranslated_tstb;
-        private System.Windows.Forms.ToolStripButton SearchTranslated_tsb;
-        private System.Windows.Forms.ToolStripButton TranslatedPrev_tsb;
-        private System.Windows.Forms.ToolStripButton TranslatedNext_tsb;
-        private System.Windows.Forms.ToolStripButton TranslatedLast_tsb;
-        private System.Windows.Forms.ToolStripLabel TRSearchStat_tslb;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Button Delete_btn;
         private System.Windows.Forms.ToolStripButton SourceClose_tsb;
-        private System.Windows.Forms.ToolStripButton TranslatedClose_tsb;
         private System.Windows.Forms.ToolStripButton SourceFirst_tsb;
-        private System.Windows.Forms.ToolStripButton TranslatedFirst_tsb;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TextBox Translated_tb;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
     }
 }
 
