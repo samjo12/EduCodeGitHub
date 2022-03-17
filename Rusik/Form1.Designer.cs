@@ -617,6 +617,7 @@ namespace Rusik
             this.SearchTranslated_tstb.ReadOnly = true;
             this.SearchTranslated_tstb.Size = new System.Drawing.Size(250, 25);
             this.SearchTranslated_tstb.ToolTipText = "Type text for searching here...";
+            this.SearchTranslated_tstb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SourceSearch_tstb_KeyDown);
             // 
             // SearchTranslated_tsb
             // 
@@ -627,6 +628,7 @@ namespace Rusik
             this.SearchTranslated_tsb.Size = new System.Drawing.Size(23, 22);
             this.SearchTranslated_tsb.Text = "Search";
             this.SearchTranslated_tsb.ToolTipText = "Go search!";
+            this.SearchTranslated_tsb.Click += new System.EventHandler(this.SearchTranslated_Click);
             // 
             // TranslatedFirst_tsb
             // 
@@ -690,6 +692,7 @@ namespace Rusik
             this.TranslatedClose_tsb.Text = "Close";
             this.TranslatedClose_tsb.ToolTipText = "Close Search";
             this.TranslatedClose_tsb.Visible = false;
+            this.TranslatedClose_tsb.Click += new System.EventHandler(this.TranslatedClose_tsb_Click);
             // 
             // statusStrip1
             // 
@@ -793,7 +796,6 @@ namespace Rusik
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Help Custom Translator";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

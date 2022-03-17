@@ -678,40 +678,50 @@ namespace Rusik
         {
             nudRecord.ReadOnly = true;
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
-            if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++; }
-            //проверим, если TextBox изменился - сохраним его
-            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (tabSearch == null)
+            {
+                if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++; }
+                //проверим, если TextBox изменился - сохраним его
+                if ((string)linkedListOF.CurrentData != Translated_tb.Text)
+                    if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
 
-            byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
-            Source_tb.Text = Encoding.UTF8.GetString(bytes);
-            bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
-            Translated_tb.Text = Encoding.UTF8.GetString(bytes);
-            // выводим сообщения о количестве символов в записях исходника и перевода
-            //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
-            lbSource.Text = Convert.ToString(Source_tb.Text.Length);
-            Translated_tb_KeyUp(null, null);
-            nudRecord.ReadOnly = false;
+                byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
+                Source_tb.Text = Encoding.UTF8.GetString(bytes);
+                bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
+                Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+                // выводим сообщения о количестве символов в записях исходника и перевода
+                //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
+                lbSource.Text = Convert.ToString(Source_tb.Text.Length);
+                Translated_tb_KeyUp(null, null);
+                nudRecord.ReadOnly = false;
+            }
+            else { tabSearch.Next(); }
         }
         private void Prev_btn_Click(object sender, EventArgs e)
         {
             if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
             nudRecord.ReadOnly = true;
-            if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else { nudRecord.Value--; }
-            //проверим, если TextBox изменился - сохраним его
-            //linkedListOF.SetCurrent(linkedListSF.Twin);
-            if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (tabSearch == null)
+            {
+                if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else { nudRecord.Value--; }
+                //проверим, если TextBox изменился - сохраним его
+                //linkedListOF.SetCurrent(linkedListSF.Twin);
+                if ((string)linkedListOF.CurrentData != Translated_tb.Text)
+                    if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
 
-            byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
-            Source_tb.Text = Encoding.UTF8.GetString(bytes);
-            bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
-            Translated_tb.Text = Encoding.UTF8.GetString(bytes);
-            // выводим сообщения о количестве символов в записях исходника и перевода
-            //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
-            Translated_tb_KeyUp(null, null);
-            lbSource.Text = Convert.ToString(Source_tb.Text.Length);
-            nudRecord.ReadOnly = false;
+                byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
+                Source_tb.Text = Encoding.UTF8.GetString(bytes);
+                bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
+                Translated_tb.Text = Encoding.UTF8.GetString(bytes);
+                // выводим сообщения о количестве символов в записях исходника и перевода
+                //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
+                Translated_tb_KeyUp(null, null);
+                lbSource.Text = Convert.ToString(Source_tb.Text.Length);
+                nudRecord.ReadOnly = false;
+            }
+            else { tabSearch.Prev(); }
         }
         private void nudRecord_ValueChanged(object sender, EventArgs e)
         {
@@ -748,8 +758,8 @@ namespace Rusik
                 SourceLast_tsb.Visible = false;
                 SourceClose_tsb.Visible = false;
                 SearchStat_tslb.Visible = false;
-                Prev_btn.Visible = true;
-                Next_btn.Visible = true;
+                //Prev_btn.Visible = true;
+                //Next_btn.Visible = true;
             }
             else 
             { //разблокируем кнопки поиска на панели и заблокируем NEXT PREV
@@ -759,8 +769,8 @@ namespace Rusik
                 SourceLast_tsb.Visible = true;
                 SourceClose_tsb.Visible = true;
                 SearchStat_tslb.Visible = true;
-                Prev_btn.Visible = false;
-                Next_btn.Visible = false;
+               //Prev_btn.Visible = false;
+                //Next_btn.Visible = false;
             }
         }
         private void SearchSource_Click(object sender, EventArgs e)
@@ -785,7 +795,7 @@ namespace Rusik
 
             TextBox newSource_tb = new();
             newSource_tb.Location = new Point(0, 25);
-            newSource_tb.Width = 480; newSource_tb.Height = 485;
+            newSource_tb.Width = 479; newSource_tb.Height = 485;
             newSource_tb.Font = font;
             newSource_tb.BackColor = SystemColors.GradientInactiveCaption;
             newSource_tb.Name = "newSource_tb" + Convert.ToString(currentTabS);
@@ -795,16 +805,17 @@ namespace Rusik
             newSearch.tabSource_tb = newSource_tb;
 
             TextBox newTranslated_tb = new();
-          
-            newTranslated_tb.Location = new Point(507, 61);
-            newTranslated_tb.Width = 485;  newTranslated_tb.Height = 513;
+
+            newTranslated_tb.Location = new Point(507, 88);//61);
+            newTranslated_tb.Width = 488;  newTranslated_tb.Height = 485;
             newTranslated_tb.Font = font;
             newTranslated_tb.BackColor = SystemColors.InactiveBorder;
             newTranslated_tb.Name = "newTranslated_tb" + Convert.ToString(currentTabS);
             newTranslated_tb.Multiline = true;
             newTranslated_tb.ScrollBars = ScrollBars.Vertical;
             this.Controls.Add(newTranslated_tb);
-            // this.newTranslated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
+            newTranslated_tb.KeyUp += Translated_tb_KeyUp;// ставим контрол на нажатие клавиш для отслеживания счетчика введенных символов
+
             newSearch.tabTranslated_tb = newTranslated_tb;
             newSearch.tabSource_lb = lbSource;
 
@@ -824,6 +835,64 @@ namespace Rusik
             newSearch.tabSearchStat_tslb = SearchStat_tslb;
 
             Refresh_Source_ts(Source_tc.SelectedTab);
+            newSearch.RefreshCurrent();
+        }
+        private void SearchTranslated_Click(object sender, EventArgs e)
+        {   
+            string str = SearchTranslated_tstb.Text; //строка поиска
+            SearchTabs newSearch = new();
+
+            if (SearchTranslated_tstb.Text.Length == 0) return; //пустая строка поиска 
+            newSearch.SetlinkedList(linkedListOF, str); //ищем строку str в списке SF
+            if (newSearch.Count() == 0) { return; }
+
+            currentTabT++;
+            TabPage newTabPage = new();
+            newSearch.TabPage = newTabPage; // сохраним адрес Таба в экземпляре класса
+            Font font = new Font("Segoe UI", 14.03f);//, FontStyle.Bold | FontStyle.Italic | FontStyle.Underline);
+
+            TextBox newSource_tb = new();
+            newSource_tb.Location = new Point(0, 25);
+            newSource_tb.Width = 479; newSource_tb.Height = 485;
+            newSource_tb.Font = font;
+            newSource_tb.BackColor = SystemColors.GradientInactiveCaption;
+            newSource_tb.Name = "newSource_tb" + Convert.ToString(currentTabS);
+            newSource_tb.Multiline = true;
+            newSource_tb.ScrollBars = ScrollBars.Vertical;
+            this.Controls.Add(newSource_tb);
+            newSearch.tabSource_tb = newSource_tb;
+
+            TextBox newTranslated_tb = new();
+
+            newTranslated_tb.Location = new Point(504, 85);//61);
+            newTranslated_tb.Width = 485; newTranslated_tb.Height = 485;
+            newTranslated_tb.Font = font;
+            newTranslated_tb.BackColor = SystemColors.InactiveBorder;
+            newTranslated_tb.Name = "newTranslated_tb" + Convert.ToString(currentTabS);
+            newTranslated_tb.Multiline = true;
+            newTranslated_tb.ScrollBars = ScrollBars.Vertical;
+            this.Controls.Add(newTranslated_tb);
+            newTranslated_tb.KeyUp += Translated_tb_KeyUp;// ставим контрол на нажатие клавиш для отслеживания счетчика введенных символов
+
+            newSearch.tabTranslated_tb = newTranslated_tb; //сохраняем адрес текстбокса
+            newSearch.tabSource_lb = lbSource;
+
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0, len);
+            Translated_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
+            Translated_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
+            Translated_tc.SelectedTab.Tag = (object)newSearch;  //сохраним класс поиска
+
+            this.Translated_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            this.Translated_tc.SelectedTab.Controls.Add(this.Source_ts);
+            this.Translated_tc.SelectedTab.Controls.Add(newSource_tb);
+            newTranslated_tb.BringToFront();
+            newSearch.tabTranslated_lb = lbTranslated;
+            //обновляем визуальную информацию
+            SearchStat_tslb.Text = "1 of " + Convert.ToString(newSearch.Count());
+            newSearch.tabSearchStat_tslb = SearchStat_tslb;
+
+            Refresh_Source_ts(Translated_tc.SelectedTab);
             newSearch.RefreshCurrent();
         }
         private void Source_tc_Selecting(object sender, TabControlCancelEventArgs e)
@@ -887,6 +956,22 @@ namespace Rusik
             Refresh_Source_ts(Source_tc.SelectedTab);
             temp.Dispose();
         }
+        private void TranslatedClose_tsb_Click(object sender, EventArgs e)
+        { 
+            SearchTabs tabSearch = (SearchTabs)Translated_tc.SelectedTab.Tag;
+            
+            TabPage temp;
+            if (tabSearch == null) return;
+            if (Translated_tc.SelectedTab == HomeSource) return;
+            tabSearch.Clear();
+            temp = Translated_tc.SelectedTab;
+
+            Translated_tc.SelectedTab = HomeSource; //переход на главную вкладку
+            this.Translated_tc.SelectedTab.Controls.Add(this.Source_ts);
+            this.Translated_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            Refresh_Source_ts(Translated_tc.SelectedTab);
+            temp.Dispose();
+        }
 
         private void Delete_btn_Click(object sender, EventArgs e)
         { 
@@ -916,12 +1001,12 @@ namespace Rusik
                 flag_NotSavedYet = true;
             }
         }
-        private void SearchTranslated_btn_Click(object sender, EventArgs e)
+    /*    private void SearchTranslated_btn_Click(object sender, EventArgs e)
         {
             //создаем новый TAB
             //на нем открываем новый TEXTBOX
             // Проходимся по всему списку и ищем подстроку
-        }
+        }*/
 
         private void CloseFilesClear_Click(object sender, EventArgs e)
         {
@@ -945,10 +1030,7 @@ namespace Rusik
             flag_Skipdialog = false; //по-умолчанию - не пропускать диалоги
             progressBar1.Value = 0; progressBar1_lb.Text = "%";
         }
-        private void Form1_Load(object sender, EventArgs e)
-        {
 
-        }
       private void Translate_btn_Click(object sender, EventArgs e)
         {
             SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
@@ -1061,7 +1143,7 @@ namespace Rusik
             if (e.KeyCode == Keys.Enter) // символЫ Delete и BackSpace
             {
                 if(sender== SourceSearch_tstb)SearchSource_Click(sender,e);
-                //else SearchTranslated_Click(sender, e);
+                else SearchTranslated_Click(sender, e);
             }
         }
     }
@@ -1317,14 +1399,14 @@ namespace Rusik
         }
         public void SetlinkedList(DoublyLinkedList <string> linkedList, string str)
         {
-            linkedListSF = linkedList;              
+            if (linkedList == null || str =="") return;
             //Начинаем поиск подстроки по всем элементам списка linkListSF
-            foreach (var item in linkedListSF)
+            foreach (var item in linkedList)
             {
                 if (item.Contains(str))// Вхождения найдены
                 {
                     linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
-                    linkedListSS.SetTwin(linkedListSF.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                    linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
                 }
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
