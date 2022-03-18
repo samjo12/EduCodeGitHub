@@ -787,49 +787,54 @@ namespace Rusik
 
             currentTabS++;
             TabPage newTabPage = new();
-            newSearch.TabPage = newTabPage; // сохраним адрес Таба в экземпляре класса
+            
             Font font = new Font("Segoe UI", 14.03f);//, FontStyle.Bold | FontStyle.Italic | FontStyle.Underline);
-
             TextBox newSource_tb = new();
-            newSource_tb.Location = new Point(0, 27);
+            newSource_tb.Location = new Point(0, 58);
             newSource_tb.Width = 484; newSource_tb.Height = 484;
             newSource_tb.Font = font;
             newSource_tb.BackColor = SystemColors.GradientInactiveCaption;
             newSource_tb.Name = "newSource_tb" + Convert.ToString(currentTabS);
             newSource_tb.Multiline = true;
             newSource_tb.ScrollBars = ScrollBars.Vertical;
-            
-            this.splitContainer1.Panel1.Controls.Add(newSource_tb);
-           // newSource_tb.Dock = DockStyle.Fill;
-            newSearch.tabSource_tb = newSource_tb;
+            newSource_tb.Dock = DockStyle.Fill;
 
             TextBox newTranslated_tb = new();
-
-            newTranslated_tb.Location = new Point(400, 0);// (507, 88);//61);
+            newTranslated_tb.Location = new Point(500, 58);// (507, 88);//61);
             newTranslated_tb.Width = 488;  newTranslated_tb.Height = 484;
             newTranslated_tb.Font = font;
             newTranslated_tb.BackColor = SystemColors.InactiveBorder;
             newTranslated_tb.Name = "newTranslated_tb" + Convert.ToString(currentTabS);
             newTranslated_tb.Multiline = true;
             newTranslated_tb.ScrollBars = ScrollBars.Vertical;
-            
-            this.splitContainer1.Panel2.Controls.Add(newTranslated_tb);
             newTranslated_tb.Dock = DockStyle.Fill;
             newTranslated_tb.KeyUp += Translated_tb_KeyUp;// ставим контрол на нажатие клавиш для отслеживания счетчика введенных символов
 
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0, len);
+            newSearch.TabPage = newTabPage; // сохраним адрес Таба в экземпляре класса
+            newSearch.tabSource_tb = newSource_tb;
             newSearch.tabTranslated_tb = newTranslated_tb;
             newSearch.tabSource_lb = lbSource;
 
-            int len = str.Length < 50 ? str.Length : 50;
-            newTabPage.Text = str.Substring(0, len);
+            SplitContainer newSplitContainer = new();
+            newSplitContainer.Location = new Point(0, 25);
+            newSplitContainer.Name = "splitContainer"+ Convert.ToString(currentTabS); 
+            newSplitContainer.Size = new Size(977, 485);
+            newSplitContainer.SplitterDistance = 484;
+            newSplitContainer.Panel1.Controls.Add(newSource_tb);
+            newSplitContainer.Panel2.Controls.Add(newTranslated_tb);
+            statusStrip2.Dock = DockStyle.Bottom;
+            newSplitContainer.Panel1.Controls.Add(this.statusStrip2);
+            //this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
+            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
+            
             Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
             Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
-            Source_tc.SelectedTab.Tag = (object)newSearch;  //сохраним класс поиска
-
-            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
-            this.Source_tc.SelectedTab.Controls.Add(newSource_tb);
-            newTranslated_tb.BringToFront();
+            Source_tc.SelectedTab.Tag = (object)newSearch;  //сохраним класс поиска в закладку
+            
+            Source_tc.SelectedTab.Controls.Add(newSplitContainer);
+            //newTranslated_tb.BringToFront();
             newSearch.tabTranslated_lb = lbTranslated;
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(newSearch.Count());
