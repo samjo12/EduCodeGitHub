@@ -57,41 +57,81 @@ namespace Rusik
 { "Persian","fa"},{ "Polish","pl"},{ "Portuguese","pt"},{ "Romanian","ro"},{ "Russian","ru"},{ "Serbian","sr"},{ "Slovak","sk"},
 { "Slovenian","sl"},{ "Spanish","es"},{ "Swahili","sw"},{ "Swedish","sv"},{ "Thai","th"},{ "Turkish","tr"},{ "Ukrainian","uk"},
 { "Urdu","ur"},{ "Vietnamese","vi"},{ "Welsh","cy"},{ "Yiddish","yi"} };
-        public TabControl Source_tc1;
-
+        // объявление начальной вкладки
+        public TabControl Tabs=new();
+        public TabPage Home=new();
+        public SplitContainer splitContainer1 =new();
         public Form1()
         {
             InitializeComponent();
-            //bgWorker.WorkerReportsProgress = true;
-            //bgWorker .WorkerSupportsCancellation = true;
             this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);// обработчик закрытия окна по крестику
-            //timer1.Tick += new EventHandler(Timer_Tick);
-            
+            // подключаем коллекцию со списком языков 
             comboBox1.DataSource = new BindingSource(GoogleLangs, null);
             comboBox2.DataSource = new BindingSource(GoogleLangs, null);
             comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
             comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
-            Load_INI();
+            Load_INI(); // читаем ini- файл
+                        // формируем первую вкладку
+            First_Tabpage();
         }
+        void First_Tabpage()
+        {
+            Tabs.Name = "Tabs";
+            Tabs.Size = new Size(985, 550);
+            Tabs.Location = new Point(12, 35);
+            //Tabs.ItemSize = new Size(61, 20);
+            Tabs.SelectedIndex = 0;
+            Tabs.TabIndex = 40;
+            this.Controls.Add(Tabs);
+            Tabs.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(Tabs_Selecting);
+
+            Tabs.SelectedTab = Home;
+            Home.Name = "Home";
+            Home.Text = "Home";
+            Home.Size = new Size(900, 498);
+            Home.TabIndex = 0;
+            Tabs.TabPages.Add(Home); //добавим новую вкладку Home
+
+            splitContainer1.Location = new Point(0, 25);
+            splitContainer1.Name = "splitContainer" + Convert.ToString(currentTabS);
+            splitContainer1.Size = new Size(977, 500);
+            splitContainer1.SplitterDistance = 484;
+            splitContainer1.Panel1.Controls.Add(statusStrip2);
+            splitContainer1.Panel2.Controls.Add(statusStrip1);
+            splitContainer1.Panel1.Controls.Add(Source_tb);
+            splitContainer1.Panel2.Controls.Add(Translated_tb);
+            //Source_tb.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left; //source
+            //Translated_tb.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left; //translated
+            Source_tb.Dock = DockStyle.Top; //source
+            Translated_tb.Dock = DockStyle.Top; //translated
+            Home.Tag = splitContainer1;
+
+            Home.Controls.Add(Source_ts);
+            Source_ts.Dock = DockStyle.Top;
+
+            Home.Controls.Add(splitContainer1);
+            statusStrip2.Dock = DockStyle.Bottom; //source
+            statusStrip1.Dock = DockStyle.Bottom; //translated}
+        }
+
+        private void Tabs_Selecting1(object sender, TabControlCancelEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Quit_tsmi_Click(sender, e);
-            //bgWorker.Dispose();
         }
 
-      /*  private void StartBackgroundWork()
-        {
-            //timer1.Enabled = true; bgWorker.RunWorkerAsync();
-        }*/
-
-        private void Timer_Tick(object sender, EventArgs e)
+ /*       private void Timer_Tick(object sender, EventArgs e)
         {
             progressBar1.Invalidate();
 
             progressBar1_lb.Text = Convert.ToString(progressBar1.Value)+"%";
             progressBar1_lb.Invalidate();
             
-        }
+        }*/
 
         private void Quit_tsmi_Click(object sender, EventArgs e) // МЕНЮ Quit
         {
@@ -116,7 +156,6 @@ namespace Rusik
                 linkedListSS.Clear();
             }
             Save_INI();
-
         }
 
         private bool SaveFile(string outfile="") // сохраняем список из памяти в файл с разделителем =
@@ -162,7 +201,6 @@ namespace Rusik
             if (tmpOutputFile == null || tmpOutputFile == "") return;
             else SaveFile(tmpOutputFile);  
         }
-
         private void OpenFile_tsmi_Click(object sender, EventArgs e) //MENU Open Binary File
         {
             OpenFileDialog openFileDialog1 = new();
@@ -220,10 +258,6 @@ namespace Rusik
                 int bufcounter = 0;
                 object maxK_Node = null; // ссылка на потенциально дублирующуюся строку из списка
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
-
-
-                
-               // StartBackgroundWork();
 
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл в буффер
@@ -676,14 +710,15 @@ namespace Rusik
         {
             nudRecord.ReadOnly = true;
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null)
             {
                 if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++; }
                 //проверим, если TextBox изменился - сохраним его
                 if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                     if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-
+                linkedListSF.curr = linkedListOF.curr.Twin; // х/з чтобы убрать рассинхронизацию по curr
                 byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
                 bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
@@ -701,16 +736,18 @@ namespace Rusik
             if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
             nudRecord.ReadOnly = true;
 
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
-           
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
+
             if (tabSearch == null)
             {
                 if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else { nudRecord.Value--; }
                 //проверим, если TextBox изменился - сохраним его
                 //linkedListOF.SetCurrent(linkedListSF.Twin);
-                if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                    if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-
+                if ((string)linkedListOF.CurrentData != Translated_tb.Text) 
+                    if (linkedListSF.Twin == linkedListOF.curr) 
+                    { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+                linkedListSF.curr = linkedListOF.curr.Twin;// х/з чтобы убрать рассинхронизацию по curr
                 byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
                 bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
@@ -750,13 +787,13 @@ namespace Rusik
         }
         public void Refresh_Source_ts(TabPage ts)
         {
-            if (ts == HomeSource) 
+            if (ts == Home) 
             { //заблокируем лишние кнопки на панели
                 SourceFirst_tsb.Visible = false;
                 SourcePrev_tsb.Visible = false;
                 SourceNext_tsb.Visible = false;
                 SourceLast_tsb.Visible = false;
-                SourceClose_tsb.Visible = false;
+                TabClose_tsb.Visible = false;
                 SearchStat_tslb.Visible = false;
             }
             else 
@@ -765,7 +802,7 @@ namespace Rusik
                 SourcePrev_tsb.Visible = true;
                 SourceNext_tsb.Visible = true;
                 SourceLast_tsb.Visible = true;
-                SourceClose_tsb.Visible = true;
+                TabClose_tsb.Visible = true;
                 SearchStat_tslb.Visible = true;
             }
         }
@@ -784,34 +821,30 @@ namespace Rusik
             if (SourceSearch_tstb.Text.Length == 0) return; //пустая строка поиска 
             newSearch.SetlinkedListSF(linkedListSF, str); //ищем строку str в списке SF
             if (newSearch.Count() == 0) {  return; }
-
+    
             currentTabS++;
             TabPage newTabPage = new();
             
             Font font = new Font("Segoe UI", 14.03f);//, FontStyle.Bold | FontStyle.Italic | FontStyle.Underline);
             TextBox newSource_tb = new();
             newSource_tb.Location = new Point(0, 58);
-            newSource_tb.Width = 484; newSource_tb.Height = 484;
+            newSource_tb.Width = 484; newSource_tb.Height = 475;
             newSource_tb.Font = font;
             newSource_tb.BackColor = SystemColors.GradientInactiveCaption;
             newSource_tb.Name = "newSource_tb" + Convert.ToString(currentTabS);
             newSource_tb.Multiline = true;
             newSource_tb.ScrollBars = ScrollBars.Vertical;
-            newSource_tb.Dock = DockStyle.Fill;
 
             TextBox newTranslated_tb = new();
-            newTranslated_tb.Location = new Point(500, 58);// (507, 88);//61);
-            newTranslated_tb.Width = 488;  newTranslated_tb.Height = 484;
+            newTranslated_tb.Location = new Point(500, 58);
+            newTranslated_tb.Width = 488;  newTranslated_tb.Height = 475;
             newTranslated_tb.Font = font;
             newTranslated_tb.BackColor = SystemColors.InactiveBorder;
             newTranslated_tb.Name = "newTranslated_tb" + Convert.ToString(currentTabS);
             newTranslated_tb.Multiline = true;
             newTranslated_tb.ScrollBars = ScrollBars.Vertical;
-            newTranslated_tb.Dock = DockStyle.Fill;
             newTranslated_tb.KeyUp += Translated_tb_KeyUp;// ставим контрол на нажатие клавиш для отслеживания счетчика введенных символов
 
-            int len = str.Length < 50 ? str.Length : 50;
-            newTabPage.Text = str.Substring(0, len);
             newSearch.TabPage = newTabPage; // сохраним адрес Таба в экземпляре класса
             newSearch.tabSource_tb = newSource_tb;
             newSearch.tabTranslated_tb = newTranslated_tb;
@@ -820,91 +853,115 @@ namespace Rusik
             SplitContainer newSplitContainer = new();
             newSplitContainer.Location = new Point(0, 25);
             newSplitContainer.Name = "splitContainer"+ Convert.ToString(currentTabS); 
-            newSplitContainer.Size = new Size(977, 485);
+            newSplitContainer.Size = new Size(977, 500);
             newSplitContainer.SplitterDistance = 484;
+            newSplitContainer.Orientation = Orientation.Vertical;
+//newSource_tb.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+//newTranslated_tb.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+            newSearch.splitContainer = newSplitContainer;
             newSplitContainer.Panel1.Controls.Add(newSource_tb);
             newSplitContainer.Panel2.Controls.Add(newTranslated_tb);
-            statusStrip2.Dock = DockStyle.Bottom;
-            newSplitContainer.Panel1.Controls.Add(this.statusStrip2);
-            //this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
             
-            Source_tc.TabPages.Add(newTabPage); //добавим новую вкладку в окно Source
-            Source_tc.SelectedTab = newTabPage; //переключимся на новую вкладку
-            Source_tc.SelectedTab.Tag = (object)newSearch;  //сохраним класс поиска в закладку
+            statusStrip2.Dock = DockStyle.Bottom; newSplitContainer.Panel1.Controls.Add(statusStrip2);
+            //statusStrip2.Anchor = AnchorStyles.Bottom;
             
-            Source_tc.SelectedTab.Controls.Add(newSplitContainer);
+            statusStrip1.Dock = DockStyle.Bottom; newSplitContainer.Panel2.Controls.Add(statusStrip1);
+            //statusStrip1.Anchor = AnchorStyles.Bottom;
+            Tabs.SelectedTab.Controls.Add(Source_ts);
+            newSource_tb.Dock = DockStyle.Top;
+            newTranslated_tb.Dock = DockStyle.Top;
+
+            int len = str.Length < 50 ? str.Length : 50;
+            newTabPage.Text = str.Substring(0, len);           
+            Tabs.TabPages.Add(newTabPage); //добавим новую вкладку Home
+            Tabs.SelectedTab = newTabPage; //переключимся на новую вкладку
+            Tabs.SelectedTab.Tag = newSplitContainer;
+            newSplitContainer.Tag=(object)newSearch;  //сохраним класс поиска в закладку
+
+            newTabPage.Controls.Add(newSplitContainer);
+            newTabPage.Controls.Add(Source_ts);
+
             //newTranslated_tb.BringToFront();
             newSearch.tabTranslated_lb = lbTranslated;
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(newSearch.Count());
             newSearch.tabSearchStat_tslb = SearchStat_tslb;
 
-            Refresh_Source_ts(Source_tc.SelectedTab);
+            Refresh_Source_ts(Tabs.SelectedTab);
             newSearch.RefreshCurrent();
         }
    
-        private void Source_tc_Selecting(object sender, TabControlCancelEventArgs e) // перетыкиваем вкладку мышью на панели Source_tc
+        private void Tabs_Selecting(object sender, TabControlCancelEventArgs e) // перетыкиваем вкладку мышью на панели Tabs
         {// если выбрана основная вкладка, то вынесем неперед основные текстбоксы
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc= (SplitContainer)Tabs.SelectedTab.Tag;
+            if (sc == null) return;
+            SearchTabs tabSearch = (SearchTabs) sc.Tag;
             if (tabSearch == null) 
-            { 
-                Source_tb.BringToFront();  // показываем текстбокс главной страницы
-                Translated_tb.BringToFront();
+            {
                 nudRecord_ValueChanged(null, null); //обновляем содержимое окон под записи с номером nudRecord
             }
             else 
             {// прячем лишние tc 
                 tabSearch.RefreshCurrent();
-                SearchStat_tslb.Text = Convert.ToString(tabSearch.curnum())+" of " + Convert.ToString(tabSearch.Count());
+                SearchStat_tslb.Text = Convert.ToString(tabSearch.curnum()) + " of " + Convert.ToString(tabSearch.Count());
             }
-            Refresh_Source_ts(Source_tc.SelectedTab);
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
-            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
-            ActiveTab = Source_tc.SelectedTab;
+            Refresh_Source_ts(Tabs.SelectedTab);
+            Tabs.SelectedTab.Controls.Add(Source_ts);
+            sc.Panel1.Controls.Add(statusStrip2);
+            sc.Panel2.Controls.Add(statusStrip1);
+ //           ActiveTab = Tabs.SelectedTab;
         }
         private void Search_Next_btn_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) return;
-            if (Source_tc.SelectedTab == HomeSource) return;
+            if (Tabs.SelectedTab == Home) return;
             tabSearch.Next();
         }
         private void Search_Prev_btn_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) return;
-            if (Source_tc.SelectedTab == HomeSource) return;
+            if (Tabs.SelectedTab == Home) return;
             tabSearch.Prev();
         }
         private void SourceLast_tsb_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) return;
-            if (Source_tc.SelectedTab == HomeSource) return;
+            if (Tabs.SelectedTab == Home) return;
             tabSearch.toLast();
         }
         private void SourceFirst_tsb_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) return;
-            if (Source_tc.SelectedTab == HomeSource) return;
+            if (Tabs.SelectedTab == Home) return;
             tabSearch.toFirst();
         }
-        private void SourceClose_tsb_Click(object sender, EventArgs e)
+        private void TabClose_tsb_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
-            TabPage temp;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
+            TabPage temptab;
             if (tabSearch == null) return;
-            if (Source_tc.SelectedTab == HomeSource) return;
+            if (Tabs.SelectedTab == Home) return; // вкладку home закрыть нельзя - избыточное условие
             tabSearch.Clear();
-            temp=Source_tc.SelectedTab;
+            temptab=Tabs.SelectedTab;
             
-            Source_tc.SelectedTab = HomeSource; //переход на главную вкладку
-            this.Source_tc.SelectedTab.Controls.Add(this.Source_ts);
-            this.Source_tc.SelectedTab.Controls.Add(this.statusStrip2);
-            Refresh_Source_ts(Source_tc.SelectedTab);
-            temp.Dispose();
+            Tabs.SelectedTab = Home; //переход на главную вкладку
+            sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            Tabs.SelectedTab.Controls.Add(Source_ts);
+            sc.Panel1.Controls.Add(statusStrip2);
+            sc.Panel2.Controls.Add(statusStrip1);
+            Refresh_Source_ts(Tabs.SelectedTab);
+            temptab.Dispose();
+            nudRecord_ValueChanged(null,null);
+
         }
   
         private void Delete_btn_Click(object sender, EventArgs e)
@@ -935,12 +992,6 @@ namespace Rusik
                 flag_NotSavedYet = true;
             }
         }
-    /*    private void SearchTranslated_btn_Click(object sender, EventArgs e)
-        {
-            //создаем новый TAB
-            //на нем открываем новый TEXTBOX
-            // Проходимся по всему списку и ищем подстроку
-        }*/
 
         private void CloseFilesClear_Click(object sender, EventArgs e)
         {
@@ -967,7 +1018,8 @@ namespace Rusik
 
       private void Translate_btn_Click(object sender, EventArgs e)
         {
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) // перевод главной вкладки
             {
                 if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n" + Translate_Google(Source_tb.Text);
@@ -1037,7 +1089,9 @@ namespace Rusik
         {
             int Translated_tb_len = Translated_tb.Text.Length;
             int Source_lb_len = Source_tb.Text.Length;
-            SearchTabs tabSearch = (SearchTabs)Source_tc.SelectedTab.Tag;
+            if (Tabs.SelectedTab == null) return;
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) // перевод главной вкладки
             {
                 if (Translated_tb_len > Source_lb_len) lbTranslated.ForeColor = Color.DarkRed;
@@ -1313,9 +1367,11 @@ namespace Rusik
         public TabPage TabPage;// = new();
         DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
-        DoublyLinkedList<string> linkedListSF { get; set; } //получим ссылку на главный список SF
+    //    DoublyLinkedList<string> linkedListSF { get; set; } //получим ссылку на главный список SF
+   //     DoublyLinkedList<string> linkedListOF { get; set; } //получим ссылку на главный список OF
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
         public TextBox tabTranslated_tb { get; set; }
+        public SplitContainer splitContainer { get; set; }
         public ToolStripLabel tabSearchStat_tslb { get; set; }
         public ToolStripStatusLabel tabSource_lb { get; set; }//кол-во символов в сообщении текстбокса
         public ToolStripStatusLabel tabTranslated_lb{ get; set; }//кол-во символов в сообщении текстбокса
@@ -1343,27 +1399,19 @@ namespace Rusik
                     linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
                     linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
                 }
-            }
-            foreach (var item in linkedListSS) break; // ставим curr на head
-            if (linkedListSS.Count == 0) return; //ничего не найдено
-                                                 // вот что-то найдено, если вкладка не создавалась - то создадим
-        }
-        public void SetlinkedList(DoublyLinkedList<string> linkedList, string str)
-        {
-            if (linkedList == null || str == "") return; //если передана пустая строка или непередан список
-            //Начинаем поиск подстроки по всем элементам списка linkListSF
-            foreach (var item in linkedList)
-            {
-                if (item.Contains(str))// Вхождения найдены
+                if (linkedList.curr.Twin.Data.Contains(str))// проверяем на совпадение и список с переводом
                 {
-                    linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
-                    linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                    linkedListSS.Add(linkedList.curr.Twin.Data, 0);
+                    linkedListSS.SetTwin(linkedList.curr);
                 }
+
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
+
             if (linkedListSS.Count == 0) return; //ничего не найдено
                                                  // вот что-то найдено, если вкладка не создавалась - то создадим
         }
+
         public void Next()
         {
             if (linkedListSS.curr.Next != null) 
