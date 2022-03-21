@@ -34,8 +34,8 @@ namespace Rusik
         string IniFile = ""; //полный путь к INI файлу
         public DoublyLinkedList<string> linkedListSF = new(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new(); // связный список для выходного файла
-        public DoublyLinkedList<string> linkedListSS = new(); // связный список для поиска по исходому тексту
-        public DoublyLinkedList<string> linkedListTS = new(); // связный список для поиска по переводу
+ //       public DoublyLinkedList<string> linkedListSS = new(); // связный список для поиска по исходому тексту
+ //       public DoublyLinkedList<string> linkedListTS = new(); // связный список для поиска по переводу
 
         public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
         public bool flag_NotSavedYet = false;
@@ -151,9 +151,9 @@ namespace Rusik
                         if (result == DialogResult.No) return; // пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
                 linkedListOF.Clear();
-                linkedListTS.Clear();
+                //linkedListTS.Clear();
                 linkedListSF.Clear();
-                linkedListSS.Clear();
+                //linkedListSS.Clear();
             }
             Save_INI();
         }
@@ -896,10 +896,8 @@ namespace Rusik
             SplitContainer sc= (SplitContainer)Tabs.SelectedTab.Tag;
             if (sc == null) return;
             SearchTabs tabSearch = (SearchTabs) sc.Tag;
-            if (tabSearch == null) 
-            {
-                nudRecord_ValueChanged(null, null); //обновляем содержимое окон под записи с номером nudRecord
-            }
+            if (tabSearch == null) //обновляем содержимое окон под записи с номером nudRecord
+                nudRecord_ValueChanged(null, null); 
             else 
             {// прячем лишние tc 
                 tabSearch.RefreshCurrent();
@@ -909,7 +907,6 @@ namespace Rusik
             Tabs.SelectedTab.Controls.Add(Source_ts);
             sc.Panel1.Controls.Add(statusStrip2);
             sc.Panel2.Controls.Add(statusStrip1);
- //           ActiveTab = Tabs.SelectedTab;
         }
         private void Search_Next_btn_Click(object sender, EventArgs e)
         {
@@ -967,13 +964,19 @@ namespace Rusik
         private void Delete_btn_Click(object sender, EventArgs e)
         { 
             long num;
-            if (linkedListSF.curr == null) return; //нечего удалять
+            string data;
+           
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
-            if (tabSearch == null)
-            {
-                string data = linkedListSF.curr.Data;
-                DialogResult result = MessageBox.Show(
+            if (tabSearch == null) //определимся что будем удалять
+            { // открыта вкладка HOME
+                data = linkedListSF.curr.Data;
+            }
+            else // удаляем из вкладки поиска
+            {   //
+                data = tabSearch.tabSource_tb.Text;
+            }
+            DialogResult result = MessageBox.Show(
                                     "Do you really wants delete message:" +
                                     "\n" + data + "?",
                                     "Please attention !",
@@ -981,24 +984,35 @@ namespace Rusik
                                     MessageBoxIcon.Question,
                                     MessageBoxDefaultButton.Button1,
                                     MessageBoxOptions.DefaultDesktopOnly);
-                if (result == DialogResult.No) { return; }// перевод не меняем
-                else
-                {
+            if (result == DialogResult.No) { return; }// перевод не меняем
+            else // Пользователь подтвердил удаление
+            {
+                flag_NotSavedYet = true;
+                if (tabSearch == null) //открыта вкладка HOME
+                { // 
+                    if (linkedListSF.curr == null) return; //нечего удалять
                     linkedListSF.Remove(linkedListSF.curr); //удаляем текущий элемент
                     linkedListOF.Remove(linkedListOF.curr); //удаляем текущий элемент
                     nudRecord.ReadOnly = true;
-                    num = linkedListSF.GetNumCurrentPosition();
-                    if (num != 0) nudRecord.Value = num;
+                    num = linkedListSF.GetCurrentNum();
+                    if (num > 0) nudRecord.Value = num;
                     nudRecord.ReadOnly = false;
                     //обновляем визуальную информацию
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Source_tb.Text = linkedListSF.curr.Data;
                     Translated_tb.Text = linkedListOF.curr.Data;
-                    flag_NotSavedYet = true;
+                }
+                else
+                {   //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
+                    linkedListSF.Remove(tabSearch.linkedListSS.curr.Twin); 
+                    //удаляем элемент из основного списка OF парный к предыдущему удаляемому элементу
+                    linkedListOF.Remove(tabSearch.linkedListSS.curr.Twin.Twin); 
+                    tabSearch.Remove(); //удаляем текущий элемент из списка поиска SS
+                    //обновляем вкладку для актуализации видимой инфы
+                    if (tabSearch.linkedListSS.Count == 0) TabClose_tsb_Click(null, null);
+                    else Tabs_Selecting(null,null);
                 }
             }
-            else // удаляем из вкладки поиска
-            { }
         }
 
         private void CloseFilesClear_Click(object sender, EventArgs e)
@@ -1193,19 +1207,24 @@ namespace Rusik
             node.Fileposition = Fileposition;
         }
         // удаление по ссылке на элемент
-        public void Remove(DoublyNode<T> node) //УДАЛИТЬ текущий элемент списка
+        public DoublyNode<T> Remove(DoublyNode<T> node) //УДАЛИТЬ текущий элемент списка
         {
-            if (node == null) return; //нечего удалять
-            if (node == curr) // если удаляемый элемент curr, то выбираем новый curr
-            {   // если узел не последний переставляем curr (вперед по возможности или назад)
-                if (node.Next != null) { curr = node.Next; node.Next.Previous = node.Previous; }
-                else { tail = node.Previous; curr = node.Previous; }
-                // если узел не первый
-                if (node.Previous != null) {  node.Previous.Next = node.Next; }
-                else { head = node.Next; }
-                count--;
-            }
-            return;
+            if (node == null) return null; //нечего удалять
+            DoublyNode<T> tempcurr = curr;
+            bool flag_isnodecurrent=true;
+            if (node != curr) // если удаляемый элемент curr, то выбираем новый curr
+                flag_isnodecurrent = false;
+            
+            // если узел не последний переставляем curr (вперед по возможности или назад)
+
+            if (node.Next != null) { curr = node.Next; node.Next.Previous = node.Previous; }
+            else { tail = node.Previous; curr = node.Previous; }
+            // если узел не первый
+            if (node.Previous != null) { node.Previous.Next = node.Next; }
+            else { head = node.Next; }
+            if(count>0)count--;
+            if (flag_isnodecurrent == false) curr = tempcurr;
+            return curr;
         }
         
         public bool RemoveData(T data)// удаление элемента с поиском по строке
@@ -1284,7 +1303,7 @@ namespace Rusik
             curr =(DoublyNode<T>)current;
         }
 
-        public long GetNumCurrentPosition() 
+        public long GetCurrentNum() 
         {
             DoublyNode<T> item=head,current=curr;
             long num=0,num1=0; //
@@ -1375,7 +1394,7 @@ namespace Rusik
     public class SearchTabs
     {
         public TabPage TabPage;
-        DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
+        public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
         public TextBox tabTranslated_tb { get; set; }
@@ -1388,10 +1407,7 @@ namespace Rusik
         public bool TranslatedSource = false;
 
 
-        public int Count ()
-        {
-            return linkedListSS.Count;
-        }
+        public int Count() => linkedListSS.Count;
         public int curnum()
         {
             return currnum;
@@ -1494,8 +1510,9 @@ namespace Rusik
             { // Удалим ее из списка поиска
                 linkedListSS.Remove(linkedListSS.curr); //удаляем ее без сохранения из списка поиска
                 if (currnum > linkedListSS.Count) currnum--;
-                if (linkedListSS.curr == null)return; //список пуст
+                if (linkedListSS.curr == null) return; //список пуст
             }
+
             tabSource_tb.BringToFront();
             tabTranslated_tb.BringToFront();
             if (TranslatedSource == false)
@@ -1522,6 +1539,12 @@ namespace Rusik
             tabSource_lb.Text = Convert.ToString(tabSource_lb_len);
             if(linkedListSS.curr!=null) // защищаемся от случайного пизд-ца с null
                 if(linkedListSS.curr.Twin!=null)linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+        }
+
+        public void Remove() //удаляем запись из списка SF по ссылке из SS.Twin
+        {
+            if (linkedListSS.curr != null) linkedListSS.curr.Twin = null; else return;
+            linkedListSS.Remove(linkedListSS.curr);
         }
         public void Clear()
         {
