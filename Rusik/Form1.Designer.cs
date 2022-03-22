@@ -81,6 +81,7 @@ namespace Rusik
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
+            this.Save = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.Source_ts.SuspendLayout();
@@ -535,6 +536,7 @@ namespace Rusik
             this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.Translated_tb.Size = new System.Drawing.Size(459, 475);
             this.Translated_tb.TabIndex = 37;
+            this.Translated_tb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.Translated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
             // 
             // Source_tb
@@ -552,6 +554,7 @@ namespace Rusik
             this.Source_tb.TabIndex = 36;
             this.Source_tb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Source_tb_MouseClick);
             this.Source_tb.LocationChanged += new System.EventHandler(this.Source_tb_TextChanged);
+            this.Source_tb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             // 
             // miniToolStrip
             // 
@@ -618,11 +621,23 @@ namespace Rusik
             this.statusStrip2.TabIndex = 19;
             this.statusStrip2.Text = "statusStrip2";
             // 
+            // Save
+            // 
+            this.Save.BackgroundImage = global::Rusik.Properties.Resources.save;
+            this.Save.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Save.Location = new System.Drawing.Point(972, 0);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(36, 37);
+            this.Save.TabIndex = 40;
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.Save);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.Source_tb);
             this.Controls.Add(this.statusStrip2);
@@ -652,6 +667,7 @@ namespace Rusik
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Help Custom Translator";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -720,6 +736,7 @@ namespace Rusik
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
         private System.Windows.Forms.StatusStrip statusStrip2;
+        private System.Windows.Forms.Button Save;
     }
 }
 

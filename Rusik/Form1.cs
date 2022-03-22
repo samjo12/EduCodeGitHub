@@ -34,15 +34,12 @@ namespace Rusik
         string IniFile = ""; //полный путь к INI файлу
         public DoublyLinkedList<string> linkedListSF = new(); // связный список для исходного файла
         public DoublyLinkedList<string> linkedListOF = new(); // связный список для выходного файла
- //       public DoublyLinkedList<string> linkedListSS = new(); // связный список для поиска по исходому тексту
- //       public DoublyLinkedList<string> linkedListTS = new(); // связный список для поиска по переводу
 
         public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
         public bool flag_NotSavedYet = false;
         public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
-        //BackgroundWorker bgWorker=new();
-        //public Timer timer1 = new System.Windows.Forms.Timer { Interval = 100 };
+
         public string languageEn = "en"; //из модуля google-переводчика
         public string languageRu = "ru";
         public string InterfaceLanguage = "en"; //английский язык по-умолчанию
@@ -151,9 +148,7 @@ namespace Rusik
                         if (result == DialogResult.No){ Save_INI(); return; }// пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
                 linkedListOF.Clear();
-                //linkedListTS.Clear();
                 linkedListSF.Clear();
-                //linkedListSS.Clear();
             }
             Save_INI();
         }
@@ -966,7 +961,6 @@ namespace Rusik
             Refresh_Source_ts(Tabs.SelectedTab);
             temptab.Dispose();
             nudRecord_ValueChanged(null,null);
-
         }
   
         private void Delete_btn_Click(object sender, EventArgs e)
@@ -981,7 +975,7 @@ namespace Rusik
                 data = linkedListSF.curr.Data;
             }
             else // удаляем из вкладки поиска
-            {   //
+            {   
                 data = tabSearch.tabSource_tb.Text;
             }
             DialogResult result = MessageBox.Show(
@@ -1053,9 +1047,8 @@ namespace Rusik
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) // перевод главной вкладки
             {
-                if (Source_tb.Text != string.Empty) Translated_tb.Text += "\n" + Translate_Google(Source_tb.Text);
-                // выводим сообщения о количестве символов в переводe
-                //Translated_tb_KeyUp(null, null); //21.03.2022-
+                if (Source_tb.Text != string.Empty) 
+                    Translated_tb.Text += "\n" + Translate_Google(Source_tb.Text);
             }
             else 
             {
@@ -1163,6 +1156,33 @@ namespace Rusik
             {
                 if(sender== SourceSearch_tstb)SearchSource_Click(sender,e);
             }
+        }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e) 
+        { // переход Ctrl+стрелка на новую запись
+            if (e.Control && e.KeyCode == Keys.Right)
+            {
+                Next_btn_Click(null, null);
+            }
+            else if (e.Control && e.KeyCode == Keys.Left)
+            {
+                Prev_btn_Click(null, null);
+            }
+            else if (e.Control && e.KeyCode == Keys.Down)
+            {
+                Translate_btn_Click(null, null);
+            }
+            else if (e.Control && e.KeyCode == Keys.S)
+            { SaveFile(); }/*
+            else if ((e.Control & e.Shift) == Keys.V)
+            {
+                MessageBox.Show("Ctrl+shift+V detected");
+            }*/
         }
     }
 
