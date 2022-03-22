@@ -148,7 +148,7 @@ namespace Rusik
                         MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1,
                         MessageBoxOptions.DefaultDesktopOnly);
-                        if (result == DialogResult.No) return; // пользователь отказался от сохранения
+                        if (result == DialogResult.No){ Save_INI(); return; }// пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
                 linkedListOF.Clear();
                 //linkedListTS.Clear();
@@ -898,10 +898,18 @@ namespace Rusik
             SearchTabs tabSearch = (SearchTabs) sc.Tag;
             if (tabSearch == null) //обновляем содержимое окон под записи с номером nudRecord
                 nudRecord_ValueChanged(null, null); 
-            else 
-            {// прячем лишние tc 
+            else //вкладка поиска
+            {   
+                // прячем лишние tc 
                 tabSearch.RefreshCurrent();
-                SearchStat_tslb.Text = Convert.ToString(tabSearch.curnum()) + " of " + Convert.ToString(tabSearch.Count());
+                if (tabSearch.curnum() < 1)
+                {
+                    TabClose_tsb_Click(null, null); // список пуст-закроем вкладку
+                    nudRecord_ValueChanged(null, null);
+                    return;
+                }
+                else SearchStat_tslb.Text = Convert.ToString(tabSearch.curnum()) + " of " + Convert.ToString(tabSearch.Count());
+            
             }
             Refresh_Source_ts(Tabs.SelectedTab);
             Tabs.SelectedTab.Controls.Add(Source_ts);
@@ -1206,17 +1214,20 @@ namespace Rusik
             count++;
             node.Fileposition = Fileposition;
         }
+
         // удаление по ссылке на элемент
         public DoublyNode<T> Remove(DoublyNode<T> node) //УДАЛИТЬ текущий элемент списка
         {
             if (node == null) return null; //нечего удалять
             DoublyNode<T> tempcurr = curr;
-            bool flag_isnodecurrent=true;
+            bool flag_isnodecurrent= true;
             if (node != curr) // если удаляемый элемент curr, то выбираем новый curr
+            {
                 flag_isnodecurrent = false;
-            
-            // если узел не последний переставляем curr (вперед по возможности или назад)
-
+                // если узел не последний переставляем curr (вперед по возможности или назад)
+                
+            }
+            if(curr!=null)curr.Twin = null;
             if (node.Next != null) { curr = node.Next; node.Next.Previous = node.Previous; }
             else { tail = node.Previous; curr = node.Previous; }
             // если узел не первый
@@ -1506,7 +1517,8 @@ namespace Rusik
         public void RefreshCurrent()
         {
             if (linkedListSS.curr == null) return;
-            while (linkedListSS.curr.Twin == null) // похоже открытая запись в поиске уже была удалена из основного списка
+            // Проверим, не удалена ли открытая запись в поиске из основного списка
+            while (linkedListSS.curr.Twin == null || linkedListSS.curr.Twin.Twin==null) 
             { // Удалим ее из списка поиска
                 linkedListSS.Remove(linkedListSS.curr); //удаляем ее без сохранения из списка поиска
                 if (currnum > linkedListSS.Count) currnum--;
@@ -1545,6 +1557,7 @@ namespace Rusik
         {
             if (linkedListSS.curr != null) linkedListSS.curr.Twin = null; else return;
             linkedListSS.Remove(linkedListSS.curr);
+            currnum--;
         }
         public void Clear()
         {
