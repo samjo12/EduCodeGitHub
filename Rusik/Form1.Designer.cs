@@ -82,6 +82,8 @@ namespace Rusik
             this.lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this.Save = new System.Windows.Forms.Button();
+            this.UNDO = new System.Windows.Forms.Button();
+            this.REDO = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.Source_ts.SuspendLayout();
@@ -158,35 +160,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -211,7 +213,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(15, 678);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -252,7 +254,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(190, 678);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -599,7 +601,7 @@ namespace Rusik
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
             this.toolStripStatusLabel1.Text = "Translated message symbols:";
             // 
             // lbTranslated
@@ -632,11 +634,32 @@ namespace Rusik
             this.Save.UseVisualStyleBackColor = true;
             this.Save.Click += new System.EventHandler(this.Save_Click);
             // 
+            // UNDO
+            // 
+            this.UNDO.Location = new System.Drawing.Point(124, 610);
+            this.UNDO.Name = "UNDO";
+            this.UNDO.Size = new System.Drawing.Size(47, 41);
+            this.UNDO.TabIndex = 41;
+            this.UNDO.Text = "Undo";
+            this.UNDO.UseVisualStyleBackColor = true;
+            this.UNDO.Click += new System.EventHandler(this.UNDO_Click);
+            // 
+            // REDO
+            // 
+            this.REDO.Location = new System.Drawing.Point(177, 611);
+            this.REDO.Name = "REDO";
+            this.REDO.Size = new System.Drawing.Size(47, 41);
+            this.REDO.TabIndex = 42;
+            this.REDO.Text = "Redo";
+            this.REDO.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.REDO);
+            this.Controls.Add(this.UNDO);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.Source_tb);
@@ -737,6 +760,8 @@ namespace Rusik
         private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.Button Save;
+        private System.Windows.Forms.Button UNDO;
+        private System.Windows.Forms.Button REDO;
     }
 }
 

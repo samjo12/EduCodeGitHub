@@ -815,7 +815,7 @@ namespace Rusik
 
             if (SourceSearch_tstb.Text.Length == 0) return; //пустая строка поиска 
             newSearch.SetlinkedListSF(linkedListSF, str); //ищем строку str в списке SF
-            if (newSearch.Count() == 0) {  return; }
+            if (newSearch.Count() == 0) { newSearch.Clear(); return; } // поиск ничего не дал
     
             currentTabS++;
             TabPage newTabPage = new();
@@ -1163,6 +1163,10 @@ namespace Rusik
             SaveFile();
         }
 
+        private void SaveState(DoublyLinkedList<string>linkedList, string str)
+        { 
+        
+        }
         private void Form1_KeyDown(object sender, KeyEventArgs e) 
         { // переход Ctrl+стрелка на новую запись
             if (e.Control && e.KeyCode == Keys.Right)
@@ -1178,11 +1182,42 @@ namespace Rusik
                 Translate_btn_Click(null, null);
             }
             else if (e.Control && e.KeyCode == Keys.S)
-            { SaveFile(); }/*
+            { SaveFile(); }
+            else if (e.Control && e.KeyCode == Keys.Z)
+            { UNDO_textbox(); }/*
             else if ((e.Control & e.Shift) == Keys.V)
             {
                 MessageBox.Show("Ctrl+shift+V detected");
             }*/
+        }
+        private void UNDO_textbox()
+        {
+            if (Tabs.SelectedTab == null) return; // нет открытых файлов
+            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag;
+            if (tabSearch == null) // вызов с главного TABa
+            {
+                if (linkedListOF.curr.UNDO.curr != null)
+                { 
+                  linkedListOF.curr.Data = linkedListOF.curr.UNDO.curr.Data; 
+                  linkedListOF.curr.UNDO.NextNode(); 
+                  nudRecord_ValueChanged(null, null);
+                }
+            }
+            else //UNDO на вкладке поиска 
+            {
+                if (tabSearch.linkedListSS.curr.UNDO.curr != null)
+                {
+                    tabSearch.linkedListSS.curr.Data = tabSearch.linkedListSS.curr.UNDO.curr.Data;
+                    tabSearch.linkedListSS.curr.UNDO.NextNode();
+                    tabSearch.RefreshCurrent();
+                }
+            }
+        }
+
+        private void UNDO_Click(object sender, EventArgs e)
+        {
+            UNDO_textbox();
         }
     }
 
@@ -1197,6 +1232,7 @@ namespace Rusik
         public DoublyNode<T> Previous { get; set; } // предыдущий узел
         public DoublyNode<T> Next { get; set; }     // следующий узел
         public DoublyNode<T> Twin { get; set; }     // ссылка на связанный элемент из оригинального/переведенного списка
+        public DoublyLinkedList<T> UNDO = new(); // список с отменой
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
     {
@@ -1222,7 +1258,7 @@ namespace Rusik
         }
         public void AddFirst(T data, long Fileposition)
         {
-            DoublyNode<T> node = new DoublyNode<T>(data);
+            DoublyNode<T> node = new DoublyNode<T>(data); // добавить первым
             DoublyNode<T> temp = head;
             curr = node; // добавляемый элемент становится текущим
             node.Next = temp;
@@ -1319,9 +1355,17 @@ namespace Rusik
 
         public void ReplaceData(T data, DoublyNode<T> directNode=null) // Заменяет поле даты текущего элемента, либо иного
         {                                           // элемента, ссылка на который указана в необязательном поле directNode
-            if (directNode != null) { directNode.Data = data; return; }
-            if (curr == null) return;
-            curr.Data = data; 
+            if (directNode == null) directNode = curr;
+            if (directNode != null) 
+            {
+                if(directNode.UNDO.curr!=null)
+                    if(directNode.UNDO.curr.Data.Equals(data)) // Если данные изменились создадим эл-нт UNDO
+                        directNode.UNDO.AddFirst(directNode.Data,directNode.Fileposition);
+                if (directNode.UNDO.Count() > 100) //Обрезаем хвост UNDO - лимит не более 100 откатов
+                    directNode.UNDO.tail = directNode.UNDO.tail.Previous;
+                directNode.Data = data; 
+                return; 
+            }
         }
         public void SetTwin(DoublyNode<T> twin)
         {
@@ -1354,6 +1398,7 @@ namespace Rusik
             head = null;
             tail = null;
             curr = null;
+            
             count = 0;
         }
 
@@ -1427,6 +1472,7 @@ namespace Rusik
         public TabPage TabPage;
         public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
+
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
         public TextBox tabTranslated_tb { get; set; }
         public SplitContainer splitContainer { get; set; }
@@ -1467,7 +1513,7 @@ namespace Rusik
                                                  // вот что-то найдено, если вкладка не создавалась - то создадим
         }
 
-        public void Next()
+        public void Next() //перемещение по результатам поиска
         {
             if (linkedListSS.curr == null) return; // проверим что список не пустой
             if (linkedListSS.curr.Next != null)
@@ -1478,8 +1524,9 @@ namespace Rusik
                     if (currnum > linkedListSS.Count) currnum--;
                 }
                 else 
-                { 
-                    linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                {
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin.Twin);
+                    //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
                     currnum++; 
                 }
                 linkedListSS.curr = linkedListSS.curr.Next;
@@ -1493,7 +1540,7 @@ namespace Rusik
             RefreshCurrent();
             tabSearchStat_tslb.Text =Convert.ToString(currnum)+" of "+ linkedListSS.Count;
         }
-        public void Prev()
+        public void Prev()//перемещение по результатам поиска
         {
             if (linkedListSS.curr == null) return; // проверим что список не пустой
             if (linkedListSS.curr.Previous != null) 
@@ -1505,7 +1552,8 @@ namespace Rusik
                 }
                 else
                 {
-                    linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin.Twin);
+                    //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
                     currnum--;
                 }
                 linkedListSS.curr = linkedListSS.curr.Previous;
@@ -1570,7 +1618,9 @@ namespace Rusik
             tabTranslated_lb.Text = Convert.ToString(tabTranslated_tb_len);
             tabSource_lb.Text = Convert.ToString(tabSource_lb_len);
             if(linkedListSS.curr!=null) // защищаемся от случайного пизд-ца с null
-                if(linkedListSS.curr.Twin!=null)linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                if(linkedListSS.curr.Twin!=null) 
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin.Twin);
+            //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
         }
 
         public void Remove() //удаляем запись из списка SF по ссылке из SS.Twin
