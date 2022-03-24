@@ -1358,8 +1358,9 @@ namespace Rusik
             if (directNode == null) directNode = curr;
             if (directNode != null) 
             {
-                if(directNode.UNDO.curr!=null)
-                    if(directNode.UNDO.curr.Data.Equals(data)) // Если данные изменились создадим эл-нт UNDO
+                if(directNode.UNDO.curr==null) directNode.UNDO.AddFirst(directNode.Data, directNode.Fileposition);
+                else
+                    if (!directNode.UNDO.curr.Data.Equals(data)) // Если данные изменились создадим эл-нт UNDO
                         directNode.UNDO.AddFirst(directNode.Data,directNode.Fileposition);
                 if (directNode.UNDO.Count() > 100) //Обрезаем хвост UNDO - лимит не более 100 откатов
                     directNode.UNDO.tail = directNode.UNDO.tail.Previous;
