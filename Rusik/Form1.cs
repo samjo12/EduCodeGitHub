@@ -703,8 +703,9 @@ namespace Rusik
 
         private void Next_btn_Click(object sender, EventArgs e)
         {
-            nudRecord.ReadOnly = true;
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
+            if (linkedListOF.curr == null  || linkedListSF.curr == null) return;
+            nudRecord.ReadOnly = true;
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null)
@@ -713,7 +714,7 @@ namespace Rusik
                 //проверим, если TextBox изменился - сохраним его
                 if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                     if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-                linkedListSF.curr = linkedListOF.curr.Twin; // х/з чтобы убрать рассинхронизацию по curr
+                //linkedListSF.curr = linkedListOF.curr.Twin; // х/з чтобы убрать рассинхронизацию по curr
                 byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
                 bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
@@ -729,6 +730,7 @@ namespace Rusik
         private void Prev_btn_Click(object sender, EventArgs e)
         {
             if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
+            if (linkedListOF.curr == null || linkedListSF.curr == null) return;
             nudRecord.ReadOnly = true;
 
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
@@ -742,7 +744,7 @@ namespace Rusik
                 if ((string)linkedListOF.CurrentData != Translated_tb.Text) 
                     if (linkedListSF.Twin == linkedListOF.curr) 
                     { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-                linkedListSF.curr = linkedListOF.curr.Twin;// х/з чтобы убрать рассинхронизацию по curr
+                //linkedListSF.curr = linkedListOF.curr.Twin;// х/з чтобы убрать рассинхронизацию по curr
                 byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
                 bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
@@ -758,6 +760,7 @@ namespace Rusik
         private void nudRecord_ValueChanged(object sender, EventArgs e)
         {
             if (nudRecord.ReadOnly == true) return; // это пришел афтершок из функций Next_btn_Click И Prev_btn_click
+            if (linkedListOF.curr == null || linkedListSF.curr == null) return;
             long counter = (long)nudRecord.Value;
             //проверим, если TextBox изменился - сохраним его
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
@@ -802,7 +805,7 @@ namespace Rusik
             }
         }
  
-        private void SearchSource_Click(object sender, EventArgs e)
+        private void NewSearch_Click(object sender, EventArgs e)
         {   // поиск по тексту из входящего файла
             /*        
             public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
@@ -992,7 +995,7 @@ namespace Rusik
                 flag_NotSavedYet = true;
                 if (tabSearch == null) //открыта вкладка HOME
                 { // 
-                    if (linkedListSF.curr == null) return; //нечего удалять
+                    if (linkedListOF.curr == null || linkedListSF.curr == null) return;//нечего удалять
                     linkedListSF.Remove(linkedListSF.curr); //удаляем текущий элемент
                     linkedListOF.Remove(linkedListOF.curr); //удаляем текущий элемент
                     nudRecord.ReadOnly = true;
@@ -1116,16 +1119,19 @@ namespace Rusik
             if (Tabs.SelectedTab == null) return;
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
-            if (tabSearch == null) // перевод главной вкладки
+            if (tabSearch == null && Tabs.SelectedTab==Home) // перевод главной вкладки
             {
                 if (Translated_tb_len > Source_lb_len) lbTranslated.ForeColor = Color.DarkRed;
                 else lbTranslated.ForeColor = Color.Black;
                 lbTranslated.Text = Convert.ToString(Translated_tb_len);
                 //проверим, если TextBox изменился - сохраним его в списке
-                if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+                if(linkedListOF.curr!=null)
+                    if ((string)linkedListOF.CurrentData != Translated_tb.Text)
+                        if(linkedListSF.curr!=null)
+                            if (linkedListSF.Twin == linkedListOF.curr) 
+                            { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
             }
-            else
+            else if(tabSearch != null)
             {
                 tabSearch.Translated_KeyUp();
             }
@@ -1154,7 +1160,7 @@ namespace Rusik
         {
             if (e.KeyCode == Keys.Enter) // символЫ Delete и BackSpace
             {
-                if(sender== SourceSearch_tstb)SearchSource_Click(sender,e);
+                if(sender== SourceSearch_tstb)NewSearch_Click(sender,e);
             }
         }
 
@@ -1297,7 +1303,7 @@ namespace Rusik
         public bool RemoveData(T data)// удаление элемента с поиском по строке
         {
             DoublyNode<T> current = head;
-
+            DoublyNode<T> temp = curr;
             // поиск удаляемого узла
             while (current != null)
             {
@@ -1332,8 +1338,10 @@ namespace Rusik
                     head = current.Next;
                 }
                 count--;
+                curr = temp;
                 return true;
             }
+            curr = temp;
             return false;
         }
 
@@ -1494,6 +1502,7 @@ namespace Rusik
         {
             if (linkedList == null || str =="") return; //если передана пустая строка или непередан список
             //Начинаем поиск подстроки по всем элементам списка linkListSF
+            var temp=linkedList.curr;
             foreach (var item in linkedList)
             {
                 if (item.Contains(str))// Вхождения найдены
@@ -1509,9 +1518,10 @@ namespace Rusik
 
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
-
+            linkedList.curr = temp;
             if (linkedListSS.Count == 0) return; //ничего не найдено
                                                  // вот что-то найдено, если вкладка не создавалась - то создадим
+            
         }
 
         public void Next() //перемещение по результатам поиска
@@ -1632,12 +1642,15 @@ namespace Rusik
         }
         public void Clear()
         {
-            Translated_KeyUp(); //сохраняем текстбокс
-            linkedListSS.Clear();
+            if (linkedListSS.Count() > 0)
+            {
+                Translated_KeyUp(); //сохраняем текстбокс
+                linkedListSS.Clear();
+            }
 
-            tabSource_tb.Dispose();
-            tabTranslated_tb.Dispose();
-            linkedListSS = null;
+            if(tabSource_tb!=null) tabSource_tb.Dispose();
+            if(tabTranslated_tb!=null) tabTranslated_tb.Dispose();
+            if(linkedListSS!=null) linkedListSS = null;
         }
 
     }

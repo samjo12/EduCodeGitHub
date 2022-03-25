@@ -457,7 +457,7 @@ namespace Rusik
             this.SourceSearch_tsb.Size = new System.Drawing.Size(23, 22);
             this.SourceSearch_tsb.Text = "Search";
             this.SourceSearch_tsb.ToolTipText = "Go search";
-            this.SourceSearch_tsb.Click += new System.EventHandler(this.SearchSource_Click);
+            this.SourceSearch_tsb.Click += new System.EventHandler(this.NewSearch_Click);
             // 
             // SourceFirst_tsb
             // 
