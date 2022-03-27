@@ -165,6 +165,7 @@ namespace Rusik
             {
                 long counter = 0;
                 // записываем в файл содержимое списков с данными
+                var tmp_curr = linkedListSF.curr;
                 foreach (var item in linkedListSF)
                 {
                     if (item == null) break;
@@ -183,6 +184,7 @@ namespace Rusik
                         percent += onepercent; 
                     }
                 }
+                linkedListSF.curr=tmp_curr; //восстановим curr
             }
             Save_INI();
             return true;
@@ -705,25 +707,31 @@ namespace Rusik
         {
             if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
             if (linkedListOF.curr == null  || linkedListSF.curr == null) return;
-            nudRecord.ReadOnly = true;
+            
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null)
             {
+                nudRecord.ReadOnly = true;
                 if (nudRecord.Value == linkedListSF.Count) { nudRecord.Value = 1; } else { nudRecord.Value++; }
+                nudRecord.ReadOnly = false;
                 //проверим, если TextBox изменился - сохраним его
                 if ((string)linkedListOF.CurrentData != Translated_tb.Text)
-                    if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-                //linkedListSF.curr = linkedListOF.curr.Twin; // х/з чтобы убрать рассинхронизацию по curr
-                byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.NextNode());
+                    if (linkedListSF.Twin == linkedListOF.curr) 
+                    { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+                var str = (string)linkedListSF.NextNode();
+                if (str == null) { MessageBox.Show("Next_btn_Click - ERROR1"); str = "";  }
+                byte[] bytes = Encoding.Default.GetBytes(str);
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
-                bytes = Encoding.Default.GetBytes((string)linkedListOF.NextNode());
+                str = (string)linkedListOF.NextNode();
+                if (str == null) { MessageBox.Show("Next_btn_Click - ERROR2"); str = ""; }
+                bytes = Encoding.Default.GetBytes(str);
                 Translated_tb.Text = Encoding.UTF8.GetString(bytes);
                 // выводим сообщения о количестве символов в записях исходника и перевода
                 //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
                 lbSource.Text = Convert.ToString(Source_tb.Text.Length);
                 Translated_tb_KeyUp(null, null);
-                nudRecord.ReadOnly = false;
+                //nudRecord.ReadOnly = false;
             }
             else { tabSearch.Next(); }
         }
@@ -731,29 +739,32 @@ namespace Rusik
         {
             if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
             if (linkedListOF.curr == null || linkedListSF.curr == null) return;
-            nudRecord.ReadOnly = true;
 
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
 
             if (tabSearch == null) //вкладка Home
             {
+                nudRecord.ReadOnly = true;
                 if (nudRecord.Value == 1) { nudRecord.Value = linkedListSF.Count; } else { nudRecord.Value--; }
+                nudRecord.ReadOnly = false;
                 //проверим, если TextBox изменился - сохраним его
                 //linkedListOF.SetCurrent(linkedListSF.Twin);
                 if ((string)linkedListOF.CurrentData != Translated_tb.Text) 
                     if (linkedListSF.Twin == linkedListOF.curr) 
                     { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
-                //linkedListSF.curr = linkedListOF.curr.Twin;// х/з чтобы убрать рассинхронизацию по curr
-                byte[] bytes = Encoding.Default.GetBytes((string)linkedListSF.PrevNode());
+                var str = (string)linkedListSF.PrevNode();
+                if (str == null) { MessageBox.Show("Prev_btn_Click - ERROR1"); str = ""; }
+                byte[] bytes = Encoding.Default.GetBytes(str);
                 Source_tb.Text = Encoding.UTF8.GetString(bytes);
-                bytes = Encoding.Default.GetBytes((string)linkedListOF.PrevNode());
+                str = (string)linkedListOF.PrevNode();
+                if (str == null) { MessageBox.Show("Prev_btn_Click - ERROR2"); str = ""; }
+                bytes = Encoding.Default.GetBytes(str);
                 Translated_tb.Text = Encoding.UTF8.GetString(bytes);
                 // выводим сообщения о количестве символов в записях исходника и перевода
                 //lbTranslated.Text = Convert.ToString(Translated_tb.Text.Length);
                 Translated_tb_KeyUp(null, null);
                 lbSource.Text = Convert.ToString(Source_tb.Text.Length);
-                nudRecord.ReadOnly = false;
             }
             else { tabSearch.Prev(); } //вкладки с поиском
         }
@@ -765,6 +776,7 @@ namespace Rusik
             //проверим, если TextBox изменился - сохраним его
             if ((string)linkedListOF.CurrentData != Translated_tb.Text)
                 if (linkedListSF.Twin == linkedListOF.curr) { linkedListOF.ReplaceData(Translated_tb.Text); flag_NotSavedYet = true; }
+            var temp_curr = linkedListSF.curr;
             foreach (var item in linkedListSF)
             {
                 counter--;
@@ -772,7 +784,12 @@ namespace Rusik
                 {
                     byte[] bytes = Encoding.Default.GetBytes(item);
                     Source_tb.Text = Encoding.UTF8.GetString(bytes);
+                    if (linkedListSF.Twin == null)
+                    { MessageBox.Show("nudRecord_ValueChanged ERROR!");
+                        linkedListSF.curr = temp_curr; linkedListOF.curr = linkedListSF.Twin;  return;
+                    }
                     linkedListOF.curr = linkedListSF.Twin;
+
                     bytes = Encoding.Default.GetBytes(linkedListOF.curr.Data);
                     Translated_tb.Text = Encoding.UTF8.GetString(bytes);
                     // выводим сообщения о количестве символов в записях исходника и перевода
@@ -996,22 +1013,22 @@ namespace Rusik
                 if (tabSearch == null) //открыта вкладка HOME
                 { // 
                     if (linkedListOF.curr == null || linkedListSF.curr == null) return;//нечего удалять
-                    linkedListSF.Remove(linkedListSF.curr); //удаляем текущий элемент
-                    linkedListOF.Remove(linkedListOF.curr); //удаляем текущий элемент
-                    nudRecord.ReadOnly = true;
+                    linkedListSF.DeleteNode(linkedListSF.curr); //удаляем текущий элемент
+                    linkedListOF.DeleteNode(linkedListOF.curr); //удаляем текущий элемент
+                    
                     num = linkedListSF.GetCurrentNum();
-                    if (num > 0) nudRecord.Value = num;
-                    nudRecord.ReadOnly = false;
+                    if (num > 0) { nudRecord.ReadOnly = true; nudRecord.Value = num; nudRecord.ReadOnly = false;}
                     //обновляем визуальную информацию
                     Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     Source_tb.Text = linkedListSF.curr.Data;
                     Translated_tb.Text = linkedListOF.curr.Data;
                 }
-                else
-                {   //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
-                    linkedListSF.Remove(tabSearch.linkedListSS.curr.Twin); 
-                    //удаляем элемент из основного списка OF парный к предыдущему удаляемому элементу
-                    linkedListOF.Remove(tabSearch.linkedListSS.curr.Twin.Twin); 
+                else // открыта вкладка поиска
+                {   
+                    //удаляем элемент из основного списка OF с переводом
+                    linkedListOF.DeleteNode(tabSearch.linkedListSS.curr.Twin.Twin); 
+                    //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
+                    linkedListSF.DeleteNode(tabSearch.linkedListSS.curr.Twin); 
                     tabSearch.Remove(); //удаляем текущий элемент из списка поиска SS
                     //обновляем вкладку для актуализации видимой инфы
                     if (tabSearch.linkedListSS.Count == 0) TabClose_tsb_Click(null, null);
@@ -1238,6 +1255,7 @@ namespace Rusik
         public DoublyNode<T> Previous { get; set; } // предыдущий узел
         public DoublyNode<T> Next { get; set; }     // следующий узел
         public DoublyNode<T> Twin { get; set; }     // ссылка на связанный элемент из оригинального/переведенного списка
+        public long N_Record { get; set; } // номер по-порядку 
         public DoublyLinkedList<T> UNDO = new(); // список с отменой
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
@@ -1278,25 +1296,22 @@ namespace Rusik
         }
 
         // удаление по ссылке на элемент
-        public DoublyNode<T> Remove(DoublyNode<T> node) //УДАЛИТЬ текущий элемент списка
-        {
-            if (node == null) return null; //нечего удалять
-            DoublyNode<T> tempcurr = curr;
-            bool flag_isnodecurrent= true;
-            if (node != curr) // если удаляемый элемент curr, то выбираем новый curr
-            {
-                flag_isnodecurrent = false;
-                // если узел не последний переставляем curr (вперед по возможности или назад)
-                
-            }
-            if(curr!=null)curr.Twin = null;
+        public DoublyNode<T> DeleteNode(DoublyNode<T> node1=null) //null- УДАЛИТЬ текущий элемент списка или по ссылке
+        {   
+            bool flag_isnodecurrent= true; //удаляется текущий элемент
+            DoublyNode<T> tempcurr = curr, node = node1;
+//если node1 не передан,то удаляем текущий элемент,
+//иначе если переданный элемент не текущий, то в конце восстановим curr
+            if (node == null) node=curr; else if(node!=curr) flag_isnodecurrent = false; 
+
+            node.Twin = null; //ставим метку, что данный элемент ни на что не ссылается и его можно удалять
             if (node.Next != null) { curr = node.Next; node.Next.Previous = node.Previous; }
             else { tail = node.Previous; curr = node.Previous; }
             // если узел не первый
             if (node.Previous != null) { node.Previous.Next = node.Next; }
             else { head = node.Next; }
             if(count>0)count--;
-            if (flag_isnodecurrent == false) curr = tempcurr;
+            if (flag_isnodecurrent == false) curr = tempcurr; // восстанавливаем curr 
             return curr;
         }
         
@@ -1509,11 +1524,12 @@ namespace Rusik
                 {
                     linkedListSS.Add(item, 0); //создаем в списке поиска новый элемент
                     linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                    continue; //пропускаем поиск по переводу, чтобы не сделать дубликат в найденном
                 }
                 if (linkedList.curr.Twin.Data.Contains(str))// проверяем на совпадение и список с переводом
                 {
-                    linkedListSS.Add(linkedList.curr.Twin.Data, 0);
-                    linkedListSS.SetTwin(linkedList.curr);
+                        linkedListSS.Add(linkedList.curr.Twin.Data, 0);
+                        linkedListSS.SetTwin(linkedList.curr);
                 }
 
             }
@@ -1531,7 +1547,7 @@ namespace Rusik
             {
                 if (linkedListSS.curr.Twin == null) // похоже открытая запись в поиске уже была удалена из основного списка
                 { // Удалим ее из списка поиска
-                    linkedListSS.Remove(linkedListSS.curr); //удаляем ее без сохранения
+                    linkedListSS.DeleteNode(linkedListSS.curr); //удаляем ее без сохранения
                     if (currnum > linkedListSS.Count) currnum--;
                 }
                 else 
@@ -1558,7 +1574,7 @@ namespace Rusik
             {
                 if (linkedListSS.curr.Twin == null) // похоже открытая запись в поиске уже была удалена из основного списка
                 { // Удалим ее из списка поиска
-                    linkedListSS.Remove(linkedListSS.curr); //удаляем ее без сохранения
+                    linkedListSS.DeleteNode(linkedListSS.curr); //удаляем ее без сохранения
                     if (currnum > linkedListSS.Count) currnum--;
                 }
                 else
@@ -1593,15 +1609,15 @@ namespace Rusik
             { linkedListSS.curr = linkedListSS.curr.Next; }
             RefreshCurrent();
         }
-        public void RefreshCurrent()
+        public void RefreshCurrent() //обновим видимую запись во вкладке поиска
         {
-            if (linkedListSS.curr == null) return;
+            if (linkedListSS.curr == null) return; // вдруг список пуст
             // Проверим, не удалена ли открытая запись в поиске из основного списка
             while (linkedListSS.curr.Twin == null || linkedListSS.curr.Twin.Twin==null) 
             { // Удалим ее из списка поиска
-                linkedListSS.Remove(linkedListSS.curr); //удаляем ее без сохранения из списка поиска
+                linkedListSS.DeleteNode(linkedListSS.curr); //удаляем ее без сохранения из списка поиска
                 if (currnum > linkedListSS.Count) currnum--;
-                if (linkedListSS.curr == null) return; //список пуст
+                if (linkedListSS.curr == null) return; //список стал пуст ?
             }
 
             tabSource_tb.BringToFront();
@@ -1631,13 +1647,12 @@ namespace Rusik
             if(linkedListSS.curr!=null) // защищаемся от случайного пизд-ца с null
                 if(linkedListSS.curr.Twin!=null) 
                     linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin.Twin);
-            //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
         }
 
         public void Remove() //удаляем запись из списка SF по ссылке из SS.Twin
         {
             if (linkedListSS.curr != null) linkedListSS.curr.Twin = null; else return;
-            linkedListSS.Remove(linkedListSS.curr);
+            linkedListSS.DeleteNode(linkedListSS.curr);
             currnum--;
         }
         public void Clear()
