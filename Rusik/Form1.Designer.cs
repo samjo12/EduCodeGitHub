@@ -61,9 +61,9 @@ namespace Rusik
             this.SourceFile_tb = new System.Windows.Forms.Label();
             this.TranslatedFile_tb = new System.Windows.Forms.Label();
             this.Delete_btn = new System.Windows.Forms.Button();
-            this.Source_ts = new System.Windows.Forms.ToolStrip();
+            this.Search_ts = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.SourceSearch_tstb = new System.Windows.Forms.ToolStripTextBox();
+            this.Search_tstb = new System.Windows.Forms.ToolStripTextBox();
             this.SourceSearch_tsb = new System.Windows.Forms.ToolStripButton();
             this.SourceFirst_tsb = new System.Windows.Forms.ToolStripButton();
             this.SourcePrev_tsb = new System.Windows.Forms.ToolStripButton();
@@ -72,8 +72,6 @@ namespace Rusik
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.SearchStat_tslb = new System.Windows.Forms.ToolStripLabel();
             this.TabClose_tsb = new System.Windows.Forms.ToolStripButton();
-            this.Translated_tb = new System.Windows.Forms.TextBox();
-            this.Source_tb = new System.Windows.Forms.TextBox();
             this.miniToolStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbSource = new System.Windows.Forms.ToolStripStatusLabel();
@@ -86,7 +84,7 @@ namespace Rusik
             this.REDO = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            this.Source_ts.SuspendLayout();
+            this.Search_ts.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.statusStrip2.SuspendLayout();
             this.SuspendLayout();
@@ -117,6 +115,7 @@ namespace Rusik
             // 
             // nudRecord
             // 
+            this.nudRecord.BackColor = System.Drawing.SystemColors.Control;
             this.nudRecord.Location = new System.Drawing.Point(677, 611);
             this.nudRecord.Minimum = new decimal(new int[] {
             1,
@@ -160,35 +159,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -213,7 +212,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(15, 678);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -254,7 +253,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(190, 678);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -411,13 +410,13 @@ namespace Rusik
             this.Delete_btn.UseVisualStyleBackColor = true;
             this.Delete_btn.Click += new System.EventHandler(this.Delete_btn_Click);
             // 
-            // Source_ts
+            // Search_ts
             // 
-            this.Source_ts.BackColor = System.Drawing.SystemColors.Info;
-            this.Source_ts.Dock = System.Windows.Forms.DockStyle.None;
-            this.Source_ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Search_ts.BackColor = System.Drawing.SystemColors.Info;
+            this.Search_ts.Dock = System.Windows.Forms.DockStyle.None;
+            this.Search_ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
-            this.SourceSearch_tstb,
+            this.Search_tstb,
             this.SourceSearch_tsb,
             this.SourceFirst_tsb,
             this.SourcePrev_tsb,
@@ -426,11 +425,12 @@ namespace Rusik
             this.toolStripSeparator3,
             this.SearchStat_tslb,
             this.TabClose_tsb});
-            this.Source_ts.Location = new System.Drawing.Point(12, 585);
-            this.Source_ts.Name = "Source_ts";
-            this.Source_ts.Size = new System.Drawing.Size(293, 25);
-            this.Source_ts.TabIndex = 37;
-            this.Source_ts.Text = "toolStrip1";
+            this.Search_ts.Location = new System.Drawing.Point(12, 585);
+            this.Search_ts.Name = "Search_ts";
+            this.Search_ts.Size = new System.Drawing.Size(293, 25);
+            this.Search_ts.TabIndex = 37;
+            this.Search_ts.Text = "toolStrip1";
+            this.Search_ts.Visible = false;
             // 
             // toolStripLabel1
             // 
@@ -438,15 +438,15 @@ namespace Rusik
             this.toolStripLabel1.Size = new System.Drawing.Size(0, 22);
             this.toolStripLabel1.ToolTipText = "Type your string for searching here...";
             // 
-            // SourceSearch_tstb
+            // Search_tstb
             // 
-            this.SourceSearch_tstb.AcceptsReturn = true;
-            this.SourceSearch_tstb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.SourceSearch_tstb.Name = "SourceSearch_tstb";
-            this.SourceSearch_tstb.ReadOnly = true;
-            this.SourceSearch_tstb.Size = new System.Drawing.Size(250, 25);
-            this.SourceSearch_tstb.ToolTipText = "Type text for seaching here...";
-            this.SourceSearch_tstb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SourceSearch_tstb_KeyDown);
+            this.Search_tstb.AcceptsReturn = true;
+            this.Search_tstb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Search_tstb.Name = "Search_tstb";
+            this.Search_tstb.ReadOnly = true;
+            this.Search_tstb.Size = new System.Drawing.Size(250, 25);
+            this.Search_tstb.ToolTipText = "Type text for seaching here...";
+            this.Search_tstb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SourceSearch_tstb_KeyDown);
             // 
             // SourceSearch_tsb
             // 
@@ -457,7 +457,7 @@ namespace Rusik
             this.SourceSearch_tsb.Size = new System.Drawing.Size(23, 22);
             this.SourceSearch_tsb.Text = "Search";
             this.SourceSearch_tsb.ToolTipText = "Go search";
-            this.SourceSearch_tsb.Click += new System.EventHandler(this.NewSearch_Click);
+            this.SourceSearch_tsb.Click += new System.EventHandler(this.NewTab_Click);
             // 
             // SourceFirst_tsb
             // 
@@ -525,39 +525,6 @@ namespace Rusik
             this.TabClose_tsb.Visible = false;
             this.TabClose_tsb.Click += new System.EventHandler(this.TabClose_tsb_Click);
             // 
-            // Translated_tb
-            // 
-            this.Translated_tb.AllowDrop = true;
-            this.Translated_tb.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.Translated_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Translated_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Translated_tb.Location = new System.Drawing.Point(508, 70);
-            this.Translated_tb.Multiline = true;
-            this.Translated_tb.Name = "Translated_tb";
-            this.Translated_tb.ReadOnly = true;
-            this.Translated_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Translated_tb.Size = new System.Drawing.Size(459, 475);
-            this.Translated_tb.TabIndex = 37;
-            this.Translated_tb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            this.Translated_tb.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Translated_tb_KeyUp);
-            // 
-            // Source_tb
-            // 
-            this.Source_tb.AllowDrop = true;
-            this.Source_tb.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.Source_tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Source_tb.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Source_tb.Location = new System.Drawing.Point(12, 70);
-            this.Source_tb.Multiline = true;
-            this.Source_tb.Name = "Source_tb";
-            this.Source_tb.ReadOnly = true;
-            this.Source_tb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Source_tb.Size = new System.Drawing.Size(457, 475);
-            this.Source_tb.TabIndex = 36;
-            this.Source_tb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Source_tb_MouseClick);
-            this.Source_tb.LocationChanged += new System.EventHandler(this.Source_tb_TextChanged);
-            this.Source_tb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            // 
             // miniToolStrip
             // 
             this.miniToolStrip.AccessibleName = "New item selection";
@@ -597,11 +564,12 @@ namespace Rusik
             this.statusStrip1.Size = new System.Drawing.Size(207, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip1.Visible = false;
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
             this.toolStripStatusLabel1.Text = "Translated message symbols:";
             // 
             // lbTranslated
@@ -622,6 +590,7 @@ namespace Rusik
             this.statusStrip2.Size = new System.Drawing.Size(159, 22);
             this.statusStrip2.TabIndex = 19;
             this.statusStrip2.Text = "statusStrip2";
+            this.statusStrip2.Visible = false;
             // 
             // Save
             // 
@@ -662,13 +631,11 @@ namespace Rusik
             this.Controls.Add(this.UNDO);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.Source_tb);
             this.Controls.Add(this.statusStrip2);
-            this.Controls.Add(this.Translated_tb);
             this.Controls.Add(this.Delete_btn);
             this.Controls.Add(this.TranslatedFile_tb);
             this.Controls.Add(this.SourceFile_tb);
-            this.Controls.Add(this.Source_ts);
+            this.Controls.Add(this.Search_ts);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1_lb);
@@ -694,8 +661,8 @@ namespace Rusik
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.Source_ts.ResumeLayout(false);
-            this.Source_ts.PerformLayout();
+            this.Search_ts.ResumeLayout(false);
+            this.Search_ts.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.statusStrip2.ResumeLayout(false);
@@ -739,9 +706,9 @@ namespace Rusik
         private System.Windows.Forms.Label SourceFile_tb;
         private System.Windows.Forms.Label TranslatedFile_tb;
         private System.Windows.Forms.Button Delete_btn;
-        private System.Windows.Forms.ToolStrip Source_ts;
+        private System.Windows.Forms.ToolStrip Search_ts;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripTextBox SourceSearch_tstb;
+        private System.Windows.Forms.ToolStripTextBox Search_tstb;
         private System.Windows.Forms.ToolStripButton SourceSearch_tsb;
         private System.Windows.Forms.ToolStripButton SourceFirst_tsb;
         private System.Windows.Forms.ToolStripButton SourcePrev_tsb;
@@ -750,8 +717,6 @@ namespace Rusik
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripLabel SearchStat_tslb;
         private System.Windows.Forms.ToolStripButton TabClose_tsb;
-        private System.Windows.Forms.TextBox Translated_tb;
-        private System.Windows.Forms.TextBox Source_tb;
         private System.Windows.Forms.StatusStrip miniToolStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel lbSource;
