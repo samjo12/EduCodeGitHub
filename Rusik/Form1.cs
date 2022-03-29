@@ -67,6 +67,17 @@ namespace Rusik
             comboBox2.DataSource = new BindingSource(GoogleLangs, null);
             comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
             comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
+            /*string usage_message = "This program can help you with some unofficial " +
+            "localization of other programs or games.";
+            TextBox mess_tb = new();
+            mess_tb.Location = new Point(0, 25);
+            mess_tb.Name = "UsageMessage";
+            mess_tb.Size = new Size(977, 500);
+            mess_tb.Text = usage_message;
+            mess_tb.Multiline = true;
+            mess_tb.ReadOnly = true;
+            Controls.Add(mess_tb);
+            */
             Load_INI(); // читаем ini- файл
                         // формируем первую вкладку
                         
@@ -1130,6 +1141,7 @@ namespace Rusik
             if (Tabs == null) return;
             UNDO_textbox();
         }
+
     }
 
     public class DoublyNode <T>
