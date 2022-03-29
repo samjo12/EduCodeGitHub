@@ -61,12 +61,72 @@ namespace Minesweeper.Properties {
         }
         
         /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap blackbomb30 {
+            get {
+                object obj = ResourceManager.GetObject("blackbomb30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
         internal static byte[] DS_DIGI {
             get {
                 object obj = ResourceManager.GetObject("DS_DIGI", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flag_red30 {
+            get {
+                object obj = ResourceManager.GetObject("flag_red30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap flag_yellow30 {
+            get {
+                object obj = ResourceManager.GetObject("flag_yellow30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mine30l {
+            get {
+                object obj = ResourceManager.GetObject("mine30l", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Recycle30 {
+            get {
+                object obj = ResourceManager.GetObject("Recycle30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redbomb30 {
+            get {
+                object obj = ResourceManager.GetObject("redbomb30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

@@ -309,84 +309,80 @@ namespace Password_Generator
         //      public static Color colorschem2 = Color.FromArgb(2, 226, 232);// темно-серый неактивный индикатор
         public static Color colorschem1 = Color.White; // синий индикатор
         public static Color colorschem2 = Color.Red;// темно-серый неактивный индикатор
-        
-    }
-    public partial class Miner2 : Form // класс дочерней формы игрового поля
-    {
-        readonly Miner1 miner1; //создаем переменную со ссылкой на адрес класса1
-        int X;
-        int Y;
-        int S;
-        PrivateFontCollection private_fonts = new PrivateFontCollection();
-
-        public GifImage gifImage = null;
-        public GifImage gifMine = null;
-
-        public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
+        public static string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif";
+        public static string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
+        public static string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
+        public static string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
+        public static string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
+        public static string filePath6 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\Recycle30.gif";
+        /*public string filePath = @"C:\Users\usr\source\repos\Miner\mine30l.gif"; //взрыв
         public string filePath2 = @"C:\Users\usr\source\repos\Miner\blackbomb30.gif"; //мина на взводе
         public string filePath3 = @"C:\Users\usr\source\repos\Miner\redbomb30.gif";
         public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
         public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
-        public string filePath6 = @"C:\Users\usr\source\repos\Miner\Recycle30.gif";
-        /*public string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif"; //взрыв
-        public string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
-        public string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
-        public string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
-        public string filePath5 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_yellow30.png";
-        public string filePath6 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\Recycle30.gif";*/
+        public string filePath6 = @"C:\Users\usr\source\repos\Miner\Recycle30.gif";*/
+}
+public partial class Miner2 : Form // класс дочерней формы игрового поля
+{
+readonly Miner1 miner1; //создаем переменную со ссылкой на адрес класса1
+int X;
+int Y;
+int S;
+PrivateFontCollection private_fonts = new PrivateFontCollection();
 
-        //DateTime date1 = new DateTime(0, 0);
-        //Timer timer1 = new Timer();
-        Timer timer2 = new Timer();
+public GifImage gifImage = null;
+public GifImage gifMine = null;
 
-        public Clock gametime; // индикатор игрового таймера
-        public Clock gamecont; // индикатор количества мин
-        public Color LabelBackColour =Color.Azure;
-   
-        Label WIN = new Label();
-        int W = StaticData.W; //размеры кнопок в пикселях -ширина
-        int H= StaticData.W;        //размеры кнопок в пикселях -высота
-        int Z;      // исходное количество мин. изначально равно S
-        Button[,] _buttons = new Button[30, 30];
-        bool[,] buttonflags = new Boolean[30, 30];
-        bool[,] buttonopened = new Boolean[30, 30];
+Timer timer2 = new Timer();
 
-        public Label[,] LButtons = new Label[30, 30];
-        Boolean flag_detonation = false;
-        bool flag_restart = false;
-        int[,] minespole = new int[30,30];
-        int explodeX;
-        int explodeY;
-     //   Button Startbtn = new Button(); //кнопка рестарт
-        public Button Restartbtn = new Button();// После окончания игры создадим эту кнопку на все окно дря рестарта
-        public RoundButton Restart_btn = new RoundButton();
-        Button FlagSWbtn = new Button();// кнопка смена режимов клавищ мыши, меняем местами левую и правую кнопки мыши
-   //     bool FlagSwitch = false; // по умолчанию, левая кнопка тыкает, а правая открывает ячейки
-        public const int BySide_padding = 40;//45
-        public const int Top_padding = 45; //90
-        Random rnd = new Random();
+public Clock gametime; // индикатор игрового таймера
+public Clock gamecont; // индикатор количества мин
+public Color LabelBackColour =Color.Azure;
 
-        public Miner2(Miner1 owner)
-        {
-            miner1 = owner;
-            // Загружаем встроенный в ресурсы свой шрифт
-            EnableDoubleBuffering();
-            LoadFont();
-            var labelFontDigi = new Font(private_fonts.Families[0], 20);
+Label WIN = new Label();
+int W = StaticData.W; //размеры кнопок в пикселях -ширина
+int H= StaticData.W;        //размеры кнопок в пикселях -высота
+int Z;      // исходное количество мин. изначально равно S
+Button[,] _buttons = new Button[30, 30];
+bool[,] buttonflags = new Boolean[30, 30];
+bool[,] buttonopened = new Boolean[30, 30];
 
-            gifImage = new GifImage(filePath); //2
-            gifImage.ReverseAtEnd = false; // 2 dont reverse at end
-            gifMine = new GifImage(filePath2);
-           
-            this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
+public Label[,] LButtons = new Label[30, 30];
+Boolean flag_detonation = false;
+bool flag_restart = false;
+int[,] minespole = new int[30,30];
+int explodeX;
+int explodeY;
+//   Button Startbtn = new Button(); //кнопка рестарт
+public Button Restartbtn = new Button();// После окончания игры создадим эту кнопку на все окно дря рестарта
+public RoundButton Restart_btn = new RoundButton();
+Button FlagSWbtn = new Button();// кнопка смена режимов клавищ мыши, меняем местами левую и правую кнопки мыши
+//     bool FlagSwitch = false; // по умолчанию, левая кнопка тыкает, а правая открывает ячейки
+public const int BySide_padding = 40;//45
+public const int Top_padding = 45; //90
+Random rnd = new Random();
 
-            this.Text = StaticData.Form2text;// "Take it Easy ...";
-            //this.BackColor= Color.Black;
+public Miner2(Miner1 owner)
+{
+    miner1 = owner;
+    // Загружаем встроенный в ресурсы свой шрифт
+    EnableDoubleBuffering();
+    LoadFont();
+    var labelFontDigi = new Font(private_fonts.Families[0], 20);
 
-            X = StaticData.X;
-            Y = StaticData.Y;
-            S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
-            Z = S; // количество мин
+    gifImage = new GifImage(StaticData.filePath); //2
+    gifImage.ReverseAtEnd = false; // 2 dont reverse at end
+    gifMine = new GifImage(StaticData.filePath2);
+
+    this.FormClosing += new FormClosingEventHandler(this.Miner2_FormClosing);// обработчик закрытия окна по крестику
+
+    this.Text = StaticData.Form2text;// "Take it Easy ...";
+    //this.BackColor= Color.Black;
+
+    X = StaticData.X;
+    Y = StaticData.Y;
+    S = Convert.ToInt32(Math.Round(StaticData.S*X*Y/100)); /*количество мин исходя из уровня сложности S%*(*X*Y)/100% */
+        Z = S; // количество мин
             // вычисляем размер окна
             // константы размеров
             
@@ -400,7 +396,7 @@ namespace Password_Generator
             Restart_btn.Location = new Point((this.Width-6*W)/2, 5); //20 и 35 - отступы слева и сверху
             Restart_btn.Tag = 1000; // специальная кнопка рестарта игры
             Restart_btn.Visible = true;
-            Restart_btn.BackgroundImage =Image.FromFile(filePath6);
+            Restart_btn.BackgroundImage =Image.FromFile(StaticData.filePath6);
             this.Controls.Add(Restart_btn); //выводим кнопку с заданными ранее параметрами
             this.Restart_btn.MouseDown += new MouseEventHandler(this.button1_MouseDown); // вешаем на кнопку  обработчик нажатий  кнопок мыши
                                                                    // this._buttons[i, j].Click += new System.EventHandler(this.button1_Click); // вешаем обработчик событий
@@ -701,18 +697,14 @@ namespace Password_Generator
 
                 }
         }
- /*       private void timer1_Tick(object sender, EventArgs e)
-        {
-          date1 = date1.AddSeconds(1);
-        }
- */
+
         private void timer2_Tick(object sender, EventArgs e)
         {
             LButtons[explodeX, explodeY].Image=(Bitmap)gifImage.GetNextFrame();
             if (LButtons[explodeX, explodeY].Image is null) 
             { 
                 timer2.Stop(); 
-                LButtons[explodeX, explodeY].Image = Image.FromFile(filePath3); 
+                LButtons[explodeX, explodeY].Image = Image.FromFile(StaticData.filePath3); 
                 return; 
             }
         }
@@ -801,7 +793,7 @@ namespace Password_Generator
                 flag_detonation = false; // сбрасываем флаг взрыва
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
-                    { if (buttonflags[i,j] is true && minespole[i,j]!=10) _buttons[i,j].Image= Image.FromFile(filePath5); //false flag
+                    { if (buttonflags[i,j] is true && minespole[i,j]!=10) _buttons[i,j].Image= Image.FromFile(StaticData.filePath5); //false flag
                         //if (_buttons[i, j].Visible is true) dispose_button(_buttons[i, j]); // открываем только неоткрытые кнопки
                         LButtons[i, j].BringToFront();
                     }
@@ -823,7 +815,7 @@ namespace Password_Generator
                 //поставим недоставленные флаги
                 for (int i = 0; i < X; i++)
                     for (int j = 0; j < Y; j++)
-                        if (buttonflags[i, j] is false && minespole[i, j] == 10) _buttons[i, j].Image = Image.FromFile(filePath4); //flag
+                        if (buttonflags[i, j] is false && minespole[i, j] == 10) _buttons[i, j].Image = Image.FromFile(StaticData.filePath4); //flag
                 WIN.Visible = true;
                 return;
             }
@@ -853,7 +845,7 @@ namespace Password_Generator
             if (buttonflags[x, y] is false)
             {
                 if (S == 0) return;// нельзя ставить флажков больше, чем есть мин по счетчику
-                buttonflags[x, y] = true; _buttons[x, y].Image = Image.FromFile(filePath4);
+                buttonflags[x, y] = true; _buttons[x, y].Image = Image.FromFile(StaticData.filePath4);
                 S--;
                 gamecont.bombcounter = S; gamecont.Invalidate();
                 if (S == 0) {  GameOver_check();  return; } //проверим - не достигнут ли конец игры
@@ -1228,7 +1220,7 @@ namespace Password_Generator
             using (var brush = new LinearGradientBrush(ClientRectangle, backColor, backColor2, LinearGradientMode.Vertical))
                 e.Graphics.FillPath(brush, Path);
             using (var brush = new LinearGradientBrush(ClientRectangle, backColor, backColor2, LinearGradientMode.Vertical))
-                e.Graphics.DrawImage(Image.FromFile(@"C:\Users\usr\source\repos\Miner\Recycle30.gif"), ClientRectangle);
+                e.Graphics.DrawImage(Image.FromFile(StaticData.filePath6), ClientRectangle);
             using (var brush = new SolidBrush(foreColor))
             {
                 var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
