@@ -309,7 +309,7 @@ namespace Password_Generator
         //      public static Color colorschem2 = Color.FromArgb(2, 226, 232);// темно-серый неактивный индикатор
         public static Color colorschem1 = Color.White; // синий индикатор
         public static Color colorschem2 = Color.Red;// темно-серый неактивный индикатор
-        public static string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif";
+        /*public static string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif";
         public static string filePath2 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\blackbomb30.gif"; //мина на взводе
         public static string filePath3 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\redbomb30.gif";
         public static string filePath4 = @"C:\Users\amsad\source\EduCodeGitHub\Miner\flag_red30.png";
@@ -321,7 +321,13 @@ namespace Password_Generator
         public string filePath4 = @"C:\Users\usr\source\repos\Miner\flag_red30.png";
         public string filePath5 = @"C:\Users\usr\source\repos\Miner\flag_yellow30.png";
         public string filePath6 = @"C:\Users\usr\source\repos\Miner\Recycle30.gif";*/
-}
+        public static string filePath = @"..\..\..\mine30l.gif";
+        public static string filePath2 = @"..\..\..\blackbomb30.gif"; //мина на взводе
+        public static string filePath3 = @"..\..\..\redbomb30.gif";
+        public static string filePath4 = @"..\..\..\flag_red30.png";
+        public static string filePath5 = @"..\..\..\flag_yellow30.png";
+        public static string filePath6 = @"..\..\..\Recycle30.gif";
+    }
 public partial class Miner2 : Form // класс дочерней формы игрового поля
 {
 readonly Miner1 miner1; //создаем переменную со ссылкой на адрес класса1

@@ -38,6 +38,8 @@ namespace Rusik
         //public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
         public bool flag_NotSavedYet = false;
         public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
+        //флаг наличие доп.данных о смещениях/позициях текстовых строк внутри бинарного файла :
+        public bool flag_ExtraDataforBinary = false; 
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
 
         public string languageEn = "en"; //из модуля google-переводчика
@@ -431,7 +433,7 @@ namespace Rusik
             if (!File.Exists(IniFile)) return; // ini - файл отсутствует
             //ЧИТАЕМ ФАЙЛ построчно
             using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
-            {  
+            {
                 while ((message = readerSF.ReadLine()) != null)
                 {
                     for (int i = 0; i < message.Length; i++)
@@ -443,7 +445,7 @@ namespace Rusik
                             command = Regex.Replace(command, @"\s", ""); //удаляем пробелы
                             command = Regex.Replace(command, @"\t", ""); // удаляем табуляцию
 
-                            command_value = message.Substring(i+1, message.Length-i-1);
+                            command_value = message.Substring(i + 1, message.Length - i - 1);
                             command_value = Regex.Replace(command_value, @"\t", "");// удаляем табуляцию
                             foreach (var item in commands) //проверяем, команда ли это?
                             {
@@ -474,8 +476,8 @@ namespace Rusik
                                                 if (item1 == command_value) languageEn = command_value;
                                             comboBox1.SelectedValue = languageEn;
                                             foreach (var item1 in GoogleLangs.Keys)
-                                                if (GoogleLangs[item1] == languageEn) 
-                                                {  comboBox1.Text = GoogleLangs[item1]; break; }
+                                                if (GoogleLangs[item1] == languageEn)
+                                                { comboBox1.Text = GoogleLangs[item1]; break; }
                                             break;
                                         case "TranslationLanguage":
                                             command_value = Regex.Replace(command_value, @"\s", "");
@@ -505,17 +507,50 @@ namespace Rusik
             }//закрываем файл
              //Ищем названия параметров
              //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
-            if (TranslatedFile=="" || TranslatedFile==null) LastRecordNumber = 1;
-            if (TranslatedFile != "" && TranslatedFile !=null) { flag_Skipdialog = true; OpenTranslatedFile(); }
-            if (LastRecordNumber!=1)
-            { 
-                nudRecord.Value = LastRecordNumber; 
-                nudRecord_ValueChanged(null,null); 
+            if (TranslatedFile == "" || TranslatedFile == null) LastRecordNumber = 1;
+            if (TranslatedFile != "" && TranslatedFile != null) { flag_Skipdialog = true; OpenTranslatedFile(); }
+            if (LastRecordNumber != 1)
+            {
+                nudRecord.Value = LastRecordNumber;
+                nudRecord_ValueChanged(null, null);
             }
             if (comboBox1.Text == null) comboBox1.Text = "en";
             if (comboBox1.Text == null) comboBox1.Text = "ru";
-        }
+            // проверим наличие файла с экстра данными
+            IniFile = IniFile[0..^3]; IniFile += "ext";
 
+            if (!File.Exists(IniFile)) return; // extra - файл отсутствует
+            //ЧИТАЕМ ФАЙЛ Hash,offset,len
+        /*    using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
+            {
+                while ((message = readerSF.ReadLine()) != null)
+                {
+                    for (int i = 0; i < message.Length; i++)
+                    {
+                    }
+                }
+            }*/
+        
+        }
+        public static string CreateMD5(string input) //расчет Хэша по строке
+        {
+            // Use input string to calculate MD5 hash
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                return Convert.ToHexString(hashBytes); // .NET 5 +
+
+                // Convert the byte array to hexadecimal string prior to .NET 5
+                // StringBuilder sb = new System.Text.StringBuilder();
+                // for (int i = 0; i < hashBytes.Length; i++)
+                // {
+                //     sb.Append(hashBytes[i].ToString("X2"));
+                // }
+                // return sb.ToString();
+            }
+        }
         private void Save_INI()
         {
             /*string[] commands = { "InterfaceLanguage", "TranslatedFile", "LastRecordNumber", "SourceLanguage", "TranslationLanguage", "OpenFileHistory" };
