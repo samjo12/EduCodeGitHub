@@ -32,8 +32,8 @@ namespace Rusik
         public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
         public string OutputFile=""; // Выходной текстовый файл с текущим рабочим переводом
         string IniFile = ""; //полный путь к INI файлу
-        public DoublyLinkedList<string> linkedListSF = new(); // связный список для исходного файла
-        public DoublyLinkedList<string> linkedListOF = new(); // связный список для выходного файла
+        public DoublyLinkedList<string> linkedListSF = new(); // связный список с исходной фразой
+        public DoublyLinkedList<string> linkedListOF = new(); // связный список c переводом
 
         //public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
         public bool flag_NotSavedYet = false;
@@ -42,8 +42,8 @@ namespace Rusik
         public bool flag_ExtraDataforBinary = false; 
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
 
-        public string languageEn = "en"; //из модуля google-переводчика
-        public string languageRu = "ru";
+        public string languageIN = "en"; //из модуля google-переводчика входной/выходной языки
+        public string languageOUT = "ru";
         public string InterfaceLanguage = "en"; //английский язык по-умолчанию
         public long LastRecordNumber=1; // это сохраненный в ini файле параметр nudRecord последнего открытого файла
         public Dictionary<string, string> GoogleLangs = new Dictionary<string, string>(){
@@ -56,10 +56,10 @@ namespace Rusik
 { "Persian","fa"},{ "Polish","pl"},{ "Portuguese","pt"},{ "Romanian","ro"},{ "Russian","ru"},{ "Serbian","sr"},{ "Slovak","sk"},
 { "Slovenian","sl"},{ "Spanish","es"},{ "Swahili","sw"},{ "Swedish","sv"},{ "Thai","th"},{ "Turkish","tr"},{ "Ukrainian","uk"},
 { "Urdu","ur"},{ "Vietnamese","vi"},{ "Welsh","cy"},{ "Yiddish","yi"} };
-        // объявление начальной вкладки
-        public TabControl Tabs;
-        public TabPage Home;//=new();
-        //public SplitContainer splitContainer1 =new();
+        // объявление имен элементов эправления
+        public TabControl Tabs; //таб-контрол
+        public TabPage Home; // главная вкладка
+        public TextBox mess_tb; //стартовый help
         public Form1()
         {
             InitializeComponent();
@@ -69,17 +69,17 @@ namespace Rusik
             comboBox2.DataSource = new BindingSource(GoogleLangs, null);
             comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
             comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
-            /*string usage_message = "This program can help you with some unofficial " +
-            "localization of other programs or games.";
-            TextBox mess_tb = new();
-            mess_tb.Location = new Point(0, 25);
+            string usage_message = "This program can help you with some unofficial " +
+            "localization some programs or games.";
+            mess_tb = new();
+            mess_tb.Location = new Point(16, 50);
             mess_tb.Name = "UsageMessage";
             mess_tb.Size = new Size(977, 500);
             mess_tb.Text = usage_message;
             mess_tb.Multiline = true;
             mess_tb.ReadOnly = true;
             Controls.Add(mess_tb);
-            */
+            
             Load_INI(); // читаем ini- файл
                         // формируем первую вкладку
                         
@@ -194,12 +194,20 @@ namespace Rusik
             TranslatedFile = openFileDialog1.FileName;
             if (TranslatedFile == null || TranslatedFile == string.Empty) return; //без имени файла дальше нечего делать
                                                                                   // if(SourceFile == string.Empty || SourceFile == null) 
-            OpenTranslatedFile();
+                                                                                  //создадим кнопку пропуска диалога
+            Button SkipCheck_btn = new();
+            SkipCheck_btn.Location = new Point(839, 678);
+            SkipCheck_btn.Size = new Size(104, 23);
+            SkipCheck_btn.Text = "SkipChecking";
+            new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //OpenTranslatedFile();
+
         }
 
         private void OpenTranslatedFile() // Чтение и разбор текстового переведенного файла
         {
+
             if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
+
             using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
             { // откроем файл Translated Text File на чтение
                 FileInfo src = new FileInfo(TranslatedFile);
@@ -215,7 +223,7 @@ namespace Rusik
                 int bufcounter = 0;
                 object maxK_Node = null; // ссылка на потенциально дублирующуюся строку из списка
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
-
+               
                 for (long i = 0; i < l; i++)
                 { // посимвольно читаем исходный файл в буффер
                     b = readerTF.ReadByte(); bufcounter++;
@@ -243,7 +251,7 @@ namespace Rusik
                             linkedListSF.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
                             flag_ReplaceData = true;
                         }
-                        else if (maxK < 0.96 && maxK > 0.85)// строка очень Похожа на одну из строк в списке,
+                        else if (maxK < 0.96 && maxK > 0.91)// строка очень Похожа на одну из строк в списке,
                         {                                   // спросим пользователя
                             var str2_tmp = linkedListSF.DataFrom((DoublyNode<string>)maxK_Node);
                             DialogResult result = MessageBox.Show(
@@ -473,20 +481,20 @@ namespace Rusik
                                             command_value = Regex.Replace(command_value, @"\s", "");
                                             command_value = command_value.ToLower();
                                             foreach (var item1 in GoogleLangs.Values)
-                                                if (item1 == command_value) languageEn = command_value;
-                                            comboBox1.SelectedValue = languageEn;
+                                                if (item1 == command_value) languageIN = command_value;
+                                            comboBox1.SelectedValue = languageIN;
                                             foreach (var item1 in GoogleLangs.Keys)
-                                                if (GoogleLangs[item1] == languageEn)
+                                                if (GoogleLangs[item1] == languageIN)
                                                 { comboBox1.Text = GoogleLangs[item1]; break; }
                                             break;
                                         case "TranslationLanguage":
                                             command_value = Regex.Replace(command_value, @"\s", "");
                                             command_value = command_value.ToLower();
                                             foreach (var item1 in GoogleLangs.Values)
-                                                if (item1 == command_value) languageRu = command_value;
-                                            comboBox2.SelectedValue = languageRu;
+                                                if (item1 == command_value) languageOUT = command_value;
+                                            comboBox2.SelectedValue = languageOUT;
                                             foreach (var item1 in GoogleLangs.Keys)
-                                                if (GoogleLangs[item1] == languageRu)
+                                                if (GoogleLangs[item1] == languageOUT)
                                                 { comboBox2.Text = GoogleLangs[item1]; break; }
                                             break;
                                             /*   case "OpenFileHistory": // делим строку на параметры по запятой
@@ -508,7 +516,7 @@ namespace Rusik
              //Ищем названия параметров
              //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
             if (TranslatedFile == "" || TranslatedFile == null) LastRecordNumber = 1;
-            if (TranslatedFile != "" && TranslatedFile != null) { flag_Skipdialog = true; OpenTranslatedFile(); }
+            if (TranslatedFile != "" && TranslatedFile != null) { flag_Skipdialog = true; OpenTranslatedFile(); mess_tb.Visible = false; }
             if (LastRecordNumber != 1)
             {
                 nudRecord.Value = LastRecordNumber;
@@ -562,8 +570,8 @@ namespace Rusik
             {
                 writer.WriteLine("[Last session Section]");
                 writer.WriteLine("InterfaceLanguage="+ InterfaceLanguage);
-                writer.WriteLine("SourceLanguage=" + languageEn);
-                writer.WriteLine("TranslationLanguage=" + languageRu);
+                writer.WriteLine("SourceLanguage=" + languageIN);
+                writer.WriteLine("TranslationLanguage=" + languageOUT);
                 writer.WriteLine("LastRecordNumber=" + Convert.ToString(nudRecord.Value));
                 writer.WriteLine("TranslatedFile=" + TranslatedFile);
                 writer.WriteLine("[History Section - don't change anything below this line !]");
@@ -1024,6 +1032,7 @@ namespace Rusik
             flag_NotSavedYet = false; // флаг -сохранение не требуется
             flag_Skipdialog = false; //по-умолчанию - не пропускать диалоги
             progressBar1.Value = 0; progressBar1_lb.Text = "%";
+            mess_tb.Visible = true; // восстановим текстовое окно с дисклеймером
         }
 
       private void Translate_btn_Click(object sender, EventArgs e)
@@ -1040,10 +1049,10 @@ namespace Rusik
             string mathod = "GET";
             string userAgent = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
             string urlFormat = "https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}";
-            //string languageEn = "en";// обьявлены глобально в классе F0rm1
-            //string languageRu = "ru";
+            //string languageIN = "en";// обьявлены глобально в классе F0rm1
+            //string languageOUT = "ru";
             string text = source;
-            string url = string.Format(urlFormat, languageEn, languageRu, Uri.EscapeUriString(text));
+            string url = string.Format(urlFormat, languageIN, languageOUT, Uri.EscapeUriString(text));
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = mathod;
             request.UserAgent = userAgent;
@@ -1098,12 +1107,12 @@ namespace Rusik
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            languageRu =(string)comboBox1.SelectedValue;
+            languageOUT =(string)comboBox1.SelectedValue;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            languageRu = (string)comboBox2.SelectedValue;
+            languageOUT = (string)comboBox2.SelectedValue;
         }
         private void SourceSearch_tstb_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1177,6 +1186,12 @@ namespace Rusik
             UNDO_textbox();
         }
 
+        private void SkipCheck_btn_Click(object sender, EventArgs e)
+        {
+            flag_Skipdialog = true; // пропустить диалоги и проверку на дубликаты строк в файле
+            SkipCheck_btn.Dispose(); //уберем кнопку пропуска, после прочтения файла она не нужна
+
+        }
     }
 
     public class DoublyNode <T>

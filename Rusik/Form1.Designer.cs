@@ -92,6 +92,7 @@ namespace Rusik
             // Prev_btn
             // 
             this.Prev_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.Prev_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Prev_btn.Font = new System.Drawing.Font("Segoe UI Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Prev_btn.Location = new System.Drawing.Point(500, 609);
             this.Prev_btn.Name = "Prev_btn";
@@ -104,6 +105,7 @@ namespace Rusik
             // Next_btn
             // 
             this.Next_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.Next_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Next_btn.Font = new System.Drawing.Font("Segoe UI Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Next_btn.Location = new System.Drawing.Point(581, 609);
             this.Next_btn.Name = "Next_btn";
@@ -159,35 +161,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             this.OpenFile_tsmi.Name = "OpenFile_tsmi";
-            this.OpenFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenFile_tsmi.Text = "Open Binary File";
             this.OpenFile_tsmi.Click += new System.EventHandler(this.OpenFile_tsmi_Click);
             // 
             // OpenTranslatedFile_tsmi
             // 
             this.OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
             this.OpenTranslatedFile_tsmi.Click += new System.EventHandler(this.OpenTranslatedFile_tsmi_Click);
             // 
             // CloseFilesClear_tsmi
             // 
             this.CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
             this.CloseFilesClear_tsmi.Text = "Close Files/Clear";
             this.CloseFilesClear_tsmi.Click += new System.EventHandler(this.CloseFilesClear_Click);
             // 
             // SaveFile_tsmi
             // 
             this.SaveFile_tsmi.Name = "SaveFile_tsmi";
-            this.SaveFile_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
             this.SaveFile_tsmi.Text = "Save File As...";
             this.SaveFile_tsmi.Click += new System.EventHandler(this.SaveFile_tsmi_Click);
             // 
             // Quit_tsmi
             // 
             this.Quit_tsmi.Name = "Quit_tsmi";
-            this.Quit_tsmi.Size = new System.Drawing.Size(207, 22);
+            this.Quit_tsmi.Size = new System.Drawing.Size(204, 22);
             this.Quit_tsmi.Text = "Quit";
             this.Quit_tsmi.Click += new System.EventHandler(this.Quit_tsmi_Click);
             // 
@@ -212,7 +214,7 @@ namespace Rusik
             this.Offset_lb.AutoSize = true;
             this.Offset_lb.Location = new System.Drawing.Point(15, 678);
             this.Offset_lb.Name = "Offset_lb";
-            this.Offset_lb.Size = new System.Drawing.Size(53, 15);
+            this.Offset_lb.Size = new System.Drawing.Size(54, 15);
             this.Offset_lb.TabIndex = 13;
             this.Offset_lb.Text = "Offset 0x";
             // 
@@ -229,6 +231,7 @@ namespace Rusik
             // 
             this.Translate_btn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.Translate_btn.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.Translate_btn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Translate_btn.Font = new System.Drawing.Font("Segoe UI Semibold", 14.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Translate_btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Translate_btn.Image = global::Rusik.Properties.Resources.Google48;
@@ -253,7 +256,7 @@ namespace Rusik
             this.Signature_lb.AutoSize = true;
             this.Signature_lb.Location = new System.Drawing.Point(190, 678);
             this.Signature_lb.Name = "Signature_lb";
-            this.Signature_lb.Size = new System.Drawing.Size(71, 15);
+            this.Signature_lb.Size = new System.Drawing.Size(72, 15);
             this.Signature_lb.TabIndex = 26;
             this.Signature_lb.Text = "Signature 0x";
             // 
@@ -569,7 +572,7 @@ namespace Rusik
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(161, 15);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(159, 15);
             this.toolStripStatusLabel1.Text = "Translated message symbols:";
             // 
             // lbTranslated
@@ -596,7 +599,7 @@ namespace Rusik
             // 
             this.Save.BackgroundImage = global::Rusik.Properties.Resources.save;
             this.Save.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Save.Location = new System.Drawing.Point(972, 0);
+            this.Save.Location = new System.Drawing.Point(69, 612);
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(36, 37);
             this.Save.TabIndex = 40;
@@ -615,7 +618,7 @@ namespace Rusik
             // 
             // REDO
             // 
-            this.REDO.Location = new System.Drawing.Point(177, 611);
+            this.REDO.Location = new System.Drawing.Point(177, 610);
             this.REDO.Name = "REDO";
             this.REDO.Size = new System.Drawing.Size(47, 41);
             this.REDO.TabIndex = 42;
