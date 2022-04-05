@@ -32,6 +32,7 @@ namespace Rusik
         public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
         public string OutputFile=""; // Выходной текстовый файл с текущим рабочим переводом
         string IniFile = ""; //полный путь к INI файлу
+        string ExtFile = ""; // полный путь к файлу с экстраданными из бинарного файла
         public DoublyLinkedList<string> linkedListSF = new(); // связный список с исходной фразой
         public DoublyLinkedList<string> linkedListOF = new(); // связный список c переводом
 
@@ -60,6 +61,7 @@ namespace Rusik
         public TabControl Tabs; //таб-контрол
         public TabPage Home; // главная вкладка
         public TextBox mess_tb; //стартовый help
+        public Button SkipCheck_btn; //кнопка пропуска диалогов
         public Form1()
         {
             InitializeComponent();
@@ -194,18 +196,22 @@ namespace Rusik
             TranslatedFile = openFileDialog1.FileName;
             if (TranslatedFile == null || TranslatedFile == string.Empty) return; //без имени файла дальше нечего делать
                                                                                   // if(SourceFile == string.Empty || SourceFile == null) 
-                                                                                  //создадим кнопку пропуска диалога
-            Button SkipCheck_btn = new();
+           /*                                                                       //создадим кнопку пропуска диалога
+            SkipCheck_btn = new();
             SkipCheck_btn.Location = new Point(839, 678);
             SkipCheck_btn.Size = new Size(104, 23);
             SkipCheck_btn.Text = "SkipChecking";
-            new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //OpenTranslatedFile();
+            */
+            //new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //
+            OpenTranslatedFile();
+
+            
+            
 
         }
 
         private void OpenTranslatedFile() // Чтение и разбор текстового переведенного файла
         {
-
             if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
 
             using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
@@ -344,7 +350,8 @@ namespace Rusik
                 nudRecord.Minimum = 1;
                 if (linkedListSF.Count > 1)
                 {
-                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+
+                    //Records_lb.Text = "Found " + linkedListSF.Count + " records.";
                     //Выведем в SourceFile_tb первый элемент списка
                     //foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
                     //foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
@@ -353,10 +360,11 @@ namespace Rusik
                     //lbSource.Text = Convert.ToString(Source_tb.Text.Length); // указываем кол-во символов в исходном сообщении
                     NewTab_Click(null, null); //пытаемся открыть основную вкладку HOME
                     Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
-                    // разблокируем строки поиска
+                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";                                 // разблокируем строки поиска
                     Search_tstb.ReadOnly = false;
                     TranslatedFile_tb.Text = TranslatedFile;
                 }
+
             }
         }
 
@@ -525,11 +533,11 @@ namespace Rusik
             if (comboBox1.Text == null) comboBox1.Text = "en";
             if (comboBox1.Text == null) comboBox1.Text = "ru";
             // проверим наличие файла с экстра данными
-            IniFile = IniFile[0..^3]; IniFile += "ext";
+           /* ExtFile = IniFile[0..^3]; ExtFile += "ext";
 
-            if (!File.Exists(IniFile)) return; // extra - файл отсутствует
+            if (!File.Exists(ExtFile)) return; // extra - файл отсутствует
             //ЧИТАЕМ ФАЙЛ Hash,offset,len
-        /*    using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
+            using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
             {
                 while ((message = readerSF.ReadLine()) != null)
                 {
@@ -775,7 +783,15 @@ namespace Rusik
             public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
             public int currentTabS = 0; // номер текущей вкладки в окне с Source
             public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
-            string str = Search_tstb.Text; //строка поиска
+            string str;
+            if (Search_ts.Visible == false) 
+            { 
+                Search_ts.Visible = true; 
+                Search_tstb.ReadOnly = false; 
+                Search_tstb.Text = "";
+                mess_tb.Visible = false;
+            }
+            str=Search_tstb.Text; //строка поиска
             SearchTabs NewTab = new();
             TabPage newTabPage=new();
             
@@ -951,11 +967,15 @@ namespace Rusik
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
             TabPage temptab;
             if (tabSearch == null) return;
-            if (Tabs.SelectedTab == Home)  // заккрываем вкладку HOME - 
+            if (Tabs.SelectedTab == Home)  // закрываем вкладку HOME - 
             {   //открепляем от вкладок и прячем эл-ты управления
-                this.Controls.Add(Search_ts); Search_tstb.Text = ""; Search_ts.Visible = false; 
+                Search_tstb.Text = ""; Controls.Add(Search_ts);  Search_ts.Visible = false; 
                 this.Controls.Add(statusStrip1); statusStrip1.Visible = false;
                 this.Controls.Add(statusStrip2); statusStrip2.Visible = false;
+                Home.Dispose();
+                tabSearch.Clear(); Home = null;
+                return;
+
             }
             tabSearch.Clear();
             temptab=Tabs.SelectedTab;
@@ -1019,7 +1039,7 @@ namespace Rusik
             
             TranslatedFile_tb.Text = ""; TranslatedFile = "";
             SourceFile_tb.Text = ""; SourceFile = "";
-
+            //выведем элементы интерфейса за пределы закрываемого окна
             //закроем все вкладки
             while(Tabs!=null) TabClose_tsb_Click(null, null); // список пуст-закроем вкладку
 
