@@ -73,9 +73,16 @@ namespace Rusik
             comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
 
             //стартовое сообщение о работе программы
-            string usage_message = "This program can be useful for some unofficial " +
-            "localizations some programs or games.\nThe main goal of program is " +
-            "searching some text phrases on any language in binary file with user defined and then ";
+            string usage_message = "This program can be useful for unofficial " +
+            "localizations some programs or games.\r\n" +
+            "The main goal of this program is searching text phrases (unicode supported) " +
+            "on any language in binary file with user defined parameters.\r\nAfter" +
+            "this capturing the outgoing text file will be created for manual translation purposes.\r\n" +
+            "Program have comfortable functional of editing," +
+            "searching, Google-translating feature, navigating and even primary binary file updating.\r\n" +
+            "Program was writen on C# lang as my first prog.\r\n\r\n" +
+            "Author calls to all Do Not Violance digital rights and licensies of any Companies, Products " +
+            "or Trademarks!\r\nPeace to all !";
             mess_tb = new();
             Font newFont = new Font(FontFamily.GenericMonospace,14);
             mess_tb.Location = new Point(16, 50);
@@ -119,9 +126,14 @@ namespace Rusik
             }
             Save_INI();
         }
+        private void Save_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
 
         private bool SaveFile(string outfile="") // сохраняем список из памяти в файл с разделителем =
         {
+            if (TranslatedFile == "" || TranslatedFile == null) return false;
             String tmpOutputFile;
             if (outfile == "") tmpOutputFile = TranslatedFile;
             else tmpOutputFile = outfile;
@@ -1070,6 +1082,7 @@ namespace Rusik
 
       private void Translate_btn_Click(object sender, EventArgs e)
         {
+            if (Tabs == null) return;
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             if (sc == null) return;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
@@ -1123,11 +1136,10 @@ namespace Rusik
                 if (str[i] == '\"' && str[i + 1] == ',' && ( i + 1 ) < len) 
                 { 
                     result += str[startST..i];
-                    //result += "\n";
                     flag_sent = true;
                 }
             }
-            return ("\n"+result);
+            return ("\r\n"+result);
         }
 
         private void Translated_tb_KeyUp(object sender, KeyEventArgs e)
@@ -1155,10 +1167,6 @@ namespace Rusik
             }
         }
 
-        private void Save_Click(object sender, EventArgs e)
-        {
-            SaveFile();
-        }
 
         private void SaveState(DoublyLinkedList<string>linkedList, string str)
         { 
