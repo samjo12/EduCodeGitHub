@@ -71,12 +71,17 @@ namespace Rusik
             comboBox2.DataSource = new BindingSource(GoogleLangs, null);
             comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
             comboBox1.ValueMember = "Value"; comboBox2.ValueMember = "Value";
-            string usage_message = "This program can help you with some unofficial " +
-            "localization some programs or games.";
+
+            //стартовое сообщение о работе программы
+            string usage_message = "This program can be useful for some unofficial " +
+            "localizations some programs or games.\nThe main goal of program is " +
+            "searching some text phrases on any language in binary file with user defined and then ";
             mess_tb = new();
+            Font newFont = new Font(FontFamily.GenericMonospace,14);
             mess_tb.Location = new Point(16, 50);
             mess_tb.Name = "UsageMessage";
             mess_tb.Size = new Size(977, 500);
+            mess_tb.Font = newFont;
             mess_tb.Text = usage_message;
             mess_tb.Multiline = true;
             mess_tb.ReadOnly = true;
@@ -189,31 +194,37 @@ namespace Rusik
             Start_btn.Visible = true;
         }
 
-        private void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)//MENU Open Text File
+        private protected void OpenTranslatedFile_tsmi_Click(object sender, EventArgs e)//MENU Open Text File
         {
             OpenFileDialog openFileDialog1 = new();
             openFileDialog1.ShowDialog();
             TranslatedFile = openFileDialog1.FileName;
             if (TranslatedFile == null || TranslatedFile == string.Empty) return; //без имени файла дальше нечего делать
-                                                                                  // if(SourceFile == string.Empty || SourceFile == null) 
-           /*                                                                       //создадим кнопку пропуска диалога
+
+        /* 
+
+            //создадим кнопку пропуска диалога
             SkipCheck_btn = new();
             SkipCheck_btn.Location = new Point(839, 678);
             SkipCheck_btn.Size = new Size(104, 23);
             SkipCheck_btn.Text = "SkipChecking";
-            */
-            //new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //
+            this.Controls.Add(SkipCheck_btn);
+            SkipCheck_btn.Click += SkipCheck_btn_Click;*/
             OpenTranslatedFile();
-
+            //new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //
             
-            
-
+           // SkipCheck_btn.Dispose(); //удалим кнопку
+        }
+        private void SkipCheck_btn_Click(object sender, EventArgs e)
+        {
+            flag_Skipdialog = true; // пропустить диалоги и проверку на дубликаты строк в файле
         }
 
+        
         private void OpenTranslatedFile() // Чтение и разбор текстового переведенного файла
         {
             if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
-
+            
             using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
             { // откроем файл Translated Text File на чтение
                 FileInfo src = new FileInfo(TranslatedFile);
@@ -339,32 +350,34 @@ namespace Rusik
                     else {  buf2[bufcounter - 1] = b; }
 
                     // играем с прогрессбаром
-
+                    
                     if (i >= percent) // проверяем нужно ли двигать прогресс бар на 1%
                     {
                         if (progressBar1.Value < 100) { progressBar1.Value++; }
                         percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%";
                     }
                 }
-                nudRecord.Maximum = linkedListSF.Count;
-                nudRecord.Minimum = 1;
-                if (linkedListSF.Count > 1)
-                {
 
-                    //Records_lb.Text = "Found " + linkedListSF.Count + " records.";
-                    //Выведем в SourceFile_tb первый элемент списка
-                    //foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
-                    //foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
-                    nudRecord.Value = 1;
-                    nudRecord.ReadOnly = false;
-                    //lbSource.Text = Convert.ToString(Source_tb.Text.Length); // указываем кол-во символов в исходном сообщении
-                    NewTab_Click(null, null); //пытаемся открыть основную вкладку HOME
-                    Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
-                    Records_lb.Text = "Found " + linkedListSF.Count + " records.";                                 // разблокируем строки поиска
-                    Search_tstb.ReadOnly = false;
-                    TranslatedFile_tb.Text = TranslatedFile;
-                }
 
+            }
+            nudRecord.Maximum = linkedListSF.Count;
+            nudRecord.Minimum = 1;
+            if (linkedListSF.Count > 1)
+            {
+
+                //Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                //Выведем в SourceFile_tb первый элемент списка
+                //foreach (var item in linkedListSF) { Source_tb.Text = item; break; }
+                //foreach (var item in linkedListOF) { Translated_tb.Text = item; break; }
+                nudRecord.Value = 1;
+                nudRecord.ReadOnly = false;
+                //lbSource.Text = Convert.ToString(Source_tb.Text.Length); // указываем кол-во символов в исходном сообщении
+                NewTab_Click(null, null); //пытаемся открыть основную вкладку HOME
+                Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
+                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                // разблокируем строку поиска
+                Search_tstb.ReadOnly = false;
+                TranslatedFile_tb.Text = TranslatedFile;
             }
         }
 
@@ -1061,7 +1074,7 @@ namespace Rusik
             if (sc == null) return;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
 
-            tabSearch.tabTranslated_tb.Text += "\n" + Translate_Google(tabSearch.tabSource_tb.Text);
+            tabSearch.tabTranslated_tb.Text += ("\n" + Translate_Google(tabSearch.tabSource_tb.Text));
             tabSearch.Translated_KeyUp();
         }
         private string Translate_Google(string source)
@@ -1109,7 +1122,7 @@ namespace Rusik
                 }
                 if (str[i] == '\"' && str[i + 1] == ',' && ( i + 1 ) < len) 
                 { 
-                    result += str[startST..(i - 1)];
+                    result += str[startST..i];
                     //result += "\n";
                     flag_sent = true;
                 }
@@ -1206,12 +1219,7 @@ namespace Rusik
             UNDO_textbox();
         }
 
-        private void SkipCheck_btn_Click(object sender, EventArgs e)
-        {
-            flag_Skipdialog = true; // пропустить диалоги и проверку на дубликаты строк в файле
-            SkipCheck_btn.Dispose(); //уберем кнопку пропуска, после прочтения файла она не нужна
 
-        }
     }
 
     public class DoublyNode <T>
