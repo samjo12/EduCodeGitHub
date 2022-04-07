@@ -856,9 +856,10 @@ namespace Rusik
                 if (NewTab.Count() == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } // поиск ничего не дал }
 
                 NewTab.PrevTabPage = Tabs.SelectedTab; // сохраняем адрес родительской вкладки 
-                var container=Tabs.SelectedTab.Tag;
-                container.Tag = (object)NewTab;
-                NewTab.PrevtabSearch =; //сохраняем адрес родителького класса данных связанного с род.вкладкой
+                SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+                SearchTabs tabSearch = (SearchTabs)sc.Tag; //извлекаем класс данных бывшей текущей вкладки
+                //сохраняем адрес родителького класса данных в классе данных новой вкладки
+                NewTab.PrevTabSearch =tabSearch; 
                 int len = str.Length < 50 ? str.Length : 50;
                 newTabPage.Text = str.Substring(0, len);
                 Tabs.TabPages.Add(newTabPage); //добавим новую вкладку Home
@@ -990,9 +991,9 @@ namespace Rusik
         private void TabClose_tsb_Click(object sender, EventArgs e)
         {
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
-            SearchTabs tabSearch = (SearchTabs)sc.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag; // класс-данных закрываемой вкладки
             TabPage temptab;
-            if (tabSearch == null) return;
+            if (tabSearch == null) return; //вкладок вообще нет
             if (Tabs.SelectedTab == Home)  // закрываем вкладку HOME - 
             {   //открепляем от вкладок и прячем эл-ты управления
                 Search_tstb.Text = ""; Controls.Add(Search_ts); Search_ts.Visible = false;
@@ -1003,12 +1004,22 @@ namespace Rusik
             }
             else // закрываем вкладку поиска
             {
-                temptab = Tabs.SelectedTab;
-                Tabs.SelectedTab = tabSearch.PrevTabPage;//переход на родительскую вкладку
-                // исправим связи кладок соседних с удаляемой
-                if(tabSearch.NextTabPage!=null)
-                tabSearch.Clear(); //очищаем данные по удаляемой вкладке
-                 
+                temptab = Tabs.SelectedTab; //удаляемая TabPage
+                if (tabSearch.PrevTabSearch == null)
+                {
+                    Tabs.SelectedTab = Home; // на главную вкладку
+                }
+                else
+                {
+                    SplitContainer sc1 = (SplitContainer)tabSearch.TabPage.Tag;
+                    SearchTabs tabSearch1 = (SearchTabs)sc1.Tag; // класс-данных закрываемой вкладки
+                    if (tabSearch1.TabPage != null) { Tabs.SelectedTab = tabSearch.PrevTabPage; }//переход на родительскую вкладку
+                    else { Tabs.SelectedTab = Home; tabSearch.Clear(); }//или на главную, если родительская была удалена
+                    tabSearch.PrevTabSearch = null; tabSearch.TabPage = null;
+                }
+                
+                 //очищаем класс данных по удаляемой вкладке
+
                 sc = (SplitContainer)Tabs.SelectedTab.Tag;
                 Tabs.SelectedTab.Controls.Add(Search_ts);
                 sc.Panel1.Controls.Add(statusStrip2);
@@ -1479,8 +1490,8 @@ namespace Rusik
     public class SearchTabs
     {
         public TabPage TabPage; //вкладка связанная с данной копией класса
-        public TabPage PrevTabPage; //родительская вкладка по отношению к данной копии класса
-        public TabPage NextTabPage=null; //возможная вкладка-потомок
+        public TabPage PrevTabPage; //родительская вкладка TabPage
+        public SearchTabs PrevTabSearch; //класс SearchTabs данных родительской вкладки
         public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
@@ -1667,8 +1678,8 @@ namespace Rusik
                 Translated_KeyUp(); //сохраняем текстбокс
                 linkedListSS.Clear();
             }
-            if(tabSource_tb!=null) tabSource_tb.Dispose();
-            if(tabTranslated_tb!=null) tabTranslated_tb.Dispose();
+            if (tabSource_tb != null) { tabSource_tb.Dispose(); tabSource_tb = null; }
+            if (tabTranslated_tb != null) { tabTranslated_tb.Dispose(); tabTranslated_tb = null; }
             if(linkedListSS!=null) linkedListSS = null;
         }
     }
