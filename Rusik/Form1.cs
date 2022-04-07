@@ -96,9 +96,7 @@ namespace Rusik
             
             Load_INI(); // читаем ini- файл
                         // формируем первую вкладку
-                        
         }
-
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Quit_tsmi_Click(sender, e);
@@ -214,7 +212,6 @@ namespace Rusik
             if (TranslatedFile == null || TranslatedFile == string.Empty) return; //без имени файла дальше нечего делать
 
         /* 
-
             //создадим кнопку пропуска диалога
             SkipCheck_btn = new();
             SkipCheck_btn.Location = new Point(839, 678);
@@ -222,10 +219,11 @@ namespace Rusik
             SkipCheck_btn.Text = "SkipChecking";
             this.Controls.Add(SkipCheck_btn);
             SkipCheck_btn.Click += SkipCheck_btn_Click;*/
+
             OpenTranslatedFile();
+
             //new System.Threading.Thread(() => OpenTranslatedFile()).Start(); //
-            
-           // SkipCheck_btn.Dispose(); //удалим кнопку
+            //SkipCheck_btn.Dispose(); //удалим кнопку
         }
         private void SkipCheck_btn_Click(object sender, EventArgs e)
         {
@@ -856,7 +854,11 @@ namespace Rusik
                 if (Search_tstb.Text.Length == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } //пустая строка поиска 
                 NewTab.SetlinkedListSF(linkedListSF, str); //ищем строку str в списке SF
                 if (NewTab.Count() == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } // поиск ничего не дал }
-                
+
+                NewTab.PrevTabPage = Tabs.SelectedTab; // сохраняем адрес родительской вкладки 
+                var container=Tabs.SelectedTab.Tag;
+                container.Tag = (object)NewTab;
+                NewTab.PrevtabSearch =; //сохраняем адрес родителького класса данных связанного с род.вкладкой
                 int len = str.Length < 50 ? str.Length : 50;
                 newTabPage.Text = str.Substring(0, len);
                 Tabs.TabPages.Add(newTabPage); //добавим новую вкладку Home
@@ -920,7 +922,6 @@ namespace Rusik
             newTabPage.Controls.Add(newSplitContainer);
             newTabPage.Controls.Add(Search_ts);
 
-            //newTranslated_tb.BringToFront();
             NewTab.tabTranslated_lb = lbTranslated;
             //обновляем визуальную информацию
             SearchStat_tslb.Text = "1 of " + Convert.ToString(NewTab.Count());
@@ -994,25 +995,27 @@ namespace Rusik
             if (tabSearch == null) return;
             if (Tabs.SelectedTab == Home)  // закрываем вкладку HOME - 
             {   //открепляем от вкладок и прячем эл-ты управления
-                Search_tstb.Text = ""; Controls.Add(Search_ts);  Search_ts.Visible = false; 
+                Search_tstb.Text = ""; Controls.Add(Search_ts); Search_ts.Visible = false;
                 this.Controls.Add(statusStrip1); statusStrip1.Visible = false;
                 this.Controls.Add(statusStrip2); statusStrip2.Visible = false;
                 Home.Dispose();
                 tabSearch.Clear(); Home = null;
-                return;
-
             }
-            tabSearch.Clear();
-            temptab=Tabs.SelectedTab;
-            
-            Tabs.SelectedTab = Home; //переход на главную вкладку
-            sc = (SplitContainer)Tabs.SelectedTab.Tag;
-            Tabs.SelectedTab.Controls.Add(Search_ts);
-            sc.Panel1.Controls.Add(statusStrip2);
-            sc.Panel2.Controls.Add(statusStrip1);
-            Refresh_Search_ts(Tabs.SelectedTab);
-            temptab.Dispose();
-            //nudRecord_ValueChanged(null,null);
+            else // закрываем вкладку поиска
+            {
+                temptab = Tabs.SelectedTab;
+                Tabs.SelectedTab = tabSearch.PrevTabPage;//переход на родительскую вкладку
+                // исправим связи кладок соседних с удаляемой
+                if(tabSearch.NextTabPage!=null)
+                tabSearch.Clear(); //очищаем данные по удаляемой вкладке
+                 
+                sc = (SplitContainer)Tabs.SelectedTab.Tag;
+                Tabs.SelectedTab.Controls.Add(Search_ts);
+                sc.Panel1.Controls.Add(statusStrip2);
+                sc.Panel2.Controls.Add(statusStrip1);
+                Refresh_Search_ts(Tabs.SelectedTab);
+                temptab.Dispose(); // ликвидируем сам таб
+            }
         }
   
         private void Delete_btn_Click(object sender, EventArgs e)
@@ -1031,31 +1034,30 @@ namespace Rusik
                 data = tabSearch.tabSource_tb.Text;
             }
             DialogResult result = MessageBox.Show(
-                                    "Do you really wants delete message:" +
-                                    "\n" + data + "?",
-                                    "Please attention !",
-                                    MessageBoxButtons.YesNo,
-                                    MessageBoxIcon.Question,
-                                    MessageBoxDefaultButton.Button1,
-                                    MessageBoxOptions.DefaultDesktopOnly);
+                 "Do you really wants delete message:" +
+                 "\n" + data + "?",
+                 "Please attention !",
+                 MessageBoxButtons.YesNo,
+                 MessageBoxIcon.Question,
+                 MessageBoxDefaultButton.Button1,
+                 MessageBoxOptions.DefaultDesktopOnly);
             if (result == DialogResult.No) { return; }// перевод не меняем
             else // Пользователь подтвердил удаление
             {
                 flag_NotSavedYet = true;
-                    //удаляем элемент из основного списка OF с переводом
-                    linkedListOF.DeleteNode(tabSearch.linkedListSS.curr.Twin.Twin); 
-                    //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
-                    linkedListSF.DeleteNode(tabSearch.linkedListSS.curr.Twin); 
-                    tabSearch.Remove(); //удаляем текущий элемент из списка поиска SS
-                    //обновляем вкладку для актуализации видимой инфы
-                    if (tabSearch.linkedListSS.Count == 0) TabClose_tsb_Click(null, null);
-                    else Tabs_Selecting(null,null);
+                //удаляем элемент из основного списка OF с переводом
+                linkedListOF.DeleteNode(tabSearch.linkedListSS.curr.Twin.Twin); 
+                //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
+                linkedListSF.DeleteNode(tabSearch.linkedListSS.curr.Twin); 
+                tabSearch.Remove(); //удаляем текущий элемент из списка поиска SS
+                //обновляем вкладку для актуализации видимой инфы
+                if (tabSearch.linkedListSS.Count == 0) TabClose_tsb_Click(null, null);
+                else Tabs_Selecting(null,null);
             }
         }
 
         private void CloseFilesClear_Click(object sender, EventArgs e)
         {
-               
             nudRecord.ReadOnly = true; // устанавливаем номер записи в 1
             nudRecord.Increment = 0;
             nudRecord.BackColor = Color.LightGray;
@@ -1082,12 +1084,12 @@ namespace Rusik
 
       private void Translate_btn_Click(object sender, EventArgs e)
         {
-            if (Tabs == null) return;
+            if (Tabs == null) return; // кнопка нажата, а окна еще не созданы
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
-            if (sc == null) return;
+            if (sc == null) return; 
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
 
-            tabSearch.tabTranslated_tb.Text += ("\n" + Translate_Google(tabSearch.tabSource_tb.Text));
+            tabSearch.tabTranslated_tb.Text += Translate_Google(tabSearch.tabSource_tb.Text);
             tabSearch.Translated_KeyUp();
         }
         private string Translate_Google(string source)
@@ -1108,7 +1110,7 @@ namespace Rusik
         }
         private string Parse_Google_JSON(string str) //распарсиваем ответ Google в JSON
         {
-            int openbr = 0; //счетчик скобок []
+            int openbr = 0;   //счетчик скобок []
             int openbrTR = 0; // номер скобы перед переводом
             int openbrTR1st = 0; //количество открытых скоб перед первой строкой
             int startST=0; //позиция начала подстроки с текстом перевода
@@ -1139,7 +1141,7 @@ namespace Rusik
                     flag_sent = true;
                 }
             }
-            return ("\r\n"+result);
+            return (result);
         }
 
         private void Translated_tb_KeyUp(object sender, KeyEventArgs e)
@@ -1166,7 +1168,6 @@ namespace Rusik
                 if(sender== Search_tstb)NewTab_Click(sender,e);
             }
         }
-
 
         private void SaveState(DoublyLinkedList<string>linkedList, string str)
         { 
@@ -1227,7 +1228,6 @@ namespace Rusik
             UNDO_textbox();
         }
 
-
     }
 
     public class DoublyNode <T>
@@ -1273,10 +1273,8 @@ namespace Rusik
             curr = node; // добавляемый элемент становится текущим
             node.Next = temp;
             head = node;
-            if (count == 0)
-                tail = head;
-            else
-                temp.Previous = node;
+            if (count == 0) tail = head;
+            else temp.Previous = node;
             count++;
             node.Fileposition = Fileposition;
         }
@@ -1480,7 +1478,9 @@ namespace Rusik
 
     public class SearchTabs
     {
-        public TabPage TabPage;
+        public TabPage TabPage; //вкладка связанная с данной копией класса
+        public TabPage PrevTabPage; //родительская вкладка по отношению к данной копии класса
+        public TabPage NextTabPage=null; //возможная вкладка-потомок
         public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
@@ -1530,7 +1530,7 @@ namespace Rusik
             }
             foreach (var item in linkedListSS) break; // ставим curr на head
             linkedList.curr = temp;
-           // if (linkedListSS.Count == 0) return; //ничего не найдено
+            // if (linkedListSS.Count == 0) return; //ничего не найдено
                                                  // вот что-то найдено, если вкладка не создавалась - то создадим
         }
 
@@ -1574,7 +1574,7 @@ namespace Rusik
                 else
                 {
                     linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin.Twin);
-                    //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                  // linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
                     currnum--;
                 }
                 linkedListSS.curr = linkedListSS.curr.Previous;
