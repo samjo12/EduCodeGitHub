@@ -26,7 +26,8 @@ namespace Rusik
         public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
         public int currentTabS = 0; // номер текущей вкладки в окне с Source
         public int currentTabT = 0; // номер текущей вкладки в окне с Translated
-        public TabPage ActiveTab = null;
+       
+        public Dictionary <TabPage, SearchTabs> OpenedTabs; //коллекция открытых вкладок
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
         public string SourceFile=""; // бинарный файл
         public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
@@ -854,15 +855,15 @@ namespace Rusik
                 if (Search_tstb.Text.Length == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } //пустая строка поиска 
                 NewTab.SetlinkedListSF(linkedListSF, str); //ищем строку str в списке SF
                 if (NewTab.Count() == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } // поиск ничего не дал }
-
-                NewTab.PrevTabPage = Tabs.SelectedTab; // сохраняем адрес родительской вкладки 
+                // Формируем связи новой вкладки с соседними, т.е. с родительской
+                NewTab.PrevTabPage = Tabs.SelectedTab; // сохраняем в новой вкладке указатель на родительскую вкладку 
                 SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
-                SearchTabs tabSearch = (SearchTabs)sc.Tag; //извлекаем класс данных бывшей текущей вкладки
-                //сохраняем адрес родителького класса данных в классе данных новой вкладки
-                NewTab.PrevTabSearch =tabSearch; 
+                SearchTabs tabSearch = (SearchTabs)sc.Tag; //извлекаем класс данных текущей вкладки
+                tabSearch.NextTabPage =newTabPage; // запоминаем в родительской вкладке указатель на новую вкладку
+                //Даем имя новой вкладке
                 int len = str.Length < 50 ? str.Length : 50;
                 newTabPage.Text = str.Substring(0, len);
-                Tabs.TabPages.Add(newTabPage); //добавим новую вкладку Home
+                Tabs.TabPages.Add(newTabPage); //добавим новую вкладку на закладки
                 Tabs.SelectedTab = newTabPage; //переключимся на новую вкладку
             }
             
@@ -983,7 +984,7 @@ namespace Rusik
         private void SourceFirst_tsb_Click(object sender, EventArgs e)
         {
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
-            SearchTabs tabSearch = (SearchTabs)sc.Tag;
+            SearchTabs tabSearch = (SearchTabs)sc.Tag; 
             if (tabSearch == null) return;
             if (Tabs.SelectedTab == Home) return;
             tabSearch.toFirst();
@@ -1004,21 +1005,33 @@ namespace Rusik
             }
             else // закрываем вкладку поиска
             {
+                SearchTabs tabSearch_prev=null, tabSearch_next=null;
                 temptab = Tabs.SelectedTab; //удаляемая TabPage
-                if (tabSearch.PrevTabSearch == null)
+                // извлечем классы данных возможных родителькой и дочерней вкладок
+                if (tabSearch.PrevTabPage != null)
                 {
-                    Tabs.SelectedTab = Home; // на главную вкладку
+                    SplitContainer sc1 = (SplitContainer)tabSearch.PrevTabPage.Tag;
+                    tabSearch_prev = (SearchTabs)sc1.Tag; // класс-данных родительской вкладки
                 }
-                else
+                if (tabSearch.NextTabPage!=null)
                 {
-                    SplitContainer sc1 = (SplitContainer)tabSearch.TabPage.Tag;
-                    SearchTabs tabSearch1 = (SearchTabs)sc1.Tag; // класс-данных закрываемой вкладки
-                    if (tabSearch1.TabPage != null) { Tabs.SelectedTab = tabSearch.PrevTabPage; }//переход на родительскую вкладку
-                    else { Tabs.SelectedTab = Home; tabSearch.Clear(); }//или на главную, если родительская была удалена
-                    tabSearch.PrevTabSearch = null; tabSearch.TabPage = null;
+                    SplitContainer sc1 = (SplitContainer)tabSearch.NextTabPage.Tag;
+                    tabSearch_next = (SearchTabs)sc1.Tag; // класс-данных дочерней вкладки
                 }
+                if (tabSearch.PrevTabPage != null)
+                {
+                    tabSearch_prev.NextTabPage = tabSearch.NextTabPage;
+                }
+                if (tabSearch.NextTabPage != null)
+                {
+
+                }
+
+                if (tabSearch1.TabPage != null) { Tabs.SelectedTab = tabSearch.PrevTabPage; }//переход на родительскую вкладку
+                else { Tabs.SelectedTab = Home; tabSearch.Clear(); }//или на главную, если родительская была удалена
+                tabSearch.PrevTabSearch = null; tabSearch.TabPage = null;
                 
-                 //очищаем класс данных по удаляемой вкладке
+                //очищаем класс данных по удаляемой вкладке
 
                 sc = (SplitContainer)Tabs.SelectedTab.Tag;
                 Tabs.SelectedTab.Controls.Add(Search_ts);
@@ -1490,8 +1503,8 @@ namespace Rusik
     public class SearchTabs
     {
         public TabPage TabPage; //вкладка связанная с данной копией класса
-        public TabPage PrevTabPage; //родительская вкладка TabPage
-        public SearchTabs PrevTabSearch; //класс SearchTabs данных родительской вкладки
+        public TabPage PrevTabPage=null; //родительская вкладка TabPage
+        public TabPage NextTabPage=null; //ссылка на вкладку возможного потомка
         public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
 
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
