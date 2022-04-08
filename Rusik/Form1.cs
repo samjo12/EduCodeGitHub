@@ -1024,21 +1024,23 @@ namespace Rusik
                 }
                 if (tabSearch.NextTabPage != null)
                 {
-
+                    tabSearch_next.PrevTabPage = tabSearch.PrevTabPage;
                 }
-
-                if (tabSearch1.TabPage != null) { Tabs.SelectedTab = tabSearch.PrevTabPage; }//переход на родительскую вкладку
-                else { Tabs.SelectedTab = Home; tabSearch.Clear(); }//или на главную, если родительская была удалена
-                tabSearch.PrevTabSearch = null; tabSearch.TabPage = null;
+                if (tabSearch.PrevTabPage != null) { Tabs.SelectedTab = tabSearch.PrevTabPage; }//переход на родительскую вкладку
+                else { Tabs.SelectedTab = Home;  }//или на главную, если родительская была удалена
+                
                 
                 //очищаем класс данных по удаляемой вкладке
-
+                tabSearch.PrevTabPage = null; tabSearch.NextTabPage = null; 
+                tabSearch.TabPage = null; tabSearch.Clear();
+                // Переносим все нужные контролы на сплит-контейнер вкладки, на которую произошел переход
+                Tabs.SelectedTab.Controls.Add(Search_ts); // Панель поиска
                 sc = (SplitContainer)Tabs.SelectedTab.Tag;
-                Tabs.SelectedTab.Controls.Add(Search_ts);
-                sc.Panel1.Controls.Add(statusStrip2);
-                sc.Panel2.Controls.Add(statusStrip1);
-                Refresh_Search_ts(Tabs.SelectedTab);
-                temptab.Dispose(); // ликвидируем сам таб
+                sc.Panel1.Controls.Add(statusStrip2); //панель статуса слева
+                sc.Panel2.Controls.Add(statusStrip1); //панель статуса справа
+                Refresh_Search_ts(Tabs.SelectedTab); // отображаем набор функционала на панели в соответствии
+                // с тем открыта ли вкладка поиска или Home
+                temptab.Dispose(); // ликвидируем сам удаляемый Таб
             }
         }
   
