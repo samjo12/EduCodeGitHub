@@ -266,7 +266,7 @@ namespace Rusik
                         for (int j = 0; j < bufcounter; j++) tmp_bytes1[j] = buf1[j];
                         str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
                         //Если строка пустая, менее 3 символов или содержит символ ENTER, то такое сообщение - пропускаем
-                        if (str1 == "" || str1.Length <= 3) { bufcounter = 0; continue; }
+                        if (str1 == "" || str1.Length < 2) { bufcounter = 0; continue; }
                         float maxK;
 
                         if (flag_Skipdialog == false) //если включен режим пропуска диалога, то поиск совпадающих строк-отключаем
