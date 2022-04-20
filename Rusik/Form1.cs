@@ -22,12 +22,10 @@ namespace Rusik
     {
         static readonly int MaxBytesMessage = 7000; // Максимальный размер сообщения в байтах
         public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
-        public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
-        public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
-        public int currentTabS = 0; // номер текущей вкладки в окне с Source
-        public int currentTabT = 0; // номер текущей вкладки в окне с Translated
+        // номер текущей вкладки в окне с Source, использую для динамич. именования контролов
+        public int currentTabS = 0; 
        
-        public Dictionary <TabPage, SearchTabs> OpenedTabs; //коллекция открытых вкладок
+        //public Dictionary <TabPage, SearchTabs> OpenedTabs; //коллекция открытых вкладок
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
         public string SourceFile=""; // бинарный файл
         public string TranslatedFile=""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
@@ -37,11 +35,10 @@ namespace Rusik
         public DoublyLinkedList<string> linkedListSF = new(); // связный список с исходной фразой
         public DoublyLinkedList<string> linkedListOF = new(); // связный список c переводом
 
-        //public DoublyLinkedList<string> linkedListHS = new(); // связный список c историей открытия файлов
-        public bool flag_NotSavedYet = false;
+        public bool flag_NotSavedYet = false;//флаг - требуется сохранение, данные были изменены
         public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
         //флаг наличие доп.данных о смещениях/позициях текстовых строк внутри бинарного файла :
-        public bool flag_ExtraDataforBinary = false; 
+        public bool flag_ExtraDataforBinary = false; //наличие спец.файла с картой рипнутого бинарного файла
         public byte[] Signature = { 0x04, 0x00, 0x06, 0x00 };  // Сигнатура из байт
 
         public string languageIN = "en"; //из модуля google-переводчика входной/выходной языки
@@ -66,8 +63,9 @@ namespace Rusik
         public Form1()
         {
             InitializeComponent();
-            this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);// обработчик закрытия окна по крестику
-            // подключаем коллекцию со списком языков 
+            // вешаем обработчик закрытия окна по крестику
+            this.FormClosing += new FormClosingEventHandler(this.Form1_FormClosing);
+            // подключаем коллекцию со списком языков перевода к комбобоксу 
             comboBox1.DataSource = new BindingSource(GoogleLangs, null);
             comboBox2.DataSource = new BindingSource(GoogleLangs, null);
             comboBox1.DisplayMember = "Key"; comboBox2.DisplayMember = "Key";
@@ -195,7 +193,7 @@ namespace Rusik
                 outF.Attributes |= FileAttributes.Hidden;
                 //outF.Attributes |= FileAttributes.ReadOnly;
             }
-            // разблокируем поля SourceFile_tb TranslatedFile_tb
+            // выведем имя открытого файла
             SourceFile_tb.Text = SourceFile;
 
             //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
@@ -249,7 +247,7 @@ namespace Rusik
                 bool flag_ReplaceData = false; // флаг
                 //bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон перенес в заголовок класса
                 int bufcounter = 0;
-                object maxK_Node = null; // ссылка на потенциально дублирующуюся строку из списка
+                object maxK_Node = null; // ссылка на потенциально дублирующуюся запись в списке
                 object maxK_NodeOF = null; //ссылка на перевод заменяемой строки
                
                 for (long i = 0; i < l; i++)
@@ -267,7 +265,7 @@ namespace Rusik
                         str1 = Encoding.UTF8.GetString(tmp_bytes1); // Создаем из буфера с бaйтами строку в UTF8
                         //Если строка пустая, менее 3 символов или содержит символ ENTER, то такое сообщение - пропускаем
                         if (str1 == "" || str1.Length < 2) { bufcounter = 0; continue; }
-                        float maxK;
+                        float maxK; // коэфф. схожести строк по Танимото
 
                         if (flag_Skipdialog == false) //если включен режим пропуска диалога, то поиск совпадающих строк-отключаем
                         { maxK = FindSameString(str1, linkedListSF, out maxK_Node); } // проверим на наличие совпадений в списке
@@ -439,7 +437,7 @@ namespace Rusik
             // найдем отличие между строками используя алгоритм Танимото
             int a = 0; // кол-во элементов в 1-ом множестве
             int b = 0; //кол-во элементов во 2-ом множестве
-            int c = 0; //кол-во общих элементов  в двух множествах
+            int c = 0; //кол-во общих элементов в двух множествах a & b
             // Найдем множество - количество уникальных символов в каждой из строк
             Dictionary<char, int> dictionarys1 = str1out.GroupBy(x => x)
                 .ToDictionary(x => x.Key, x => x.Count());
@@ -453,7 +451,7 @@ namespace Rusik
             c = result.Count();
             // Расчет коэффициента Танимото
             kTanimoto = (float)c / (a + b - (float)c);
-            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство. обычно 0.85 - уже вполне достоверно */
+            return kTanimoto; // Чем ближе к 1 , тем достовернее сходство
         }
         private void Load_INI()
         {
@@ -556,7 +554,7 @@ namespace Rusik
             }
             if (comboBox1.Text == null) comboBox1.Text = "en";
             if (comboBox1.Text == null) comboBox1.Text = "ru";
-            // проверим наличие файла с экстра данными
+            // проверим наличие файла с экстра-данными 
            /* ExtFile = IniFile[0..^3]; ExtFile += "ext";
 
             if (!File.Exists(ExtFile)) return; // extra - файл отсутствует
@@ -803,10 +801,8 @@ namespace Rusik
         {   // поиск по тексту из входящего файла
             /*        
             public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
-            public int numSearchTabS = 0; // кол-во открытых вкладок с поиском по Source message
-            public int numSearchTabT = 0; // кол-во открытых вкладок с поиском по Translated message
             public int currentTabS = 0; // номер текущей вкладки в окне с Source
-            public int currentTabT = 0; // номер текущей вкладки в окне с Translated*/
+            */
             string str;
             if (Search_ts.Visible == false) 
             { 
