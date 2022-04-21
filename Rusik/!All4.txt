@@ -1,4 +1,5 @@
 StickLUp=
+StickLUp=
 StickLDown=
 StickLLeft=
 StickLRight=
@@ -2641,12 +2642,11 @@ After the instructions were entered, the whole liquid tank activated. Did the in
 This equipment seems to be sending out instructions through the movements of the fluid. What is it calling for?=Это оборудование, похоже, посылает инструкции через движения жидкости. К чему оно призывает?
 These seem to be sequence codes for robots, along with some other data of unknown significance. Is it a sample of the experiment?=Похоже, это коды последовательности для роботов, а также некоторые другие данные неизвестного назначения. Это образец какого-то эксперимента?
 I just saw Brank's sequence code. It seems that he's one of the experimental samples.=Я только что видел исходный код Бранка. Похоже, что он один из экспериментальных образцов.
-The equipment's interface was damaged, and the cabin shows traces of robot paint where they scratched against the surface. This capsule warehouse was last used by robots, and treated quite roughly by the looks of things.=
-This is... It seems that the liquid leaked from the damaged interface is the same as the residue left by Brank, but it's still in its original form. I should take some samples.=Это... Похоже, что жидкость, вытекшую из поврежденного интерфейса, такая же, как и остатки, оставленные Бранком, но она все еще в своей первоначальном виде. Я должен взять несколько образцов.
-Robot joints, bones, nerves, muscle fibers... but no complete limbs. Are these the remains of some robot dissection?=Суставы, кости, нервы, мышечные волокна... но нет целых конечностей. Это останки какого-то робота?
-This residue is different from the one Brank left behind. Is that because of differences within the robots themselves?=Этот остаток отличается от того, который оставил Бранк. Это из-за различий в самих роботах?
-Why did all traces of Brank suddenly stop here?=
-Почему все следы Бранка вдруг заканчиваются здесь?
+The equipment's interface was damaged, and the cabin shows traces of robot paint where they scratched against the surface. This capsule warehouse was last used by robots, and treated quite roughly by the looks of things.=Интерфейс оборудования был поврежден, а на кабине видны следы краски роботов в тех местах, где они царапали поверхность. Этот капсульный склад в последний раз использовался роботами, и, судя по всему, с ним обращались довольно грубо.
+This is... It seems that the liquid leaked from the damaged interface is the same as the residue left by Brank, but it's still in its original form. I should take some samples.=Это... Похоже, что жидкость, вытекшая из поврежденного интерфейса, такая же, как и та что оставлена Бранком, но она все еще в своей первоначальной форме. Я должен взять несколько образцов.
+Robot joints, bones, nerves, muscle fibers... but no complete limbs. Are these the remains of some robot dissection?=Механические суставы, кости, нервы, мышечные волокна... но нет целых конечностей. Это останки какого-то робота?
+This residue is different from the one Brank left behind. Is that because of differences within the robots themselves?=Этот остаток жидкости отличается от того, что оставил Бранк. Это из-за различий в самих роботах?
+Why did all traces of Brank suddenly stop here?=Почему все следы Бранка вдруг прекратились здесь?
 This is the same mark as the one left by Brank earlier. He must have been here.=Это тот же след, что и оставленный ранее Бранком. Должно быть, он был здесь.
 There must be a lot of clues here. I should investigate carefully.=
 Someone has used this device to activate the liquid, controlling the robots and forcing them to come here like walking corpses.=Кто-то использовал это устройство для активации жидкости, управляя роботами и заставляя их приходить сюда, как ходячие трупы.
@@ -2655,8 +2655,7 @@ However, Brank's trail ends here. Was he taken somewhere else? There's no hidden
 What the... Storing such a large amount of recharge fluid is a big project. There must be something huge connected to this machine.=Что за... Хранение такого большого количества жидкости для подзарядки - это большой проект. С этой машиной должно быть связано что-то огромное.
 Looks like this robot is dead. Let me check inside the head casing... Yes, he has the same device installed as the others! Looks like this one's broken, though.=Похоже, этот робот мертв. Позвольте мне проверить внутри корпуса головы... Да, у него установлено то же устройство, что и у остальных! Похоже, этот сломан.
 This strange liquid seems... alive, and it's entering the electronic brain through the implanted device. Is this how Brank was controlled?=Эта странная жидкость кажется... живой, и она проникает в электронный мозг через имплантированное устройство. Так вот как управляли Бранком?
-There are even posters that once promoted Sky City down here... Huh, that’s just a place for the rich and powerful.=
-Тут даже висят плакаты, которые когда-то рекламировали Скай Сити... Ха, это просто место для богатых и влиятельных.
+There are even posters that once promoted Sky City down here... Huh, that’s just a place for the rich and powerful.=Тут даже висят плакаты, которые когда-то рекламировали Скай Сити... Ха, это просто место для богатых и влиятельных.
 It's you?!=Это ты?!
 How did you get here?=Как ты сюда попал?
 Go play somewhere else. The last thing I need is more trouble!=Иди поиграй в другом месте. Последнее, что мне нужно - это новые проблемы!
@@ -3759,7 +3758,6 @@ Molly=Молли
 Cheese=Чиз
 Philip=Филипп
 Lu=Лю
-Vorkin=
 #N/A=
 Abir=Абир
 Oreoma=Ореома
@@ -5746,9 +5744,8 @@ BB-X makes great coffee, despite his short temper. Hang on…are those screws?=B
 A weapon...? I remember seeing a <color%3D#FF3E3EFF>claymore</color> lying around, but I can't remember where I put it…=Оружие...? Я помню, что видел где-то <color%3D#FF3E3EFF>меч</color>, но я не могу вспомнить, где...
 I recovered this old chair from a crime scene…after the impaled victim was removed, of course.=Я спас это старое кресло с места преступления... конечно, после того, как заколотая жертва была с него удалена.
 Meow~ Meow~ Meow~ <color%3В#afafafff>[William seems quite keen to go outside.]</color>=Мяу~ Мяу~ Мяу~ Мяу~ <color%3D#afafafff>[Уильям похоже точно хочет выйти наружу.]</color>
-That's why! No wonder William was stuck in there, but I did see a cluster of black…=Вот почему! Неудивительно, что Уильям застрял там, но я видел скопление черных...
+That's why! No wonder William was stuck in there, but I did see a cluster of black…=Вот почему! Не�
+
 помнить, где...
 I recovered this old chair from a crime scene…after the impaled victim was removed, of course.=Я спас это ста�
 ed this old chair from a crime scene…after the impaled victim was removed, of course.=Я спас это старое кресло с места преступления... конечно, после того, как заколотая жертва была с него удалена.
-Meow~ Meow~ Meow~ <color%3В#afafafff>[William seems quite keen to go outside.]</color>=Мяу~ Мяу~ Мяу~ Мяу~ <color%3D#afafafff>[Уильям похоже точно хочет выйти наружу.]</color>
-That's why! No wonder William was stuck in there, but I did see a cluster of black…=Вот почему! Не�
