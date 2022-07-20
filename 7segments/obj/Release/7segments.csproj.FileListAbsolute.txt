@@ -1,5 +1,0 @@
-C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Release\7segments.csproj.AssemblyReference.cache
-C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Release\newClock.Exch.resources
-C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Release\_7segmentsI.Properties.Resources.resources
-C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Release\7segments.csproj.GenerateResource.cache
-C:\Users\amsad\source\EduCodeGitHub\7segments\obj\Release\7segments.csproj.CoreCompileInputs.cache
