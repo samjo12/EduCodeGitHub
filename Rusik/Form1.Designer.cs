@@ -430,7 +430,7 @@ namespace Rusik
             this.TabClose_tsb});
             this.Search_ts.Location = new System.Drawing.Point(12, 585);
             this.Search_ts.Name = "Search_ts";
-            this.Search_ts.Size = new System.Drawing.Size(439, 25);
+            this.Search_ts.Size = new System.Drawing.Size(293, 25);
             this.Search_ts.TabIndex = 37;
             this.Search_ts.Text = "toolStrip1";
             this.Search_ts.Visible = false;
@@ -659,7 +659,7 @@ namespace Rusik
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Help Custom Translator";
+            this.Text = "Help Custom Translator v.0.7 by Samjo";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.nudRecord)).EndInit();
             this.menuStrip1.ResumeLayout(false);

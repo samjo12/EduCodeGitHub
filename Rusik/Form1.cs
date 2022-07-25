@@ -21,7 +21,7 @@ namespace Rusik
     public partial class Form1 : Form
     {
         static readonly int MaxBytesMessage = 7000; // Максимальный размер сообщения в байтах
-        public long CurrentnudRecord; // переменная для сохранения номера текущей записи списка при запуске поиска
+        public long CurrentnudRecord; // номер текущей записи списка при запуске поиска
         // номер текущей вкладки в окне с Source, использую для динамич. именования контролов
         public int currentTabS = 0; 
        
@@ -75,11 +75,11 @@ namespace Rusik
             string usage_message = "This program can be useful for unofficial " +
             "localizations some programs or games.\r\n" +
             "The main goal of this program is searching text phrases (unicode supported) " +
-            "on any language in binary file with user defined parameters.\r\nAfter" +
+            "on any languages in binary file with user defined parameters.\r\nAfter" +
             "this capturing the outgoing text file will be created for manual translation purposes.\r\n" +
             "Program have comfortable functional of editing," +
             "searching, Google-translating feature, navigating and even primary binary file updating.\r\n" +
-            "Program was writen on C# lang as my first prog.\r\n\r\n" +
+            "Program was writen on C# lang as my subfirst prog.\r\n\r\n" +
             "Author calls to all Do Not Violance digital rights and licensies of any Companies, Products " +
             "or Trademarks!\r\nPeace to all !";
             mess_tb = new();
