@@ -1,0 +1,17 @@
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.exe
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.deps.json
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.runtimeconfig.json
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.runtimeconfig.dev.json
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.dll
+C:\Users\usr\source\repos\Miner\bin\Debug\netcoreapp3.1\Menesweeper.pdb
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.csproj.AssemblyReference.cache
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Password_Generator.Miner1.resources
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.Properties.Resources.resources
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.csproj.GenerateResource.cache
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.AssemblyInfoInputs.cache
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.AssemblyInfo.cs
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.csproj.CoreCompileInputs.cache
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.dll
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.pdb
+C:\Users\usr\source\repos\Miner\obj\Debug\netcoreapp3.1\Menesweeper.genruntimeconfig.cache
