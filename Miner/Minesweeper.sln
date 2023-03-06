@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31105.61
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minesweeper", "Minesweeper.csproj", "{59D03F95-E9B2-442C-8117-6CE94A885F87}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fireworks", "..\Cards\Fireworks\Fireworks.csproj", "{283B7792-85DB-4F21-B612-28369306E426}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{30760A62-4FB6-4765-81AD-22D40B3C1149}"
 EndProject
@@ -25,14 +23,6 @@ Global
 		{59D03F95-E9B2-442C-8117-6CE94A885F87}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59D03F95-E9B2-442C-8117-6CE94A885F87}.Release|x86.ActiveCfg = Release|Any CPU
 		{59D03F95-E9B2-442C-8117-6CE94A885F87}.Release|x86.Build.0 = Release|Any CPU
-		{283B7792-85DB-4F21-B612-28369306E426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{283B7792-85DB-4F21-B612-28369306E426}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{283B7792-85DB-4F21-B612-28369306E426}.Debug|x86.ActiveCfg = Debug|x86
-		{283B7792-85DB-4F21-B612-28369306E426}.Debug|x86.Build.0 = Debug|x86
-		{283B7792-85DB-4F21-B612-28369306E426}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{283B7792-85DB-4F21-B612-28369306E426}.Release|Any CPU.Build.0 = Release|Any CPU
-		{283B7792-85DB-4F21-B612-28369306E426}.Release|x86.ActiveCfg = Release|x86
-		{283B7792-85DB-4F21-B612-28369306E426}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

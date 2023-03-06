@@ -1,3 +1,9 @@
 is_global = true
+build_property.ApplicationManifest = 
+build_property.StartupObject = 
+build_property.ApplicationDefaultFont = 
+build_property.ApplicationHighDpiMode = 
+build_property.ApplicationUseCompatibleTextRendering = 
+build_property.ApplicationVisualStyles = 
 build_property.RootNamespace = Minesweeper
-build_property.ProjectDir = C:\Users\usr\source\repos\Miner\
+build_property.ProjectDir = C:\Users\USR\Documents\GitHub\EduCodeGitHub\Miner\
