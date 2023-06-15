@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Rusik</id>
+    <version>1.0.0</version>
+    <authors>Rusik</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework="net7.0-windows7.0" />
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net7.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WindowsForms" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="C:\Users\USR\Documents\GitHub\EduCodeGitHub\Rusik\bin\Release\net7.0-windows\Rusik.runtimeconfig.json" target="lib\net7.0-windows7.0\Rusik.runtimeconfig.json" />
+    <file src="C:\Users\USR\Documents\GitHub\EduCodeGitHub\Rusik\bin\Release\net7.0-windows\Rusik.dll" target="lib\net7.0-windows7.0\Rusik.dll" />
+  </files>
+</package>

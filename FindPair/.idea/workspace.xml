@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c5e0cafd-7c94-47de-96d8-7eae42e588dd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Rusik/.vs/Rusik/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/.vs/Rusik/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/Chapter1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/Chapter1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/Rusik.csproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/Rusik.csproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.runtimeconfig.dev.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/bin/Debug/net5.0-windows/Rusik.runtimeconfig.dev.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.Form1.resources" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.Form1.resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.GenerateResource.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.csproj.GenerateResource.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.designer.runtimeconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.designer.runtimeconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.genruntimeconfig.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/Rusik.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/ref/Rusik.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Debug/net5.0-windows/ref/Rusik.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/Rusik.csproj.nuget.g.targets" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Rusik/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../Rusik/obj/project.nuget.cache" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\USR\.android\avd\Galaxy_Nexus_API_29.avd]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2MSZ0nkU9JnuUJf9QI5gc9SWIKN" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="PsdUISettings">
+    <option name="MODULE_TAB" value="Properties" />
+    <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
+    <option name="LAST_EDITED_BUILD_TYPE" value="release" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.findpair" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.example.findpair" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="INSPECTION_WITHOUT_ACTIVITY_RESTART" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c5e0cafd-7c94-47de-96d8-7eae42e588dd" name="Changes" comment="" />
+      <created>1677762723963</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1677762723963</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

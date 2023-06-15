@@ -19,10 +19,10 @@ namespace Rusik.Properties {
     // с помощью такого средства, как ResGen или Visual Studio.
     // Чтобы добавить или удалить член, измените файл .ResX и снова запустите ResGen
     // с параметром /str или перестройте свой проект VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Rusik.Properties {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rusik.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace Rusik.Properties {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,9 +61,31 @@ namespace Rusik.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на This program may be useful for translating text\ in some binary or text files.
+        ///You can search &amp; catch strings of text in binary files using HEX-coded IN-OUT signatures.
+        ///Supports Google translating service for limited translations.
+        ///Program can operate with text files that consist of two parts:
+        ///original sentence = translation sentence (compared with symbol =).
+        /// </summary>
+        public static string aboutProgram {
+            get {
+                return ResourceManager.GetString("aboutProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на About program ....
+        /// </summary>
+        public static string aboutProgramTitle {
+            get {
+                return ResourceManager.GetString("aboutProgramTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Basket {
+        public static System.Drawing.Bitmap Basket {
             get {
                 object obj = ResourceManager.GetObject("Basket", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +95,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap cross {
+        public static System.Drawing.Bitmap cross {
             get {
                 object obj = ResourceManager.GetObject("cross", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +105,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Google48 {
+        public static System.Drawing.Bitmap Google48 {
             get {
                 object obj = ResourceManager.GetObject("Google48", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +115,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Next {
+        public static System.Drawing.Bitmap Next {
             get {
                 object obj = ResourceManager.GetObject("Next", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +125,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Prev {
+        public static System.Drawing.Bitmap Prev {
             get {
                 object obj = ResourceManager.GetObject("Prev", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -111,9 +133,40 @@ namespace Rusik.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Do you want to continue previous session for working with file:
+        ///{0} ?
+        ///Say YES, if you want to continue previous session or 
+        ///Say NO, if you want to start a new one..
+        /// </summary>
+        public static string questionNewSession {
+            get {
+                return ResourceManager.GetString("questionNewSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Question. Pay Attention!.
+        /// </summary>
+        public static string questionTitle {
+            get {
+                return ResourceManager.GetString("questionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        public static System.Drawing.Icon rusik {
+            get {
+                object obj = ResourceManager.GetObject("rusik", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap save {
+        public static System.Drawing.Bitmap save {
             get {
                 object obj = ResourceManager.GetObject("save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -123,7 +176,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Search {
+        public static System.Drawing.Bitmap Search {
             get {
                 object obj = ResourceManager.GetObject("Search", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -133,7 +186,7 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ToFirst {
+        public static System.Drawing.Bitmap ToFirst {
             get {
                 object obj = ResourceManager.GetObject("ToFirst", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -143,10 +196,34 @@ namespace Rusik.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ToLast {
+        public static System.Drawing.Bitmap ToLast {
             get {
                 object obj = ResourceManager.GetObject("ToLast", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This program can be useful for unofficial localizations some programs or games.
+        ///The main function is searching text resources (unicode supported) on any languages in binary file with user predefined parameters.
+        ///After this capturing the outgoing text file will be created for manual translation purposes.
+        ///Program have comfortable functional for editing and searching, Google-translating feature, navigating and even primary binary file updating.
+        ///Program was writen on C# lang as my subfirst prog.
+        ///
+        ///Author ca [остаток строки не уместился]&quot;;.
+        /// </summary>
+        public static string usageMessage {
+            get {
+                return ResourceManager.GetString("usageMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Usage Message.
+        /// </summary>
+        public static string usageMessageTitle {
+            get {
+                return ResourceManager.GetString("usageMessageTitle", resourceCulture);
             }
         }
     }

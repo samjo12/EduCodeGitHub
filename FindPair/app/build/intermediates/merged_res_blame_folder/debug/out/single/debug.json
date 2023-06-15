@@ -1,0 +1,162 @@
+[
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_sugar.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_sugar.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_steak.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_steak.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_wrap.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_wrap.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_thanksgiving.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_thanksgiving.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_teapot.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_teapot.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_tea_cup.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_tea_cup.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_spoon_of_sugar.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_spoon_of_sugar.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_tea.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_tea.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_spaghetti.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_spaghetti.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_tapas.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_tapas.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.findpair.app-main-32:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/layout_activity_main.xml.flat",
+        "source": "com.example.findpair.app-main-32:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-anydpi-v33_ic_launcher.xml.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-anydpi-v33/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/xml_backup_rules.xml.flat",
+        "source": "com.example.findpair.app-main-32:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_wine_glass.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_wine_glass.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_wine_bottle.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_wine_bottle.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_strawberry.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_strawberry.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_sugar_cube.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_sugar_cube.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_sushi.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_sushi.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_vegan_symbol.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_vegan_symbol.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_tomato.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_tomato.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_tin_can.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_tin_can.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_taco.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_taco.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_sweet_potato.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_sweet_potato.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_watermelon.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_watermelon.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/drawable_img_vegan_food.xml.flat",
+        "source": "com.example.findpair.app-main-32:/drawable/img_vegan_food.xml"
+    },
+    {
+        "merged": "com.example.findpair.app-merged_res-30:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.findpair.app-main-32:/mipmap-hdpi/ic_launcher.webp"
+    }
+]

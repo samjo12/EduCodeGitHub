@@ -1,0 +1,28 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "Rusik/1.0.0": {
+        "runtime": {
+          "Rusik.dll": {}
+        },
+        "resources": {
+          "ru-RU/Rusik.resources.dll": {
+            "locale": "ru-RU"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Rusik/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
