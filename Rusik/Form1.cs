@@ -20,28 +20,29 @@ using System.Diagnostics.Eventing.Reader;
 using Rusik.Properties;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TextBox = System.Windows.Forms.TextBox;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
+using System.Security.Cryptography.Xml;
+using System.Xml.Linq;
 ///using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Rusik
 {
     public partial class Form1 : Form
     {
-        static readonly int MaxBytesMessage = 7000; // Максимальный размер сообщения в байтах
+        static readonly int MaxBytesMessage = 27000; // Максимальный размер сообщения в байтах
         public long CurrentnudRecord; // номер текущей записи списка при запуске поиска
         // номер текущей вкладки в окне с Source, использую для динамич. именования контролов
         public int currentTabS = 0;
 
         //public Dictionary <TabPage, SearchTabs> OpenedTabs; //коллекция открытых вкладок
         public long SourceNodeCounter = 0; // счетчик-указатель на текущую запись списка
-        public string SourceFile = ""; // бинарный файл
-        public string TranslatedFile = ""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
-        public string OutputFile = ""; // Выходной текстовый файл с текущим рабочим переводом
+        public string BinaryFile = ""; // бинарный файл
+        public string TextFile = ""; //Текстовый файл частично переведенный ранее со знаком разделителем "="
+        public string OutputTextFile = ""; // Выходной текстовый файл с текущим рабочим переводом
         string IniFile = ""; //полный путь к INI файлу , типа последний открытый файл
         string IniFileSpec = ""; // полный путь к ini файлу который открывается программой
-        string ExtFile = ""; // полный путь к файлу с экстраданными из бинарного файла
-        public DoublyLinkedList<string> linkedListSF = new(); // связный список с исходной фразой
-        public DoublyLinkedList<string> linkedListOF = new(); // связный список c переводом
-
+        public DoublyLinkedList<string> linkedList = new(); // связный список c переводом
         public bool flag_NotSavedYet = false;//флаг - требуется сохранение, данные были изменены
         public bool flag_Skipdialog = false; //флаг пропуска пользовательских диалоговых окон
         //флаг наличие доп.данных о смещениях/позициях текстовых строк внутри бинарного файла :
@@ -49,8 +50,10 @@ namespace Rusik
 
         public List<byte> SignatureINList = new List<byte>();
         public List<byte> SignatureOUTList = new List<byte>();
-        public byte[] SignatureIN ;//{ 04-00-06-00 };  // Сигнатура из байт Английский
-        public byte[] SignatureOUT ;//{ 0C-00-06-00 }; //сигнатура русский
+        public byte[] signatureIN = null;//{ 04-00-06-00 };  // Сигнатура из байт Английский
+        public byte[] SignatureOUT = null;//{ 0C-00-06-00 }; //сигнатура русский
+        public long OffsetIN = 0; // Смещение от конца сигнатуры до счетчика текста
+        public long OffsetOUT = 0;
 
         public string languageIN = "en"; //из модуля google-переводчика входной/выходной языки
         public string languageOUT = "ru";
@@ -71,6 +74,9 @@ namespace Rusik
         public TabPage Home; // главная вкладка
         public TextBox mess_tb; //стартовый help
         public System.Windows.Forms.Button SkipCheck_btn; //кнопка пропуска диалогов
+
+        public byte[] SignatureIN { get => signatureIN; set => signatureIN = value; }
+
         public Form1()
         {
             InitializeComponent();
@@ -108,21 +114,20 @@ namespace Rusik
         private void Quit_tsmi_Click(object sender, EventArgs e) // МЕНЮ Quit
         {   // если sender==null ,то из программы не выйдем
             // если исходный файл открыт, то предлагаем сохранить выходной файл
-            if (linkedListOF.Curr != null) // если в памяти есть список - то предлагаем сохраниться
+            if (linkedList.Curr != null) // если в памяти есть список - то предлагаем сохраниться
             {
                 if (flag_NotSavedYet == true)
                     do
                     {
                         DialogResult result = MessageBox.Show(
-                        "Do yo want to Save file?\n" + TranslatedFile,
+                        "Do you want to Save file?\n" + TextFile,
                         "Attention",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1);
                         if (result == DialogResult.No) { Save_INI(); return; }// пользователь отказался от сохранения
                     } while (SaveFile() == false); // согласился сохраниться , но что-то пошло не так. Даем еще одну попытку...
-                linkedListOF.Clear();
-                linkedListSF.Clear();
+                linkedList.Clear();
             }
             Save_INI();
             if (sender != null) Environment.Exit(0);
@@ -135,25 +140,25 @@ namespace Rusik
 
         private bool SaveFile(string outfile = "") // сохраняем список из памяти в файл с разделителем =
         {
-            if (TranslatedFile == "" || TranslatedFile == null) return false;
+            if (TextFile == "" || TextFile == null) return false;
             System.String tmpOutputFile;
-            if (outfile == "") tmpOutputFile = TranslatedFile;
+            if (outfile == "") tmpOutputFile = TextFile;
             else tmpOutputFile = outfile;
-            long onepercent = linkedListSF.Count / 100 - 1, percent = onepercent;
+            long onepercent = linkedList.Count / 100 - 1, percent = onepercent;
             progressBar1.Value = 0;
             progressBar1_lb.Text = "%";
             using (BinaryWriter writer = new BinaryWriter(File.Open(tmpOutputFile, FileMode.OpenOrCreate)))
             {
                 long counter = 0;
                 // записываем в файл содержимое списков с данными
-                var tmp_curr = linkedListSF.curr;
-                foreach (var item in linkedListSF)
+                var tmp_curr = linkedList.curr;
+                foreach (var item in linkedList)
                 {
                     if (item == null) break;
                     byte[] bytes = System.Text.Encoding.UTF8.GetBytes(item + "=");
                     writer.Write(bytes);
-                    var item2 = linkedListSF.Twin.Data;
-                    if (item2 == null) item2 = String.Empty;
+                    var item2 = linkedList.Twin.Data;
+                    if (item2 == null) item2 = "";
                     item2 += "\r\n";
                     bytes = System.Text.Encoding.UTF8.GetBytes(item2);
                     writer.Write(bytes);
@@ -161,11 +166,14 @@ namespace Rusik
                     if (counter >= percent)
                     {
                         if (progressBar1.Value < 100)
-                        { progressBar1.Value++; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%"; }
+                        {
+                            progressBar1.Value++;
+                            progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%";
+                        }
                         percent += onepercent;
                     }
                 }
-                linkedListSF.curr = tmp_curr; //восстановим curr
+                linkedList.curr = tmp_curr; //восстановим curr
             }
             Save_INI();
             return true;
@@ -185,25 +193,25 @@ namespace Rusik
             openFileDialog1.ShowDialog();
             string tmpSourceFile = openFileDialog1.FileName;
             if (tmpSourceFile == "") return; // пользователь не выбрал файла
-            else SourceFile = tmpSourceFile;
-            if (SourceFile == null || SourceFile == string.Empty) return; //без имени файла дальше нечего делать
-            OutputFile = SourceFile + ".bin";
+            else BinaryFile = tmpSourceFile;
+            if (BinaryFile == null || BinaryFile == string.Empty) return; //без имени файла дальше нечего делать
+            OutputTextFile = BinaryFile + ".bin";
             // !!!!!!! тут недоделана логика
-            if (File.Exists(SourceFile + ".txt")) TranslatedFile = SourceFile + ".txt"; // определяем вспомогательный файл с переводом по-умолчанию
+            if (File.Exists(BinaryFile + ".txt")) TextFile = BinaryFile + ".txt"; // определяем вспомогательный файл с переводом по-умолчанию
 
-            if (File.Exists(OutputFile))//такой файл уже есть, т.е. работа с ним велась ранее
+            if (File.Exists(OutputTextFile))//такой файл уже есть, т.е. работа с ним велась ранее
             {
-                DialogResult result = MessageBox.Show(String.Format(Resources.questionNewSession, SourceFile),
+                DialogResult result = MessageBox.Show(String.Format(Resources.questionNewSession, BinaryFile),
                     Resources.questionTitle,
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1);
                 if (result == DialogResult.No)// пользователь выбрал удалить старый файл и начать новую сессию
                 {
-                    File.Delete(OutputFile);
-                    FileInfo srcF = new FileInfo(SourceFile);
+                    File.Delete(OutputTextFile);
+                    FileInfo srcF = new FileInfo(BinaryFile);
 
-                    srcF.CopyTo(OutputFile);
+                    srcF.CopyTo(OutputTextFile);
                     //FileInfo outF = new FileInfo(OutputFile); // ставим атрибуты на копию hidden
                     //outF.Attributes |= FileAttributes.Hidden;
                     //outF.Attributes |= FileAttributes.ReadOnly;
@@ -212,14 +220,14 @@ namespace Rusik
             }
             else
             {// Если выходной файл еще не существует, копируем выбранный файл во временный
-                FileInfo srcF = new FileInfo(SourceFile);
-                srcF.CopyTo(OutputFile);
+                FileInfo srcF = new FileInfo(BinaryFile);
+                srcF.CopyTo(OutputTextFile);
             }
 
             // выведем имя открытого файла
             //SourceFile_tb.ForeColor = Color.White;
             SourceFile_tb.BackColor = Color.White;
-            SourceFile_tb.Text = SourceFile;
+            SourceFile_tb.Text = BinaryFile;
 
             //разблокируем поля Смещения, Поиска Сигнатуры и Поиска строк текста во входном и выходном файлах
             SignatureIN_tb.ReadOnly = false; // textbox Offset
@@ -232,8 +240,8 @@ namespace Rusik
         {
             OpenFileDialog openFileDialog1 = new();
             openFileDialog1.ShowDialog();
-            TranslatedFile = openFileDialog1.FileName;
-            if (TranslatedFile == null || TranslatedFile == string.Empty) return; //без имени файла дальше нечего делать
+            TextFile = openFileDialog1.FileName;
+            if (TextFile == null || TextFile == string.Empty) return; //без имени файла дальше нечего делать
 
             //создадим кнопку пропуска диалога
             SkipCheck_btn = new();
@@ -250,7 +258,7 @@ namespace Rusik
             tr1.Start();
             tr1.Join();*/
 
-            OpenTranslatedFile();
+            OpenTextFile();
 
             SkipCheck_btn.Dispose(); //удалим кнопку
         }
@@ -259,18 +267,13 @@ namespace Rusik
             flag_Skipdialog = true; // пропустить диалоги и проверку на дубликаты строк в файле
         }
 
-
-        private void OpenTranslatedFile() // Чтение и разбор текстового переведенного файла
+        private void OpenTextFile() // Чтение и разбор текстового переведенного файла
         {
+            if (!File.Exists(TextFile)) return; // файл не существует, открывать нечего
 
-
-
-
-            if (!File.Exists(TranslatedFile)) return; // файл не существует, открывать нечего
-
-            using (BinaryReader readerTF = new BinaryReader(File.Open(TranslatedFile, FileMode.Open)))
+            using (BinaryReader readerTF = new BinaryReader(File.Open(TextFile, FileMode.Open)))
             { // откроем файл Translated Text File на чтение
-                FileInfo src = new FileInfo(TranslatedFile);
+                FileInfo src = new FileInfo(TextFile);
                 long l = src.Length; //размер исходного файла в байтах
                 byte[] buf1 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста до знака =
                 byte[] buf2 = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста после знака =
@@ -302,18 +305,18 @@ namespace Rusik
                         float maxK; // коэфф. схожести строк по Танимото
 
                         if (flag_Skipdialog == false) //если включен режим пропуска диалога, то поиск совпадающих строк-отключаем
-                        { maxK = FindSameString(str1, linkedListSF, out maxK_Node); } // проверим на наличие совпадений в списке
+                        { maxK = FindSameString(str1, linkedList, out maxK_Node); } // проверим на наличие совпадений в списке
                         else { maxK = 0; }
                         if (maxK_Node == null) { maxK = 0; }
-                        maxK_NodeOF = linkedListSF.TwinFrom((DoublyNode<string>)maxK_Node); // получаем ссылку на ячейку с переводом
+                        maxK_NodeOF = linkedList.TwinFrom((DoublyNode<string>)maxK_Node); // получаем ссылку на ячейку с переводом
                         if ((maxK <= 1) && (maxK >= 0.96)) // совпадение от 96 до 100% - это та же самая строка
                         {
-                            linkedListSF.ReplaceData(str1, null,(DoublyNode<string>)maxK_Node);
+                            linkedList.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
                             flag_ReplaceData = true;
                         }
                         else if (maxK < 0.96 && maxK > 0.91)// строка очень Похожа на одну из строк в списке,
                         {                                   // спросим пользователя
-                            var str2_tmp = linkedListSF.DataFrom((DoublyNode<string>)maxK_Node);
+                            var str2_tmp = linkedList.GetTData((DoublyNode<string>)maxK_Node);
                             DialogResult result = MessageBox.Show(
                             "There were detected couple similar strings! Similarity is " + Convert.ToString(maxK * 100) + "%\nAre it the same?" +
                             "\n1:(" + str1.Length + "): " + str1 +
@@ -323,10 +326,10 @@ namespace Rusik
                             MessageBoxButtons.YesNoCancel,
                             MessageBoxIcon.Question,
                             MessageBoxDefaultButton.Button1);
-                            if (result == DialogResult.No) { linkedListSF.Add(str1, null); }// создаем новый элемент списка
+                            if (result == DialogResult.No) { linkedList.AddInPart(str1); }// создаем новый элемент списка
                             else if (result == DialogResult.Yes)// пользователь сказал что строки одинаковые, тогда заменим старую строку новой
                             {
-                                linkedListSF.ReplaceData(str1, null, (DoublyNode<string>)maxK_Node);
+                                linkedList.ReplaceData(str1, (DoublyNode<string>)maxK_Node);
                                 flag_ReplaceData = true;
                             }
                             else //result == DialogResult.Cancel
@@ -335,7 +338,7 @@ namespace Rusik
                         }
                         else // maxK <0.75 можно не спрашивать строка точно уникальная
                         {
-                            linkedListSF.Add(str1, null);// создаем новый элемент списка
+                            linkedList.AddInPart(str1);// создаем новый элемент списка
                         }
                         sourcePart = false;
                         bufcounter = 0;
@@ -356,13 +359,13 @@ namespace Rusik
 
                             if (flag_ReplaceData == false || flag_Skipdialog == true)// запишем новую строку в список
                             {
-                                linkedListOF.Add(str2, null); // создаем запись в списке с переводом
-                       //         linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
-                        //        linkedListOF.SetTwin(linkedListSF.curr);
+                                linkedList.AddOutPart(str2); // создаем запись в списке с переводом
+                                                             //         linkedListSF.SetTwin(linkedListOF.curr); //связываем ссылками исходную строку со строкой перевода в списках
+                                                             //        linkedListOF.SetTwin(linkedListSF.curr);
                             }
                             else //Делаем замену перевода т.к. flag_ReplaceData == true
                             {
-                                var old_data = linkedListOF.DataFrom((DoublyNode<string>)maxK_NodeOF);
+                                var old_data = linkedList.GetTData1((DoublyNode<string>)maxK_NodeOF);
                                 // перевод не меняем т.к. новое значение - пустое , ИЛИ новая строка идентична старой
                                 if (str2 == "" || str2 == (string)old_data) { flag_ReplaceData = false; continue; }
                                 // Если старое значение не пустое ИЛИ новая строка не пустая - спрашиваем пользователя о замене
@@ -381,7 +384,7 @@ namespace Rusik
                                     if (result == DialogResult.No) { flag_ReplaceData = false; continue; }// перевод не меняем
                                     else if (result == DialogResult.Cancel) { flag_Skipdialog = true; }
                                 }
-                                linkedListOF.ReplaceData(null, str2, (DoublyNode<string>)maxK_NodeOF);//меняем перевод
+                                linkedList.ReplaceData(str2, (DoublyNode<string>)maxK_NodeOF);//меняем перевод
                                 flag_ReplaceData = false; // отработал - сбросили
                             }
                             continue;
@@ -402,9 +405,9 @@ namespace Rusik
 
 
             }
-            nudRecord.Maximum = linkedListSF.Count;
+            nudRecord.Maximum = linkedList.Count;
             nudRecord.Minimum = 1;
-            if (linkedListSF.Count > 1)
+            if (linkedList.Count > 1)
             {
 
                 //Records_lb.Text = "Found " + linkedListSF.Count + " records.";
@@ -416,10 +419,10 @@ namespace Rusik
                 //lbSource.Text = Convert.ToString(Source_tb.Text.Length); // указываем кол-во символов в исходном сообщении
                 NewTab_Click(null, null); //пытаемся открыть основную вкладку HOME
                 Translated_tb_KeyUp(null, null); //обновляем число символов в переводе
-                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                Records_lb.Text = "Found " + linkedList.Count + " records.";
                 // разблокируем строку поиска
                 Search_tstb.ReadOnly = false;
-                TranslatedFile_tb.Text = TranslatedFile;
+                TranslatedFile_tb.Text = TextFile;
 
             }
         }
@@ -490,14 +493,15 @@ namespace Rusik
         private void Load_INI()
         {
             // InterfaceLanguage={EN,RU};
-            // TranslatedFile= {Full Path to last editing file}; полный путь
+            // TextFile= {Full Path to last editing file}; полный путь
             // LastRecordNumber= {integer} -номер последней редактируемой записи с прошлой сессии
             // SourceLanguage={EN...} - указание для переводчика Google
             // TranslationLanguage ={RU...} - указание для переводчика Google
             // OpenFileHistory={полный путь к файлу,LastNumber}
             // Загрузим первоначальные настройки программы. Ini файл
-            string[] commands = { "InterfaceLanguage", "TranslatedFile", "BinaryFile", "LastRecordNumber", "SourceLanguage",
-                "TranslationLanguage", "OpenFileHistory","SignatureIN", "SignatureOUT" };
+            string[] commands = { "InterfaceLanguage", "TextFile", "BinaryFile",
+                "LastRecordNumber", "SourceLanguage", "TranslationLanguage", "OpenFileHistory",
+                "SignatureIN", "SignatureOUT", "OffsetIN", "OffsetOUT" };
             string[] IL = { "en", "ru" }; // возможные языки интерфейса
             IniFile = Environment.GetCommandLineArgs()[0]; //получаем имя запущенного файла
             string message = "", command = "", command_value = "";
@@ -534,16 +538,16 @@ namespace Rusik
                                             foreach (var item1 in IL)
                                                 if (item1 == command_value) InterfaceLanguage = command_value;
                                             break;
-                                        case "TranslatedFile":
+                                        case "TextFile":
                                             if (command_value != "" && command_value != null)
                                                 if (File.Exists(command_value))
-                                                { TranslatedFile = command_value; }
+                                                { TextFile = command_value; }
                                                 else LastRecordNumber = 1;
                                             break;
                                         case "BinaryFile":
                                             if (command_value != "" && command_value != null)
                                                 if (File.Exists(command_value))
-                                                { SourceFile = command_value; }
+                                                { BinaryFile = command_value; }
                                                 else LastRecordNumber = 1;
                                             break;
                                         case "LastRecordNumber":
@@ -571,28 +575,16 @@ namespace Rusik
                                                 { comboBox2.Text = GoogleLangs[item1]; break; }
                                             break;
                                         case "SignatureIN":
-                                            command_value = command_value.ToUpper();
-                                            command_value = Regex.Replace(command_value, @"[^0123456789abcdef]", "");
-                                            len = command_value.Length;
-                                            if (len > 0 && len % 2 == 1)
-                                                command_value = command_value.Substring(0, len - 1);
-                                            SignatureIN = Enumerable.Range(0, command_value.Length)
-                                            .Where(x => x % 2 == 0)
-                                            .Select(x => Convert.ToByte(command_value.Substring(x, 2), 16))
-                                            .ToArray();
-                                            SignatureIN_tb.Text = BitConverter.ToString(SignatureIN);
+                                            SignatureIN_tb.Text = GetHexString(command_value, "IN");
                                             break;
                                         case "SignatureOUT":
-                                            command_value = command_value.ToUpper();
-                                            command_value = Regex.Replace(command_value, @"[^0123456789abcdef]", "");
-                                            len = command_value.Length;
-                                            if (len > 0 && len % 2 == 1)
-                                                command_value = command_value.Substring(0, len - 1);
-                                            SignatureOUT = Enumerable.Range(0, command_value.Length)
-                                                .Where(x => x % 2 == 0)
-                                                .Select(x => Convert.ToByte(command_value.Substring(x, 2), 16))
-                                                .ToArray();
-                                            SignatureOUT_tb.Text = BitConverter.ToString(SignatureOUT);
+                                            SignatureOUT_tb.Text = GetHexString(command_value, "OUT");
+                                            break;
+                                        case "OffsetIN":
+                                            OffsetIN_tb.Text = GetHexString(command_value);
+                                            break;
+                                        case "OffsetOUT":
+                                            OffsetOUT_tb.Text = GetHexString(command_value);
                                             break;
                                             /* *   case "OpenFileHistory": // делим строку на параметры по запятой
                                                    var result = new Regex(@"^.").Matches(command_value);
@@ -612,16 +604,16 @@ namespace Rusik
             }//закрываем файл
              //Ищем названия параметров
              //   message = Encoding.UTF8.GetString(buf);//получили файл как строку текста в UTF8 кодировке
-             //if (TranslatedFile == "" || TranslatedFile == null) LastRecordNumber = 1;
-            if (SourceFile != "" && SourceFile != null)
+             //if (TextFile == "" || TextFile == null) LastRecordNumber = 1;
+            if (BinaryFile != "" && BinaryFile != null)
             {
                 SearchBinaryBtn_Click(null, null); // открываем binary файл
                 if (LastRecordNumber <= nudRecord.Maximum) nudRecord.Value = LastRecordNumber;
             }
 
-            if (TranslatedFile != "" && TranslatedFile != null)
+            if (TextFile != "" && TextFile != null)
             {
-                flag_Skipdialog = true; OpenTranslatedFile(); mess_tb.Visible = false;
+                flag_Skipdialog = true; OpenTextFile(); mess_tb.Visible = false;
                 if (LastRecordNumber != 1 && nudRecord.Value == 1)
                 {
                     //nudRecord.Maximum = linkedListSF.Count;
@@ -633,22 +625,72 @@ namespace Rusik
 
             if (comboBox1.Text == null) comboBox1.Text = "en";
             if (comboBox1.Text == null) comboBox1.Text = "ru";
-            // проверим наличие файла с экстра-данными 
-            /* ExtFile = IniFile[0..^3]; ExtFile += "ext";
-
-             if (!File.Exists(ExtFile)) return; // extra - файл отсутствует
-             //ЧИТАЕМ ФАЙЛ Hash,offset,len
-             using (StreamReader readerSF = new(File.Open(IniFile, FileMode.Open)))
-             {
-                 while ((message = readerSF.ReadLine()) != null)
-                 {
-                     for (int i = 0; i < message.Length; i++)
-                     {
-                     }
-                 }
-             }*/
-
         }
+
+        public string GetHexString(string value, string OP="")
+        { //второй параметр для копирования данных во внешнюю переменную
+            if (value == null || value == "") return null;
+            byte[] Signature;
+            value = value.ToUpper();
+            value = Regex.Replace(value, @"[^0123456789ABCDEF]", "");
+            int len = value.Length;
+            if (len > 0 && len % 2 == 1)
+                value = value.Substring(0, len - 1);
+            Signature = Enumerable.Range(0, value.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(value.Substring(x, 2), 16))
+                .ToArray();
+            if (OP == "IN") SignatureIN = Signature;
+            else if (OP == "OUT") SignatureOUT = Signature;
+            return BitConverter.ToString(Signature);
+        }
+        public byte[] ConvertStringToByteArray(string value)
+        {
+            if (value == null || value == "") return null;
+
+            int len = value.Length;
+            if (len > 0 && len % 2 == 1) value = value.Substring(0, len - 1);
+
+            return Enumerable.Range(0, value.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(value.Substring(x, 2), 16))
+                .ToArray();
+        }
+        private long ConvertHEX2Long(String value)
+        {
+            if (value == null || value == "") return 0;
+            value = value.ToUpper();
+            value = Regex.Replace(value, @"[^0123456789ABCDEF]", "");
+            return Int64.Parse(value, System.Globalization.NumberStyles.HexNumber);
+        }
+
+        private string HexStringToString(string hexString)
+        {
+            if (hexString == null || hexString == "")
+            {
+                //throw new ArgumentException();
+                return "";
+            }
+            hexString = hexString.ToUpper();
+            hexString = Regex.Replace(hexString, @"[^0123456789ABCDEF]", "");
+            if ((hexString.Length & 1) == 1) hexString = hexString.Substring(0, hexString.Length - 1);
+            var sb = new StringBuilder();
+            for (var i = 0; i < hexString.Length; i += 2)
+            {
+                var hexChar = hexString.Substring(i, 2);
+                sb.Append((char)Convert.ToByte(hexChar, 16));
+            }
+            return sb.ToString();
+        }
+        public string StringToHexString(string value)
+        {
+            if (value == null || value == "") return value;
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in value)
+                sb.AppendFormat("{0:X2}", (int)c);
+            return sb.ToString().Trim();
+        }
+
         public static string CreateMD5(string input) //расчет Хэша по строке
         {
             // Use input string to calculate MD5 hash
@@ -683,8 +725,10 @@ namespace Rusik
                 writer.WriteLine("LastRecordNumber=" + Convert.ToString(nudRecord.Value));
                 writer.WriteLine("SignatureIN=" + SignatureIN_tb.Text);
                 writer.WriteLine("SignatureOUT=" + SignatureOUT_tb.Text);
-                writer.WriteLine("BinaryFile=" + SourceFile);
-                writer.WriteLine("TranslatedFile=" + TranslatedFile);
+                writer.WriteLine("OffsetIN" + OffsetIN_tb.Text);
+                writer.WriteLine("OffsetOUT" + OffsetOUT_tb.Text);
+                writer.WriteLine("BinaryFile=" + BinaryFile);
+                writer.WriteLine("TextFile=" + TextFile);
                 writer.WriteLine("[History Section - don't change anything below this line !]");
                 //далее нужно сохранять ранее считанный список истории linkedListHS
                 /*       if (linkedListHS.curr != null) // список есть, выгружаем
@@ -696,10 +740,6 @@ namespace Rusik
                            }
                        }*/
             }
-        }
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
         }
         private void About_tsmi_Click(object sender, EventArgs e)
         {
@@ -713,91 +753,87 @@ namespace Rusik
             // начиная со смещения Offset начнем по байтам искать сигнатуру Signature.
             // Если найдем, то будем добавлять текст в список DoubleNode. Строим списки параллельно у обоих файлов.
             // создаем объект BinaryReader
-            if (SourceFile == "" || SourceFile == null) return; // Binary файл еще не открыт
+            if (BinaryFile == "" || BinaryFile == null) return; // Binary файл еще не открыт
             Start_btn.Visible = false;
             /*   using (BinaryWriter writer = new BinaryWriter(File.Open(OutputFile, FileMode.OpenOrCreate)))
                {*/
-            using (BinaryReader readerSF = new BinaryReader(File.Open(SourceFile, FileMode.Open)))
+            using (BinaryReader readerSF = new BinaryReader(File.Open(BinaryFile, FileMode.Open)))
             { // откроем файл Source на чтение
-                FileInfo src = new FileInfo(SourceFile);
+                FileInfo src = new FileInfo(BinaryFile);
                 byte[] buf = new byte[MaxBytesMessage * 3]; //Буффер для чтения из файла строки текста
                 long l = src.Length; //размер исходного файла в байтах
                 int sign_pointer = 0; // 0-сигнатура еще не встречена, 1..N - номер символа в сигнатуре
                 long onepercent = l / 100 - 1, percent = onepercent;
                 byte b;
 
-                int signatureInLength = SignatureIN_tb.Text.Length;
-                int signatureOutLength = SignatureOUT_tb.Text.Length;
-                byte[] sigbuf = new byte[signatureInLength];
-                bool iWaitLinkedListSF = false; // флаг ожидания текста перевода
+                SetSignature(); // получаем сигнатуры из форм текстбоксов
+                if (SignatureIN == null || SignatureOUT == null) return;
+                if (SignatureIN.Length == 0 || SignatureOUT.Length == 0) return;
+                int signatureInLength = SignatureIN.Length;
+                int signatureOutLength = SignatureOUT.Length;
+
+                if (signatureInLength == 0 && signatureOutLength == 0) return;
+                // создаем буфер для подгрузки сигнатуры из файла. Размер берем наибольший из двух сигнатур
+                //byte[] sigbuf = new byte[signatureInLength>signatureOutLength?signatureInLength:signatureOutLength];
+                byte[] sigbufIn = new byte[signatureInLength];
+                byte[] sigbufOut = new byte[signatureOutLength];
+                //  bool iWaitLinkedListSF = false; // флаг ожидания текста перевода
 
                 //проверим первые символы из файла, не сигнатура ли?
-                if (l > signatureInLength + 4) //+4 после сигнатуры должно следовать число (int) байт сообщения
-                    for (int ii = 0; ii < signatureInLength; ii++) sigbuf[ii] = readerSF.ReadByte();
-                else { return; }// файл слишком мал для работы
-                for (long i = signatureInLength; i < l - signatureInLength; i++)
-                {
-                    bool SignatureInFlag = sigbuf.SequenceEqual(SignatureIN), SignatureOutFlag = sigbuf.SequenceEqual(SignatureOUT);
+                if (l <= signatureInLength + 4) return;// файл слишком мал для работы
+
+                for (long i = 0; i < l; i++) //читаем файл
+                {   
+                    b =readerSF.ReadByte(); //читаем 1 байт
+                    //двигаем очередь FIFO буфера входной сигнатуры
+                    for (int ii = 1; ii < signatureInLength; ii++) sigbufIn[ii - 1] = sigbufIn[ii];
+                    sigbufIn[signatureInLength - 1] = b;
+                    //двигаем очередь FIFO буфера вЫходной сигнатуры
+                    for (int ii = 1; ii < signatureOutLength; ii++) sigbufOut[ii - 1] = sigbufOut[ii];
+                    sigbufOut[signatureOutLength - 1] = b; 
+
+                    bool SignatureInFlag = sigbufIn.SequenceEqual(SignatureIN), /*флаг совпадения с сигнатурой IN*/
+                        SignatureOutFlag = sigbufOut.SequenceEqual(SignatureOUT);// out
                     if (SignatureInFlag || SignatureOutFlag)// !СОВПАЛО! сравниваем сигнатуру через lynq
                     {
+
                         Int32 lentxt = readerSF.ReadInt32(); // читаем число int - 4 байта -длина текстовых данных
                         i += 4;
-                        if ((lentxt > MaxBytesMessage) || lentxt < 3) continue; // не может быть такое длинное/короткое предложение
-                        if ((i + lentxt) >= l) break; // конец файла достигнут - сигнатура ошибочна
+                        if ((i + lentxt) >= l|| lentxt<0) continue; // сигнатура ошибочна, размер сообщения превышает размер файла
 
-                        for (int j = 0; j < lentxt; j++)//читаем lentxt байт сообщения
+                        if ((lentxt > MaxBytesMessage) || lentxt < 3) // не может быть такое длинное/короткое предложение
                         {
-                            buf[j] = readerSF.ReadByte(); i++;
+                            for(int ii=0;ii<lentxt;ii++)readerSF.ReadByte(); //читаем в никуда, так-как эти даные не нужны
+                            i += lentxt;
+                            continue; 
                         }
-                        string message;  // преобразованиЕ массива byte в строку string
-                        byte[] tmp_bytes = new byte[lentxt];
-                        for (int j = 0; j < lentxt; j++) tmp_bytes[j] = buf[j];
-                        message = Encoding.UTF8.GetString(tmp_bytes);
+                        
+                        long message_position_in_file = i; // смещение начала_сообщения относительно начала файла
+                        byte[] tmp_bytes = new byte[lentxt]; //буфер для сообщения
+                        for (int j = 0; j < lentxt; j++) 
+                        {//читаем lentxt байт сообщения в буфер
+                            tmp_bytes[j] = readerSF.ReadByte(); i++;
+                        }
+                        // преобразованиЕ массива byte в строку string
+                        string message = Encoding.UTF8.GetString(tmp_bytes);
 
                         if (SignatureInFlag)// создаем новый элемент списка, с файловым указателем на начало строки
                         {   // встретилась сигнатура1
-                            if (iWaitLinkedListSF) //Но мы ждем перевода
-                            { //перевода не было, добавим пустой элемент списка  перевода и добавим связи
-                                linkedListOF.Add(null,"");
-                                linkedListOF.UpdateCurrent(-1,-1, i + 1, 0);// дописать
-                                linkedListSF.SetTwin(linkedListOF.curr); //связываю ссылками исходную строку со строкой перевода
-                                linkedListOF.SetTwin(linkedListSF.curr);
-                                /*byte[] buf1 = { 0xd, 0xa };//добавляем к концу строки "=0xd0xa"
-
-                                writer.Write(buf1, 0, 2); // записываем символы в выходной файл*/
-                            }
-                            linkedListSF.Add(message, null);  //создадим новый список
-                            linkedListSF.UpdateCurrent(i + 1, lentxt);
-                            iWaitLinkedListSF = true;
-                            /* buf[lentxt] = 0x3d;  // добавляем к концу строки "=0xd0xa"
+                            linkedList.AddInPart(message, message_position_in_file, lentxt);  //создадим новый узел списка
+                           /* buf[lentxt] = 0x3d;  // добавляем к концу строки "=0xd0xa"
                              writer.Write(buf, 0, lentxt); // записываем строку текста в выходной файл*/
                         }
                         else if (SignatureOutFlag)// встретилась сигнатура2
                         {//создаем список с переводом
-                            linkedListOF.Add(message, null );
-                            linkedListOF.UpdateCurrent(-1, -1, i + 1, lentxt);
-                            linkedListSF.SetTwin(linkedListOF.curr); //связываю ссылками исходную строку со строкой перевода
-                            linkedListOF.SetTwin(linkedListSF.curr);
-                            iWaitLinkedListSF = false;
+                            linkedList.AddOutPart(message, message_position_in_file, lentxt);
                             //writer.Write(buf, 0, lentxt - 1); // записываем строку текста в выходной файл
                         }
-                        //снова читаем сигнатуру в буфер
-                        if (l - i > signatureInLength + 4) //+4 после сигнатуры должно следовать число (int) байт сообщения
-                            for (int ii = 0; ii < signatureInLength; ii++) sigbuf[ii] = readerSF.ReadByte();
-                        else { return; }// файл слишком мал для дальнейшей работы
-
-                    }
-                    else //сигнатура не обнаружена читаем следующий байт
-                    {
-                        for (int ii = 1; ii < signatureInLength; ii++) sigbuf[ii - 1] = sigbuf[ii]; //двигаем очередь буфера влево
-                        sigbuf[signatureInLength - 1] = readerSF.ReadByte(); i++;
                     }
                     if (i >= percent) // проверяем нужно ли двигать прогресс бар на 1%
                     {
                         if (progressBar1.Value < 100) { progressBar1.Value++; }
                         percent += onepercent; progressBar1_lb.Text = Convert.ToString(progressBar1.Value) + "%";
                     }
-
                 }
 
                 /*          string message;  // преобразованиЕ массива byte в строку string
@@ -807,10 +843,10 @@ namespace Rusik
 
                             if (message == "..." || message == "") continue; // пустые строки не переводим
 */
-                nudRecord.Maximum = linkedListSF.Count;
+                nudRecord.Maximum = linkedList.Count;
                 nudRecord.Minimum = 1;
 
-                Records_lb.Text = "Found " + linkedListSF.Count + " records.";
+                Records_lb.Text = "Found " + linkedList.Count + " records.";
                 //Translated_tb.ReadOnly = false;
                 nudRecord.Value = 1;
                 nudRecord.ReadOnly = false;
@@ -824,8 +860,7 @@ namespace Rusik
         private void Next_btn_Click(object sender, EventArgs e)
         {
             if (Tabs == null) return;
-            if (linkedListSF.Count == 0) return; // список пуст перемещение вперед невозможно
-            // if (linkedListOF.curr == null  || linkedListSF.curr == null) return;
+            if (linkedList.Count == 0) return; // список пуст перемещение вперед невозможно
 
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
@@ -835,8 +870,7 @@ namespace Rusik
         private void Prev_btn_Click(object sender, EventArgs e)
         {
             if (Tabs == null) return;
-            if (linkedListSF.Count == 0) return; // список пуст перемещение назад невозможно
-            //if (linkedListOF.curr == null || linkedListSF.curr == null) return;
+            if (linkedList.Count == 0) return; // список пуст перемещение назад невозможно
 
             SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
@@ -904,8 +938,8 @@ namespace Rusik
 
             if (Tabs == null) // делаем главную вкладку HOME
             {
-                if (linkedListSF.Count() == 0) return; // нет смысла открывать вкладку, список пуст
-                NewTab.SetlinkedListHome(linkedListSF);
+                if (linkedList.Count() == 0) return; // нет смысла открывать вкладку, список пуст
+                NewTab.SetlinkedListHome(linkedList);
                 Tabs = new();
                 Tabs.Name = "Tabs";
                 Tabs.Size = new Size(985, 550);
@@ -935,7 +969,7 @@ namespace Rusik
             else// открывается точно не главная вкладка
             {
                 if (Search_tstb.Text.Length == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } //пустая строка поиска 
-                NewTab.SetlinkedListSF(linkedListSF, str); //ищем строку str в списке SF
+                NewTab.SearchInTab(linkedList, str); //ищем строку str в списке SF
                 if (NewTab.Count() == 0) { NewTab.Clear(); newTabPage.Dispose(); return; } // поиск ничего не дал }
                 // Формируем связи новой вкладки с соседними, т.е. с родительской
                 NewTab.PrevTabPage = Tabs.SelectedTab; // сохраняем в новой вкладке указатель на родительскую вкладку 
@@ -1135,7 +1169,7 @@ namespace Rusik
             SearchTabs tabSearch = (SearchTabs)sc.Tag;
             if (tabSearch == null) //определимся что будем удалять
             { // открыта вкладка HOME
-                data = linkedListSF.curr.Data;
+                data = linkedList.curr.Data;
             }
             else // удаляем из вкладки поиска
             {
@@ -1152,10 +1186,8 @@ namespace Rusik
             else // Пользователь подтвердил удаление
             {
                 flag_NotSavedYet = true;
-                //удаляем элемент из основного списка OF с переводом
-                linkedListOF.DeleteNode(tabSearch.linkedListSS.curr.Twin.Twin);
                 //удаляем элемент из основного списка SF на который ссылается элемент из списка поиска SS
-                linkedListSF.DeleteNode(tabSearch.linkedListSS.curr.Twin);
+                linkedList.DeleteNode(tabSearch.linkedListSS.curr.Twin);
                 tabSearch.Remove(); //удаляем текущий элемент из списка поиска SS
                 //обновляем вкладку для актуализации видимой инфы
                 if (tabSearch.linkedListSS.Count == 0) TabClose_tsb_Click(null, null);
@@ -1173,8 +1205,8 @@ namespace Rusik
             Records_lb.Text = "Found: 0 records";
 
 
-            TranslatedFile_tb.Text = ""; TranslatedFile = "";
-            SourceFile_tb.Text = ""; SourceFile = "";
+            TranslatedFile_tb.Text = ""; TextFile = "";
+            SourceFile_tb.Text = ""; BinaryFile = "";
             //выведем элементы интерфейса за пределы закрываемого окна
             //закроем все вкладки
             while (Tabs != null) TabClose_tsb_Click(null, null); // список пуст-закроем вкладку
@@ -1308,42 +1340,42 @@ namespace Rusik
                 MessageBox.Show("Ctrl+shift+V detected");
             }*/
         }
-  /*      private void UNDO_textbox()
-        {
-            if (Tabs == null) return;
-            if (Tabs.SelectedTab == null) return; // нет открытых файлов
-            SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
-            SearchTabs tabSearch = (SearchTabs)sc.Tag;
-            if (tabSearch == null) // вызов с главного TABa
-            {
-                if (linkedListOF.curr.UNDO.curr != null)
-                {
-                    linkedListOF.curr.Data = linkedListOF.curr.UNDO.curr.Data;
-                    linkedListOF.curr.UNDO.NextNode();
-                    nudRecord_ValueChanged(null, null);
-                }
-            }
-            else //UNDO на вкладке поиска 
-            {
-                if (tabSearch.linkedListSS.curr.UNDO.curr != null)
-                {
-                    tabSearch.linkedListSS.curr.Data = tabSearch.linkedListSS.curr.UNDO.curr.Data;
-                    tabSearch.linkedListSS.curr.UNDO.NextNode();
-                    tabSearch.RefreshCurrent();
-                }
-            }
-        
+        /*      private void UNDO_textbox()
+              {
+                  if (Tabs == null) return;
+                  if (Tabs.SelectedTab == null) return; // нет открытых файлов
+                  SplitContainer sc = (SplitContainer)Tabs.SelectedTab.Tag;
+                  SearchTabs tabSearch = (SearchTabs)sc.Tag;
+                  if (tabSearch == null) // вызов с главного TABa
+                  {
+                      if (linkedListOF.curr.UNDO.curr != null)
+                      {
+                          linkedListOF.curr.Data = linkedListOF.curr.UNDO.curr.Data;
+                          linkedListOF.curr.UNDO.NextNode();
+                          nudRecord_ValueChanged(null, null);
+                      }
+                  }
+                  else //UNDO на вкладке поиска 
+                  {
+                      if (tabSearch.linkedListSS.curr.UNDO.curr != null)
+                      {
+                          tabSearch.linkedListSS.curr.Data = tabSearch.linkedListSS.curr.UNDO.curr.Data;
+                          tabSearch.linkedListSS.curr.UNDO.NextNode();
+                          tabSearch.RefreshCurrent();
+                      }
+                  }
 
-        private void UNDO_Click(object sender, EventArgs e)
-        {
-            if (Tabs == null) return;
-            UNDO_textbox();
-        }
-        */
+
+              private void UNDO_Click(object sender, EventArgs e)
+              {
+                  if (Tabs == null) return;
+                  UNDO_textbox();
+              }
+              */
         private void Signature_tb_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (SignatureModeHEX_rb.Checked == false) return; //установлен режим ввода HEX
-            
+
             if (e.KeyChar == 'a') e.KeyChar = 'A';
             else if (e.KeyChar == 'b') e.KeyChar = 'B';
             else if (e.KeyChar == 'c') e.KeyChar = 'C';
@@ -1364,10 +1396,14 @@ namespace Rusik
 
         private void Signature_tb_TextChanged(object sender, EventArgs e)
         {
-            if (SignatureModeHEX_rb.Checked == false) { return; }
-            
-            TextBox tb = (TextBox)sender;// as TextBox;
+            if (SignatureModeHEX_rb.Checked == false) // вводиться строка
+            {
+                return;
+            }
 
+            // вводиться HEX:
+
+            TextBox tb = (TextBox)sender;// as TextBox;
             string current_text = tb.Text;
             current_text = Regex.Replace(current_text, @"[^0123456789ABCDEF]", "");
             int len = current_text.Length;
@@ -1396,8 +1432,11 @@ namespace Rusik
 
         private void SignatureModeString_rb_CheckedChanged(object sender, EventArgs e)
         { //  радиокнопка бинарный режим поиск по строке
-            SignatureIN_tb.PlaceholderText = "ASCII";
-            SignatureOUT_tb.PlaceholderText = "ASCII";
+            SignatureIN_tb.PlaceholderText = "Text";
+            SignatureOUT_tb.PlaceholderText = "Text";
+            SignatureIN_tb.Text = HexStringToString(SignatureIN_tb.Text);
+            SignatureOUT_tb.Text = HexStringToString(SignatureOUT_tb.Text);
+            //Signature_tb_TextChanged(sender, e); //для верного отображения текста
 
         }
 
@@ -1405,6 +1444,27 @@ namespace Rusik
         {
             SignatureIN_tb.PlaceholderText = "HEX...";
             SignatureOUT_tb.PlaceholderText = "HEX...";
+            SignatureIN_tb.Text = StringToHexString(SignatureIN_tb.Text);
+            SignatureOUT_tb.Text = StringToHexString(SignatureOUT_tb.Text);
+            //Signature_tb_TextChanged(sender, e);
+        }
+        private void SetSignature()
+        {
+            if (SignatureModeHEX_rb.Checked == true) // вводиться строка
+            {
+                GetHexString(SignatureIN_tb.Text, "IN"); // Запись сигнатур из HEX-строки в массив байт
+                GetHexString(SignatureOUT_tb.Text, "OUT");
+            }
+            else
+            {
+                SignatureIN = ConvertStringToByteArray(SignatureIN_tb.Text);
+                SignatureOUT = ConvertStringToByteArray(SignatureOUT_tb.Text);
+            }
+            if (OffsetIN_tb.Text == null || OffsetIN_tb.Text == "") OffsetIN = 0;
+            else OffsetIN = ConvertHEX2Long(OffsetIN_tb.Text);
+            if (OffsetOUT_tb.Text == null || OffsetOUT_tb.Text == "") OffsetOUT = 0;
+            else OffsetOUT = ConvertHEX2Long(OffsetIN_tb.Text);
+           
         }
     }
 
@@ -1417,15 +1477,15 @@ namespace Rusik
         }
         public T Data { get; set; }
         public T Data1 { get; set; }
-        public long Fileposition { get;  set; } // позиция начала текста IN в файле
-        public long Fileposition1 { get;  set; }// позиция начала текста OUT в файле
-        public int messageLength { get;  set; }
-        public int messageLength1 { get;  set; }
+        public long Fileposition { get; set; } // позиция начала текста IN в файле
+        public long Fileposition1 { get; set; }// позиция начала текста OUT в файле
+        public int messageLength { get; set; }
+        public int messageLength1 { get; set; }
         public DoublyNode<T> Previous { get; set; } // предыдущий узел
         public DoublyNode<T> Next { get; set; }     // следующий узел
         public DoublyNode<T> Twin { get; set; }     // ссылка на доп. перевод из txt файла
         public long N_Record { get; set; } // номер по-порядку 
-   //     public DoublyLinkedList<T> UNDO = new(); // список с отменой
+                                           //     public DoublyLinkedList<T> UNDO = new(); // список с отменой
     }
     public class DoublyLinkedList<T> : IEnumerable<T>  // класс - двусвязный список
     {
@@ -1434,7 +1494,8 @@ namespace Rusik
         DoublyNode<T> tail; // последний/хвостовой элемент
         int count;  // количество элементов в списке
 
-        public void Add(T data, T data1, long Fileposition = -1, long Fileposition1 = -1)// добавление элемента
+        public void Add(T data, T data1,
+            long Fileposition = -1, long Fileposition1 = -1, int messlen = 0, int messlen1 = 0)// добавление элемента
         {
             DoublyNode<T> node = new DoublyNode<T>(data, data1);
             curr = node;    // добавляемый элемент становится текущим
@@ -1448,7 +1509,33 @@ namespace Rusik
             tail = node;
             count++; curr.N_Record = count;
         }
-        public void AddFirst(T data, T data1) 
+        public void AddInPart(T data, long Fileposition = -1, int messlen = 0)// добавление элемента
+        {
+            DoublyNode<T> node = new DoublyNode<T>(data, data);
+            curr = node;    // добавляемый элемент становится текущим
+            if (head == null)
+                head = node;
+            else
+            {
+                tail.Next = node;
+                node.Previous = tail;
+            }
+            tail = node;
+            count++; curr.N_Record = count;
+            node.Fileposition = Fileposition;
+            node.messageLength = messlen;
+
+        }
+        public void AddOutPart(T data1, long Fileposition1 = -1, int messlen1 = 0)//добавление перевода в текущий
+        {
+            DoublyNode<T> node = curr;
+            ReplaceData(data1, node);
+            node.Fileposition1 = Fileposition1;
+            node.messageLength1 = messlen1;
+
+        }
+
+        public void AddFirst(T data, T data1)
         {
             DoublyNode<T> node = new DoublyNode<T>(data, data1); // добавить первым в список
             DoublyNode<T> temp = head;
@@ -1460,7 +1547,7 @@ namespace Rusik
             count++;
 
         }
-        public void UpdateCurrent(long Fileposition, int originalMessageLength,
+        public void ExpandData(long Fileposition, int originalMessageLength,
             long Fileposition1 = -1, int originalMessageLength1 = 0)
         {
             DoublyNode<T> node = curr;
@@ -1481,6 +1568,8 @@ namespace Rusik
             node.Fileposition = Fileposition;
             node.messageLength = originalMessageLength;
         }
+
+
         // удаление по ссылке на элемент
         public DoublyNode<T> DeleteNode(DoublyNode<T> node1 = null) //null- УДАЛИТЬ текущий элемент списка или по ссылке
         {
@@ -1501,23 +1590,23 @@ namespace Rusik
             return curr;
         }
 
-        public bool RemoveData(T data, T data1)// удаление элемента с поиском по строке
+        public bool RemoveData(T data)// удаление элемента с поиском по строке
         {
             DoublyNode<T> current = head;
             DoublyNode<T> temp = curr;
             // поиск удаляемого узла
             while (current != null)
             {
-                if (current.Data.Equals(data) || current.Data1.Equals(data1)) break;
+                if (current.Data.Equals(data) || current.Data1.Equals(data)) break; 
                 current = current.Next;
             }
             if (current == null) return false; // ничего не нашли и не удалили
             curr = current; // элемент становится текущим
 
             // если узел не последний
-            if (current.Next != null)current.Next.Previous = current.Previous;
+            if (current.Next != null) current.Next.Previous = current.Previous;
             else tail = current.Previous;// если последний, переустанавливаем tail
- 
+
             // если узел не первый
             if (current.Previous != null) current.Previous.Next = current.Next;
             else head = current.Next;// если первый, переустанавливаем head
@@ -1532,19 +1621,24 @@ namespace Rusik
         public DoublyNode<T> Twin { get { if (curr != null) return curr.Twin; else return head; } }
 
         public bool IsEmpty { get { return count == 0; } }
-        public object CurrentData { get { return curr.Data; } } //возвращает данные из текущего элемента списка
+        public object CurrentInData { get { return curr.Data; } } //возвращает данные из текущего элемента списка поле data
+        public object CurrentOutData { get { return curr.Data1; } } //возвращает данные из текущего элемента списка поле data1
         public object Curr { get { return curr; } } //возвращает указатель на текущий элемент списка
-        public object DataFrom(DoublyNode<T> Node) ////возвращает данные из произвольного элемента списка
+        public object GetTData(DoublyNode<T> Node) ////возвращает данные из произвольного элемента списка
         {
             if (Node != null) return Node.Data; else return null;
+        }
+        public object GetTData1(DoublyNode<T> Node) ////возвращает данные из произвольного элемента списка
+        {
+            if (Node != null) return Node.Data1; else return null;
         }
         public object TwinFrom(DoublyNode<T> Node) //возвращает указатель на Twin произвольного элемента списка
         {
             if (Node != null) return Node.Twin; else return null;
         }
 
-        public void ReplaceData(T data, T data1, DoublyNode<T> directNode = null) // Заменяет поле даты текущего элемента, либо иного
-        {                                           // элемента, ссылка на который указана в необязательном поле directNode
+        public void ReplaceData(T data1, DoublyNode<T> directNode = null) // Заменяет поле данных текущего узла,
+        {  // либо иного узла списка, ссылка на который указана в необязательном поле directNode
             if (directNode == null) directNode = curr;
             if (directNode != null)
             {
@@ -1554,13 +1648,14 @@ namespace Rusik
                      directNode.UNDO.AddFirst(directNode.Data, directNode.Fileposition, directNode.messageLength);
                      if (directNode.UNDO.Count() > 100) //Обрезаем хвост UNDO - лимит не более 100 откатов
                      directNode.UNDO.tail = directNode.UNDO.tail.Previous;*/
-                if (data != null) directNode.Data = data;
-                if (data1 != null) directNode.Data1 = data1;
+
+                directNode.Data1 = data1;
                 return;
             }
         }
         public void SetTwin(DoublyNode<T> twin)
         {
+            //if (twin == null) return;
             if (curr == null) return;
             curr.Twin = twin;
         }
@@ -1653,10 +1748,12 @@ namespace Rusik
         }
         public DoublyNode<T> GetHead()
         {
+            curr = head;
             return head;
         }
         public DoublyNode<T> GetTail()
         {
+            curr = tail;
             return tail;
         }
     }
@@ -1666,8 +1763,8 @@ namespace Rusik
         public TabPage TabPage; //вкладка связанная с данной копией класса
         public TabPage PrevTabPage = null; //родительская вкладка TabPage
         public TabPage NextTabPage = null; //ссылка на вкладку возможного потомка
-        public DoublyLinkedList<string> linkedListSS = new(); //создaдим список с результатами поиска
-
+        public DoublyLinkedList<string> linkedListSS=new(); //создaдим список с результатами поиска
+       
         public TextBox tabSource_tb { get; set; }//поля для хранения текстбоксов на вкладках
         public TextBox tabTranslated_tb { get; set; }
         public SplitContainer splitContainer { get; set; }
@@ -1683,40 +1780,45 @@ namespace Rusik
         {
             return currnum;
         }
+        
+        /*public SearchTabs() //конструктор
+        { 
+            linkedListSS=new(); //создaдим список с результатами поиска
+        }*/
 
         public void SetlinkedListHome(DoublyLinkedList<string> linkedList)
-        {
-            foreach (var item in linkedList)
+        { //скопировали 
+            //linkedListSS = linkedList; //вкладка HOME тупо ссылается  на список с данными
+            linkedList.GetHead();
+            while (linkedList.curr.Next != null)
             {
-                linkedListSS.Add(item, null); //создаем в списке поиска новый элемент
-                linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
+                linkedListSS.Add(null, null);
+                linkedListSS.curr.Twin = linkedList.curr;
+                linkedList.curr = linkedList.curr.Next;
             }
-            foreach (var item in linkedListSS) break; // ставим curr на head
+            linkedList.GetHead();
+            linkedListSS.GetHead();
         }
-        public void SetlinkedListSF(DoublyLinkedList<string> linkedList, string str)
+        public void SearchInTab(DoublyLinkedList<string> linkedList, string str)
         {
             if (linkedList == null || str == "") return; //если передана пустая строка или непередан список
-                                                         //Начинаем поиск подстроки по всем элементам списка linkListSF
-
+                                                         //Начинаем поиск подстроки по всем элементам списка linkList
             var temp = linkedList.curr;
             foreach (var item in linkedList)
             {
-                if (item.Contains(str))// Вхождения найдены
+                if (item.Contains(str))// Вхождения из Data найдены
                 {
-                    linkedListSS.Add(item, null); //создаем в списке поиска новый элемент
+                    linkedListSS.Add(null, null); //создаем в списке поиска новый элемент
                     linkedListSS.SetTwin(linkedList.curr); // помещаем в его поле Twin указатель на запись из списка SF
-                    continue; //пропускаем поиск по переводу, чтобы не сделать дубликат в найденном
                 }
-                if (linkedList.curr.Twin.Data.Contains(str))// проверяем на совпадение и список с переводом
+                else if (linkedList.curr.Data1.Contains(str))// проверяем на вхождения из Data1
                 {
-                    linkedListSS.Add(linkedList.curr.Twin.Data, null);
+                    linkedListSS.Add(null, null);
                     linkedListSS.SetTwin(linkedList.curr);
                 }
             }
-            foreach (var item in linkedListSS) break; // ставим curr на head
+            linkedListSS.GetHead(); // ставим для SS - curr на head
             linkedList.curr = temp;
-            // if (linkedListSS.Count == 0) return; //ничего не найдено
-            // вот что-то найдено, если вкладка не создавалась - то создадим
         }
 
         public void Next() //перемещение по результатам поиска
@@ -1731,8 +1833,7 @@ namespace Rusik
                 }
                 else
                 {
-                    linkedListSS.ReplaceData(tabTranslated_tb.Text,null, linkedListSS.curr.Twin.Twin);
-                    //linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin);
                     currnum++;
                 }
                 linkedListSS.curr = linkedListSS.curr.Next;
@@ -1740,8 +1841,7 @@ namespace Rusik
             else // мы в конце списка. перемотаем на начало
             {
                 currnum = 1;
-                while (linkedListSS.curr.Previous != null)
-                { linkedListSS.curr = linkedListSS.curr.Previous; }
+                linkedListSS.GetHead();
             }
             RefreshCurrent();
             tabSearchStat_tslb.Text = Convert.ToString(currnum) + " of " + linkedListSS.Count;
@@ -1758,8 +1858,7 @@ namespace Rusik
                 }
                 else
                 {
-                    linkedListSS.ReplaceData(tabTranslated_tb.Text, null, linkedListSS.curr.Twin.Twin);
-                    // linkedListSS.curr.Twin.Twin.Data = tabTranslated_tb.Text; //сохраняем содержимое текстбокса
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin);
                     currnum--;
                 }
                 linkedListSS.curr = linkedListSS.curr.Previous;
@@ -1767,8 +1866,7 @@ namespace Rusik
             else// мы в начале списка. перемотаем в конец
             {
                 currnum = linkedListSS.Count;
-                while (linkedListSS.curr.Next != null)
-                { linkedListSS.curr = linkedListSS.curr.Next; }
+                linkedListSS.GetTail();
             }
             RefreshCurrent();
         }
@@ -1776,23 +1874,21 @@ namespace Rusik
         {
             if (linkedListSS.curr == null || linkedListSS.Count <= 0) return; // проверим что список не пустой
             currnum = 1;
-            while (linkedListSS.curr.Previous != null)
-            { linkedListSS.curr = linkedListSS.curr.Previous; }
+            linkedListSS.GetHead();
             RefreshCurrent();
         }
         public void toLast()
         {
             if (linkedListSS.curr == null || linkedListSS.Count <= 0) return; // проверим что список не пустой
             currnum = linkedListSS.Count;
-            while (linkedListSS.curr.Next != null)
-            { linkedListSS.curr = linkedListSS.curr.Next; }
+            linkedListSS.GetTail();
             RefreshCurrent();
         }
-        public void toDefined(long pos)
+        public void toDefined(long pos) //перемещение на заданную позицию
         {
-            if (pos > linkedListSS.Count || pos <= 0) return; //запрос на нереальную позицию
+            if (pos > linkedListSS.Count || pos <= 0) return; //запрос по перемещению на нереальную позицию
             currnum = 1;
-            linkedListSS.curr = linkedListSS.GetHead();
+            linkedListSS.GetHead(); 
             while (currnum != pos)
             {
                 if (linkedListSS.curr.Next != null) { linkedListSS.curr = linkedListSS.curr.Next; currnum++; }
@@ -1803,7 +1899,7 @@ namespace Rusik
         {
             if (linkedListSS.curr == null) return; // вдруг список пуст
             // Проверим, не удалена ли открытая запись в поиске из основного списка
-            while (linkedListSS.curr.Twin == null || linkedListSS.curr.Twin.Twin == null)
+            while (linkedListSS.curr.Twin == null)
             { // Удалим ее из списка поиска
                 linkedListSS.DeleteNode(linkedListSS.curr); //удаляем ее без сохранения из списка поиска
                 if (currnum > linkedListSS.Count) currnum--;
@@ -1815,12 +1911,12 @@ namespace Rusik
             if (TranslatedSource == false)
             {
                 tabSource_tb.Text = linkedListSS.curr.Twin.Data;
-                tabTranslated_tb.Text = linkedListSS.curr.Twin.Twin.Data;
+                tabTranslated_tb.Text = linkedListSS.curr.Twin.Data1;
             }
             else
             {
-                tabSource_tb.Text = linkedListSS.curr.Twin.Twin.Data;
-                tabTranslated_tb.Text = linkedListSS.curr.Twin.Data;
+                tabSource_tb.Text = linkedListSS.curr.Twin.Data;
+                tabTranslated_tb.Text = linkedListSS.curr.Twin.Data1;
             }
             tabSearchStat_tslb.Text = Convert.ToString(currnum) + " of " + linkedListSS.Count;
             Translated_KeyUp();
@@ -1836,7 +1932,7 @@ namespace Rusik
             tabSource_lb.Text = Convert.ToString(tabSource_lb_len);
             if (linkedListSS.curr != null) // защищаемся от случайного пизд-ца с null
                 if (linkedListSS.curr.Twin != null)
-                    linkedListSS.ReplaceData(tabTranslated_tb.Text, null, linkedListSS.curr.Twin.Twin);
+                    linkedListSS.ReplaceData(tabTranslated_tb.Text, linkedListSS.curr.Twin);
         }
 
         public void Remove() //удаляем запись из списка SF по ссылке из SS.Twin

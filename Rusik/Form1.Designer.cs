@@ -80,10 +80,10 @@ namespace Rusik
             lbTranslated = new System.Windows.Forms.ToolStripStatusLabel();
             statusStrip2 = new System.Windows.Forms.StatusStrip();
             Save = new System.Windows.Forms.Button();
-            textBox1 = new System.Windows.Forms.TextBox();
+            OffsetOUT_tb = new System.Windows.Forms.TextBox();
             OffsetOUT_lb = new System.Windows.Forms.Label();
             OffsetIN_lb = new System.Windows.Forms.Label();
-            textBox2 = new System.Windows.Forms.TextBox();
+            OffsetIN_tb = new System.Windows.Forms.TextBox();
             OffsetMode512_rb = new System.Windows.Forms.RadioButton();
             OffsetModeInt32_rb = new System.Windows.Forms.RadioButton();
             SignatureModeString_rb = new System.Windows.Forms.RadioButton();
@@ -576,15 +576,15 @@ namespace Rusik
             Save.UseVisualStyleBackColor = true;
             Save.Click += Save_Click;
             // 
-            // textBox1
+            // OffsetOUT_tb
             // 
-            textBox1.Location = new System.Drawing.Point(65, 42);
-            textBox1.MaxLength = 14;
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "HEX number";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new System.Drawing.Size(41, 23);
-            textBox1.TabIndex = 44;
+            OffsetOUT_tb.Location = new System.Drawing.Point(65, 42);
+            OffsetOUT_tb.MaxLength = 14;
+            OffsetOUT_tb.Name = "OffsetOUT_tb";
+            OffsetOUT_tb.PlaceholderText = "HEX number";
+            OffsetOUT_tb.ReadOnly = true;
+            OffsetOUT_tb.Size = new System.Drawing.Size(41, 23);
+            OffsetOUT_tb.TabIndex = 44;
             // 
             // OffsetOUT_lb
             // 
@@ -604,15 +604,15 @@ namespace Rusik
             OffsetIN_lb.TabIndex = 42;
             OffsetIN_lb.Text = "OffsetIN";
             // 
-            // textBox2
+            // OffsetIN_tb
             // 
-            textBox2.Location = new System.Drawing.Point(65, 19);
-            textBox2.MaxLength = 14;
-            textBox2.Name = "textBox2";
-            textBox2.PlaceholderText = "HEX number";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new System.Drawing.Size(41, 23);
-            textBox2.TabIndex = 41;
+            OffsetIN_tb.Location = new System.Drawing.Point(65, 19);
+            OffsetIN_tb.MaxLength = 14;
+            OffsetIN_tb.Name = "OffsetIN_tb";
+            OffsetIN_tb.PlaceholderText = "HEX number";
+            OffsetIN_tb.ReadOnly = true;
+            OffsetIN_tb.Size = new System.Drawing.Size(41, 23);
+            OffsetIN_tb.TabIndex = 41;
             // 
             // OffsetMode512_rb
             // 
@@ -645,7 +645,7 @@ namespace Rusik
             SignatureModeString_rb.TabIndex = 47;
             SignatureModeString_rb.Text = "by string";
             SignatureModeString_rb.UseVisualStyleBackColor = true;
-            SignatureModeString_rb.CheckedChanged += SignatureModeString_rb_CheckedChanged;
+            SignatureModeString_rb.Click += SignatureModeString_rb_CheckedChanged;
             // 
             // SignatureModeHEX_rb
             // 
@@ -658,17 +658,17 @@ namespace Rusik
             SignatureModeHEX_rb.TabStop = true;
             SignatureModeHEX_rb.Text = "by HEX code";
             SignatureModeHEX_rb.UseVisualStyleBackColor = true;
-            SignatureModeHEX_rb.CheckedChanged += SignatureModeHEX_rb_CheckedChanged;
+            SignatureModeHEX_rb.Click += SignatureModeHEX_rb_CheckedChanged;
             // 
             // OffsetgroupBox
             // 
             OffsetgroupBox.Controls.Add(OffsetIN_lb);
             OffsetgroupBox.Controls.Add(Start_btn);
-            OffsetgroupBox.Controls.Add(textBox2);
+            OffsetgroupBox.Controls.Add(OffsetIN_tb);
             OffsetgroupBox.Controls.Add(OffsetModeInt32_rb);
             OffsetgroupBox.Controls.Add(OffsetOUT_lb);
             OffsetgroupBox.Controls.Add(OffsetMode512_rb);
-            OffsetgroupBox.Controls.Add(textBox1);
+            OffsetgroupBox.Controls.Add(OffsetOUT_tb);
             OffsetgroupBox.Location = new System.Drawing.Point(197, 13);
             OffsetgroupBox.Name = "OffsetgroupBox";
             OffsetgroupBox.Size = new System.Drawing.Size(223, 95);
@@ -750,7 +750,6 @@ namespace Rusik
             Name = "Form1";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Custom Translator v.0.8beta by Samjo";
-            Load += Form1_Load;
             KeyDown += Form1_KeyDown;
             ((System.ComponentModel.ISupportInitialize)nudRecord).EndInit();
             menuStrip1.ResumeLayout(false);
@@ -827,10 +826,10 @@ namespace Rusik
         private System.Windows.Forms.ToolStripStatusLabel lbTranslated;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox OffsetOUT_tb;
         private System.Windows.Forms.Label OffsetOUT_lb;
         private System.Windows.Forms.Label OffsetIN_lb;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox OffsetIN_tb;
         private System.Windows.Forms.RadioButton OffsetMode512_rb;
         private System.Windows.Forms.RadioButton OffsetModeInt32_rb;
         private System.Windows.Forms.RadioButton SignatureModeString_rb;
