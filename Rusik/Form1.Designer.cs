@@ -36,7 +36,7 @@ namespace Rusik
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             File_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             OpenFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
-            OpenTranslatedFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
+            OpenTextFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             CloseFilesClear_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             SaveFile_tsmi = new System.Windows.Forms.ToolStripMenuItem();
             Quit_tsmi = new System.Windows.Forms.ToolStripMenuItem();
@@ -155,7 +155,7 @@ namespace Rusik
             // 
             // File_tsmi
             // 
-            File_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { OpenFile_tsmi, OpenTranslatedFile_tsmi, CloseFilesClear_tsmi, SaveFile_tsmi, Quit_tsmi });
+            File_tsmi.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { OpenFile_tsmi, OpenTextFile_tsmi, CloseFilesClear_tsmi, SaveFile_tsmi, Quit_tsmi });
             File_tsmi.Name = "File_tsmi";
             File_tsmi.Size = new System.Drawing.Size(37, 20);
             File_tsmi.Text = "File";
@@ -163,35 +163,35 @@ namespace Rusik
             // OpenFile_tsmi
             // 
             OpenFile_tsmi.Name = "OpenFile_tsmi";
-            OpenFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            OpenFile_tsmi.Size = new System.Drawing.Size(180, 22);
             OpenFile_tsmi.Text = "Open Binary File";
             OpenFile_tsmi.Click += OpenFile_tsmi_Click;
             // 
-            // OpenTranslatedFile_tsmi
+            // OpenTextFile_tsmi
             // 
-            OpenTranslatedFile_tsmi.Name = "OpenTranslatedFile_tsmi";
-            OpenTranslatedFile_tsmi.Size = new System.Drawing.Size(204, 22);
-            OpenTranslatedFile_tsmi.Text = "Open Translated Text File";
-            OpenTranslatedFile_tsmi.Click += OpenTranslatedFile_tsmi_Click;
+            OpenTextFile_tsmi.Name = "OpenTextFile_tsmi";
+            OpenTextFile_tsmi.Size = new System.Drawing.Size(180, 22);
+            OpenTextFile_tsmi.Text = "Open Text File";
+            OpenTextFile_tsmi.Click += OpenTextFile_tsmi_Click;
             // 
             // CloseFilesClear_tsmi
             // 
             CloseFilesClear_tsmi.Name = "CloseFilesClear_tsmi";
-            CloseFilesClear_tsmi.Size = new System.Drawing.Size(204, 22);
+            CloseFilesClear_tsmi.Size = new System.Drawing.Size(180, 22);
             CloseFilesClear_tsmi.Text = "Close Files/Clear";
             CloseFilesClear_tsmi.Click += CloseFilesClear_Click;
             // 
             // SaveFile_tsmi
             // 
             SaveFile_tsmi.Name = "SaveFile_tsmi";
-            SaveFile_tsmi.Size = new System.Drawing.Size(204, 22);
+            SaveFile_tsmi.Size = new System.Drawing.Size(180, 22);
             SaveFile_tsmi.Text = "Save File As...";
             SaveFile_tsmi.Click += SaveFile_tsmi_Click;
             // 
             // Quit_tsmi
             // 
             Quit_tsmi.Name = "Quit_tsmi";
-            Quit_tsmi.Size = new System.Drawing.Size(204, 22);
+            Quit_tsmi.Size = new System.Drawing.Size(180, 22);
             Quit_tsmi.Text = "Quit";
             Quit_tsmi.Click += Quit_tsmi_Click;
             // 
@@ -794,7 +794,7 @@ namespace Rusik
         private System.Windows.Forms.TextBox SignatureOUT_tb;
         private System.Windows.Forms.Button Start_btn;
         private System.Windows.Forms.Label progressBar1_lb;
-        private System.Windows.Forms.ToolStripMenuItem OpenTranslatedFile_tsmi;
+        private System.Windows.Forms.ToolStripMenuItem OpenTextFile_tsmi;
         private System.Windows.Forms.ToolStripMenuItem CloseFilesClear_tsmi;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ComboBox comboBox2;

@@ -3,12 +3,12 @@
 InterfaceLanguage=en
 SourceLanguage=en
 TranslationLanguage=ru
-LastRecordNumber=49
+LastRecordNumber=24
 [Additional text file section]
-TextFile=C:\Users\USR\Documents\GitHub\EduCodeGitHub\Rusik\Chapter1.txt
+TextFile=
 [Binary file Section]
-BinaryFile=
-SignatureIN=
+BinaryFile=C:\Users\USR\Documents\GitHub\EduCodeGitHub\Rusik\config.bytes.RusikBin
+SignatureIN=hell
 SignatureOUT=
-OffsetIN=
+OffsetIN=0
 OffsetOUT=
