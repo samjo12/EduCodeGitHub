@@ -305,8 +305,8 @@ namespace Password_Generator
         public static DateTime currt0 = currt;
         public static bool stoptimer_flag = false;
         public static bool NightColorMode = false;
-        //      public static Color colorschem1 = Color.FromArgb(35, 30, 31); // синий индикатор
-        //      public static Color colorschem2 = Color.FromArgb(2, 226, 232);// темно-серый неактивный индикатор
+        //public static Color colorschem1 = Color.FromArgb(35, 30, 31); // синий индикатор
+        //public static Color colorschem2 = Color.FromArgb(2, 226, 232);// темно-серый неактивный индикатор
         public static Color colorschem1 = Color.White; // синий индикатор
         public static Color colorschem2 = Color.Red;// темно-серый неактивный индикатор
         /*public static string filePath = @"C:\Users\amsad\source\EduCodeGitHub\Miner\mine30l.gif";
